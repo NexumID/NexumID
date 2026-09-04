@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#05080d">
+
+    <meta name="description"
+          content="NexumID - Identidad Digital Vehicular">
+
+    <title>NexumID | Identidad Digital Vehicular</title>
+
+    <link rel="stylesheet"
+          href="estilo.css">
+</head>
+
+<body>
+
+<main class="app">
+
+    <!-- CABECERA -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                N
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    Nexum<span>ID</span>
+                </div>
+
+                <div class="brand-sub">
+                    IDENTIDAD DIGITAL VEHICULAR
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="status-dot"></div>
+
+    </header>
+
+
+    <!-- VEHÍCULO -->
+
+    <section class="hero">
+
+        <div class="vehicle-photo">
+
+            <div class="photo-placeholder">
+                🚗
+            </div>
+
+            <div class="photo-overlay"></div>
+
+        </div>
+
+
+        <div class="vehicle-info">
+
+            <span class="eyebrow">
+                MI VEHÍCULO
+            </span>
+
+            <h1 id="patente">
+                AB-CD-12
+            </h1>
+
+            <p id="modelo">
+                Chevrolet Sail · 2020
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACCESO -->
+
+    <section class="quick">
+
+        <div class="quick-item">
+
+            <span class="quick-icon">
+                ⌁
+            </span>
+
+            <div>
+
+                <strong>
+                    NFC
+                </strong>
+
+                <small>
+                    Toca y accede
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="quick-item">
+
+            <span class="quick-icon">
+                ▦
+            </span>
+
+            <div>
+
+                <strong>
+                    QR
+                </strong>
+
+                <small>
+                    Escanea y accede
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="quick-item">
+
+            <span class="quick-icon">
+                ✓
+            </span>
+
+            <div>
+
+                <strong>
+                    Digital
+                </strong>
+
+                <small>
+                    Siempre disponible
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- DOCUMENTOS -->
+
+    <section class="documents">
+
+        <div class="section-title">
+
+            <div>
+
+                <span class="eyebrow">
+                    DOCUMENTACIÓN
+                </span>
+
+                <h2>
+                    Todo en un solo lugar
+                </h2>
+
+            </div>
+
+            <span class="count">
+                5
+            </span>
+
+        </div>
+
+
+        <!-- PERMISO -->
+
+        <button class="doc-card"
+                onclick="verDocumento('permiso')">
+
+            <span class="doc-icon">
+                📄
+            </span>
+
+            <span class="doc-text">
+
+                <strong>
+                    Permiso de circulación
+                </strong>
+
+                <small>
+                    Documento digital
+                </small>
+
+            </span>
+
+            <span class="arrow">
+                ›
+            </span>
+
+        </button>
+
+
+        <!-- REVISIÓN -->
+
+        <button class="doc-card"
+                onclick="verDocumento('revision')">
+
+            <span class="doc-icon">
+                🔧
+            </span>
+
+            <span class="doc-text">
+
+                <strong>
+                    Revisión técnica
+                </strong>
+
+                <small>
+                    Documento digital
+                </small>
+
+            </span>
+
+            <span class="arrow">
+                ›
+            </span>
+
+        </button>
+
+
+        <!-- SOAP -->
+
+        <button class="doc-card"
+                onclick="verDocumento('soap')">
+
+            <span class="doc-icon">
+                🛡️
+            </span>
+
+            <span class="doc-text">
+
+                <strong>
+                    SOAP
+                </strong>
+
+                <small>
+                    Documento digital
+                </small>
+
+            </span>
+
+            <span class="arrow">
+                ›
+            </span>
+
+        </button>
+
+
+        <!-- GASES -->
+
+        <button class="doc-card"
+                onclick="verDocumento('gases')">
+
+            <span class="doc-icon">
+                🌿
+            </span>
+
+            <span class="doc-text">
+
+                <strong>
+                    Certificado de gases
+                </strong>
+
+                <small>
+                    Documento digital
+                </small>
+
+            </span>
+
+            <span class="arrow">
+                ›
+            </span>
+
+        </button>
+
+
+        <!-- PADRÓN -->
+
+        <button class="doc-card"
+                onclick="verDocumento('padron')">
+
+            <span class="doc-icon">
+                🔐
+            </span>
+
+            <span class="doc-text">
+
+                <strong>
+                    Padrón
+                </strong>
+
+                <small>
+                    Acceso protegido
+                </small>
+
+            </span>
+
+            <span class="arrow">
+                ›
+            </span>
+
+        </button>
+
+    </section>
+
+
+    <!-- INFORMACIÓN EXTRA -->
+
+    <section class="extra">
+
+
+        <button class="extra-card"
+                onclick="mostrarContacto()">
+
+            <span>
+                ☎️
+            </span>
+
+            <div>
+
+                <strong>
+                    Contacto de emergencia
+                </strong>
+
+                <small>
+                    Información del propietario
+                </small>
+
+            </div>
+
+            <span class="arrow">
+                ›
+            </span>
+
+        </button>
+
+
+        <button class="extra-card"
+                onclick="mostrarInfo()">
+
+            <span>
+                🚘
+            </span>
+
+            <div>
+
+                <strong>
+                    Información del vehículo
+                </strong>
+
+                <small>
+                    Datos y características
+                </small>
+
+            </div>
+
+            <span class="arrow">
+                ›
+            </span>
+
+        </button>
+
+    </section>
+
+
+    <!-- PIE -->
+
+    <footer>
+
+        <div class="footer-brand">
+            Nexum<span>ID</span>
+        </div>
+
+        <p>
+            IDENTIDAD DIGITAL VEHICULAR
+        </p>
+
+        <small>
+            Una solución de
+            <strong>
+                Smart Box Connect
+            </strong>
+        </small>
+
+    </footer>
+
+</main>
+
+
+<!-- VENTANA DOCUMENTOS -->
+
+<div id="modal"
+     class="modal hidden">
+
+    <div class="modal-box">
+
+        <button class="close"
+                onclick="cerrarModal()">
+
+            ×
+
+        </button>
+
+        <div id="modal-content"></div>
+
+    </div>
+
+</div>
+
+
+<script src="app.js"></script>
+
+</body>
+
+</html>
