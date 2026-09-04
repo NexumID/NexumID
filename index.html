@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -10,20 +11,21 @@
     <meta name="theme-color"
           content="#05080d">
 
-    <meta name="description"
-          content="NexumID - Identidad Digital Vehicular">
-
     <title>NexumID | Identidad Digital Vehicular</title>
 
     <link rel="stylesheet"
           href="estilo.css">
+
 </head>
+
 
 <body>
 
+
 <main class="app">
 
-    <!-- CABECERA -->
+
+    <!-- ENCABEZADO -->
 
     <header class="topbar">
 
@@ -52,9 +54,11 @@
     </header>
 
 
+
     <!-- VEHÍCULO -->
 
     <section class="hero">
+
 
         <div class="vehicle-photo">
 
@@ -73,262 +77,231 @@
                 MI VEHÍCULO
             </span>
 
-            <h1 id="patente">
+            <h1>
                 AB-CD-12
             </h1>
 
-            <p id="modelo">
+            <p>
                 Chevrolet Sail · 2020
             </p>
 
         </div>
 
-    </section>
-
-
-    <!-- ACCESO -->
-
-    <section class="quick">
-
-        <div class="quick-item">
-
-            <span class="quick-icon">
-                ⌁
-            </span>
-
-            <div>
-
-                <strong>
-                    NFC
-                </strong>
-
-                <small>
-                    Toca y accede
-                </small>
-
-            </div>
-
-        </div>
-
-
-        <div class="quick-item">
-
-            <span class="quick-icon">
-                ▦
-            </span>
-
-            <div>
-
-                <strong>
-                    QR
-                </strong>
-
-                <small>
-                    Escanea y accede
-                </small>
-
-            </div>
-
-        </div>
-
-
-        <div class="quick-item">
-
-            <span class="quick-icon">
-                ✓
-            </span>
-
-            <div>
-
-                <strong>
-                    Digital
-                </strong>
-
-                <small>
-                    Siempre disponible
-                </small>
-
-            </div>
-
-        </div>
 
     </section>
 
 
-    <!-- DOCUMENTOS -->
+
+    <!-- DOCUMENTACIÓN -->
 
     <section class="documents">
 
+
         <div class="section-title">
 
-            <div>
-
-                <span class="eyebrow">
-                    DOCUMENTACIÓN
-                </span>
-
-                <h2>
-                    Todo en un solo lugar
-                </h2>
-
-            </div>
-
-            <span class="count">
-                5
+            <span class="eyebrow">
+                DOCUMENTACIÓN
             </span>
+
+            <h2>
+                Documentos disponibles
+            </h2>
 
         </div>
 
-
-        <!-- PERMISO -->
-
-        <button class="doc-card"
-                onclick="verDocumento('permiso')">
-
-            <span class="doc-icon">
-                📄
-            </span>
-
-            <span class="doc-text">
-
-                <strong>
-                    Permiso de circulación
-                </strong>
-
-                <small>
-                    Documento digital
-                </small>
-
-            </span>
-
-            <span class="arrow">
-                ›
-            </span>
-
-        </button>
-
-
-        <!-- REVISIÓN -->
-
-        <button class="doc-card"
-                onclick="verDocumento('revision')">
-
-            <span class="doc-icon">
-                🔧
-            </span>
-
-            <span class="doc-text">
-
-                <strong>
-                    Revisión técnica
-                </strong>
-
-                <small>
-                    Documento digital
-                </small>
-
-            </span>
-
-            <span class="arrow">
-                ›
-            </span>
-
-        </button>
 
 
         <!-- SOAP -->
 
-        <button class="doc-card"
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    🛡️
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        SOAP
+                    </h3>
+
+                    <span class="vigente">
+                        ● Vigente
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
                 onclick="verDocumento('soap')">
 
-            <span class="doc-icon">
-                🛡️
-            </span>
+                VER DOCUMENTO
 
-            <span class="doc-text">
+            </button>
 
-                <strong>
-                    SOAP
-                </strong>
-
-                <small>
-                    Documento digital
-                </small>
-
-            </span>
-
-            <span class="arrow">
-                ›
-            </span>
-
-        </button>
+        </div>
 
 
-        <!-- GASES -->
 
-        <button class="doc-card"
+        <!-- REVISIÓN TÉCNICA -->
+
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    🔧
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        Revisión Técnica
+                    </h3>
+
+                    <span class="vigente">
+                        ● Vigente
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                onclick="verDocumento('revision')">
+
+                VER DOCUMENTO
+
+            </button>
+
+        </div>
+
+
+
+        <!-- PERMISO -->
+
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    📄
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        Permiso de Circulación
+                    </h3>
+
+                    <span class="vigente">
+                        ● Vigente
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                onclick="verDocumento('permiso')">
+
+                VER DOCUMENTO
+
+            </button>
+
+        </div>
+
+
+
+        <!-- CERTIFICADO GASES -->
+
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    🌿
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        Certificado de Gases
+                    </h3>
+
+                    <span class="vigente">
+                        ● Vigente
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
                 onclick="verDocumento('gases')">
 
-            <span class="doc-icon">
-                🌿
-            </span>
+                VER DOCUMENTO
 
-            <span class="doc-text">
+            </button>
 
-                <strong>
-                    Certificado de gases
-                </strong>
+        </div>
 
-                <small>
-                    Documento digital
-                </small>
-
-            </span>
-
-            <span class="arrow">
-                ›
-            </span>
-
-        </button>
 
 
         <!-- PADRÓN -->
 
-        <button class="doc-card"
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    🔐
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        Padrón
+                    </h3>
+
+                    <span class="protegido">
+                        ● Protegido
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
                 onclick="verDocumento('padron')">
 
-            <span class="doc-icon">
-                🔐
-            </span>
+                VER DOCUMENTO
 
-            <span class="doc-text">
+            </button>
 
-                <strong>
-                    Padrón
-                </strong>
+        </div>
 
-                <small>
-                    Acceso protegido
-                </small>
-
-            </span>
-
-            <span class="arrow">
-                ›
-            </span>
-
-        </button>
 
     </section>
 
 
-    <!-- INFORMACIÓN EXTRA -->
 
-    <section class="extra">
+    <!-- INFORMACIÓN -->
+
+    <section class="extras">
 
 
-        <button class="extra-card"
-                onclick="mostrarContacto()">
+        <div
+            class="extra-card"
+            onclick="mostrarContacto()">
 
             <span>
                 ☎️
@@ -346,15 +319,17 @@
 
             </div>
 
-            <span class="arrow">
+            <b>
                 ›
-            </span>
+            </b>
 
-        </button>
+        </div>
 
 
-        <button class="extra-card"
-                onclick="mostrarInfo()">
+
+        <div
+            class="extra-card"
+            onclick="mostrarInfo()">
 
             <span>
                 🚘
@@ -367,18 +342,20 @@
                 </strong>
 
                 <small>
-                    Datos y características
+                    Datos del vehículo
                 </small>
 
             </div>
 
-            <span class="arrow">
+            <b>
                 ›
-            </span>
+            </b>
 
-        </button>
+        </div>
+
 
     </section>
+
 
 
     <!-- PIE -->
@@ -402,31 +379,42 @@
 
     </footer>
 
+
 </main>
 
 
-<!-- VENTANA DOCUMENTOS -->
 
-<div id="modal"
-     class="modal hidden">
+<!-- VENTANA -->
+
+<div
+    id="modal"
+    class="modal hidden">
+
 
     <div class="modal-box">
 
-        <button class="close"
-                onclick="cerrarModal()">
+
+        <button
+            class="close"
+            onclick="cerrarModal()">
 
             ×
 
         </button>
 
+
         <div id="modal-content"></div>
 
+
     </div>
+
 
 </div>
 
 
+
 <script src="app.js"></script>
+
 
 </body>
 
