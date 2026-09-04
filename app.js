@@ -1,208 +1,421 @@
-const documentos = {
+<!DOCTYPE html>
+<html lang="es">
 
-    permiso: {
+<head>
 
-        titulo:
-            "Permiso de circulación",
+    <meta charset="UTF-8">
 
-        texto:
-            "Aquí se mostrará el documento digital del vehículo. Esta versión utiliza información de prueba."
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    },
+    <meta name="theme-color"
+          content="#05080d">
 
+    <title>NexumID | Identidad Digital Vehicular</title>
 
-    revision: {
+    <link rel="stylesheet"
+          href="estilo.css">
 
-        titulo:
-            "Revisión técnica",
-
-        texto:
-            "Aquí se mostrará la revisión técnica correspondiente al vehículo."
-
-    },
+</head>
 
 
-    soap: {
-
-        titulo:
-            "SOAP",
-
-        texto:
-            "Aquí se mostrará el documento SOAP asociado al vehículo."
-
-    },
+<body>
 
 
-    gases: {
-
-        titulo:
-            "Certificado de gases",
-
-        texto:
-            "Aquí se mostrará el certificado correspondiente, cuando aplique."
-
-    },
+<main class="app">
 
 
-    padron: {
+    <!-- ENCABEZADO -->
 
-        titulo:
-            "Padrón",
+    <header class="topbar">
 
-        texto:
-            "Este documento puede configurarse con acceso protegido mediante PIN."
+        <div class="brand">
 
-    }
+            <div class="brand-mark">
+                N
+            </div>
 
-};
+            <div>
+
+                <div class="brand-name">
+                    Nexum<span>ID</span>
+                </div>
+
+                <div class="brand-sub">
+                    IDENTIDAD DIGITAL VEHICULAR
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="status-dot"></div>
+
+    </header>
 
 
 
-function verDocumento(tipo) {
+    <!-- VEHÍCULO -->
 
-    const doc =
-        documentos[tipo];
-
-
-    if (!doc) {
-
-        return;
-
-    }
+    <section class="hero">
 
 
-    document.getElementById(
-        "modal-content"
-    ).innerHTML = `
+        <div class="vehicle-photo">
 
-        <h3>
-            ${doc.titulo}
-        </h3>
+            <div class="photo-placeholder">
+                🚗
+            </div>
+
+            <div class="photo-overlay"></div>
+
+        </div>
+
+
+        <div class="vehicle-info">
+
+            <span class="eyebrow">
+                MI VEHÍCULO
+            </span>
+
+            <h1>
+                AB-CD-12
+            </h1>
+
+            <p>
+                Chevrolet Sail · 2020
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- DOCUMENTACIÓN -->
+
+    <section class="documents">
+
+
+        <div class="section-title">
+
+            <span class="eyebrow">
+                DOCUMENTACIÓN
+            </span>
+
+            <h2>
+                Documentos disponibles
+            </h2>
+
+        </div>
+
+
+
+        <!-- SOAP -->
+
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    🛡️
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        SOAP
+                    </h3>
+
+                    <span class="vigente">
+                        ● Vigente
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                onclick="verDocumento('soap')">
+
+                VER DOCUMENTO
+
+            </button>
+
+        </div>
+
+
+
+        <!-- REVISIÓN TÉCNICA -->
+
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    🔧
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        Revisión Técnica
+                    </h3>
+
+                    <span class="vigente">
+                        ● Vigente
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                onclick="verDocumento('revision')">
+
+                VER DOCUMENTO
+
+            </button>
+
+        </div>
+
+
+
+        <!-- PERMISO -->
+
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    📄
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        Permiso de Circulación
+                    </h3>
+
+                    <span class="vigente">
+                        ● Vigente
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                onclick="verDocumento('permiso')">
+
+                VER DOCUMENTO
+
+            </button>
+
+        </div>
+
+
+
+        <!-- CERTIFICADO GASES -->
+
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    🌿
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        Certificado de Gases
+                    </h3>
+
+                    <span class="vigente">
+                        ● Vigente
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                onclick="verDocumento('gases')">
+
+                VER DOCUMENTO
+
+            </button>
+
+        </div>
+
+
+
+        <!-- PADRÓN -->
+
+        <div class="doc-card">
+
+            <div class="doc-top">
+
+                <div class="doc-icon">
+                    🔐
+                </div>
+
+                <div class="doc-info">
+
+                    <h3>
+                        Padrón
+                    </h3>
+
+                    <span class="protegido">
+                        ● Protegido
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                onclick="verDocumento('padron')">
+
+                VER DOCUMENTO
+
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- INFORMACIÓN -->
+
+    <section class="extras">
+
+
+        <div
+            class="extra-card"
+            onclick="mostrarContacto()">
+
+            <span>
+                ☎️
+            </span>
+
+            <div>
+
+                <strong>
+                    Contacto de emergencia
+                </strong>
+
+                <small>
+                    Información del propietario
+                </small>
+
+            </div>
+
+            <b>
+                ›
+            </b>
+
+        </div>
+
+
+
+        <div
+            class="extra-card"
+            onclick="mostrarInfo()">
+
+            <span>
+                🚘
+            </span>
+
+            <div>
+
+                <strong>
+                    Información del vehículo
+                </strong>
+
+                <small>
+                    Datos del vehículo
+                </small>
+
+            </div>
+
+            <b>
+                ›
+            </b>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- PIE -->
+
+    <footer>
+
+        <div class="footer-brand">
+            Nexum<span>ID</span>
+        </div>
 
         <p>
-            ${doc.texto}
+            IDENTIDAD DIGITAL VEHICULAR
         </p>
 
-        <br>
-
-        <small
-            style="color:#079cff">
-
-            NexumID · Documento digital
-
+        <small>
+            Una solución de
+            <strong>
+                Smart Box Connect
+            </strong>
         </small>
 
-    `;
+    </footer>
 
 
-    document.getElementById(
-        "modal"
-    ).classList.remove(
-        "hidden"
-    );
-
-}
+</main>
 
 
 
-function mostrarContacto() {
+<!-- VENTANA -->
 
-    document.getElementById(
-        "modal-content"
-    ).innerHTML = `
-
-        <h3>
-            Contacto de emergencia
-        </h3>
-
-        <p>
-            En la versión final aquí aparecerá
-            el contacto configurado por el
-            propietario del vehículo.
-        </p>
-
-    `;
+<div
+    id="modal"
+    class="modal hidden">
 
 
-    document.getElementById(
-        "modal"
-    ).classList.remove(
-        "hidden"
-    );
-
-}
+    <div class="modal-box">
 
 
+        <button
+            class="close"
+            onclick="cerrarModal()">
 
-function mostrarInfo() {
+            ×
 
-    document.getElementById(
-        "modal-content"
-    ).innerHTML = `
-
-        <h3>
-            Información del vehículo
-        </h3>
-
-        <p>
-            <strong>
-                Patente:
-            </strong>
-            AB-CD-12
-        </p>
-
-        <p>
-            <strong>
-                Vehículo:
-            </strong>
-            Chevrolet Sail
-        </p>
-
-        <p>
-            <strong>
-                Año:
-            </strong>
-            2020
-        </p>
-
-    `;
+        </button>
 
 
-    document.getElementById(
-        "modal"
-    ).classList.remove(
-        "hidden"
-    );
+        <div id="modal-content"></div>
 
-}
+
+    </div>
+
+
+</div>
 
 
 
-function cerrarModal() {
-
-    document.getElementById(
-        "modal"
-    ).classList.add(
-        "hidden"
-    );
-
-}
+<script src="app.js"></script>
 
 
+</body>
 
-document.getElementById(
-    "modal"
-).addEventListener(
-    "click",
-    function(e) {
-
-        if (
-            e.target === this
-        ) {
-
-            cerrarModal();
-
-        }
-
-    }
-);
+</html>
