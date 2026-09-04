@@ -4,28 +4,22 @@
     padding: 0;
 }
 
-
 :root {
-
     --bg: #05080d;
-
     --card: #0d1420;
-
     --line: #1b2939;
-
     --text: #f4f7fb;
-
     --muted: #929eae;
 
     --blue: #079cff;
+    --blue-dark: #067fe0;
 
+    --green: #22d98b;
+    --yellow: #f1bd4b;
 }
 
-
 body {
-
     background: #020407;
-
     color: var(--text);
 
     font-family:
@@ -34,16 +28,11 @@ body {
         sans-serif;
 
     min-height: 100vh;
-
 }
 
-
 .app {
-
     width: 100%;
-
     max-width: 480px;
-
     min-height: 100vh;
 
     margin: auto;
@@ -55,7 +44,6 @@ body {
             transparent 30%
         ),
         var(--bg);
-
 }
 
 
@@ -64,100 +52,67 @@ body {
 ========================= */
 
 .topbar {
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
-    padding:
-        22px
-        20px
-        18px;
-
+    padding: 22px 20px 18px;
 }
-
 
 .brand {
-
     display: flex;
-
     align-items: center;
-
     gap: 10px;
-
 }
 
-
 .brand-mark {
-
     width: 37px;
-
     height: 37px;
 
-    border:
-        1px solid
-        #304052;
-
+    border: 1px solid #304052;
     border-radius: 10px;
 
     display: grid;
-
     place-items: center;
 
     color: var(--blue);
 
     font-size: 21px;
-
     font-weight: bold;
 
     background: #080e15;
-
 }
-
 
 .brand-name {
-
     font-size: 24px;
-
     font-weight: 800;
-
     letter-spacing: -1px;
-
 }
-
 
 .brand-name span {
-
     color: var(--blue);
-
 }
 
-
 .brand-sub {
-
     color: #778496;
 
     font-size: 7px;
-
     letter-spacing: 2px;
 
     margin-top: 3px;
-
 }
 
-
 .status-dot {
-
     width: 8px;
-
     height: 8px;
 
     border-radius: 50%;
 
-    background: #20c98a;
+    background: var(--green);
 
+    box-shadow:
+        0 0 8px
+        rgba(34,217,139,.5);
 }
 
 
@@ -166,30 +121,20 @@ body {
 ========================= */
 
 .hero {
+    margin: 0 16px;
 
-    margin:
-        0
-        16px;
-
-    border:
-        1px solid
-        var(--line);
-
+    border: 1px solid var(--line);
     border-radius: 20px;
 
     overflow: hidden;
 
     background: var(--card);
-
 }
 
-
 .vehicle-photo {
-
     height: 145px;
 
     display: grid;
-
     place-items: center;
 
     background:
@@ -200,21 +145,14 @@ body {
         );
 
     position: relative;
-
 }
-
 
 .photo-placeholder {
-
     font-size: 70px;
-
 }
 
-
 .photo-overlay {
-
     position: absolute;
-
     inset: 0;
 
     background:
@@ -223,12 +161,9 @@ body {
             #0d1420,
             transparent
         );
-
 }
 
-
 .vehicle-info {
-
     position: relative;
 
     margin-top: -25px;
@@ -237,25 +172,18 @@ body {
         0
         20px
         20px;
-
 }
 
-
 .eyebrow {
-
     color: #8491a1;
 
     font-size: 10px;
-
     letter-spacing: 2px;
 
     font-weight: bold;
-
 }
 
-
 .vehicle-info h1 {
-
     display: inline-block;
 
     margin-top: 7px;
@@ -273,18 +201,14 @@ body {
     font-size: 25px;
 
     letter-spacing: 3px;
-
 }
 
-
 .vehicle-info p {
-
     color: #a3afbe;
 
     margin-top: 8px;
 
     font-size: 14px;
-
 }
 
 
@@ -293,44 +217,35 @@ body {
 ========================= */
 
 .documents {
-
     padding:
         22px
         16px
         5px;
-
 }
 
-
 .section-title {
-
     margin:
         0
         4px
         15px;
-
 }
 
-
 .section-title h2 {
-
     margin-top: 5px;
 
     font-size: 19px;
-
 }
 
 
 /* =========================
-   TARJETA DOCUMENTO
+   DOCUMENTO
 ========================= */
 
 .doc-card {
 
     width: 100%;
 
-    padding:
-        17px;
+    padding: 16px;
 
     margin-bottom: 11px;
 
@@ -346,9 +261,10 @@ body {
             #101927,
             #0b121c
         );
-
 }
 
+
+/* PARTE SUPERIOR */
 
 .doc-top {
 
@@ -358,102 +274,135 @@ body {
 
     gap: 13px;
 
-    margin-bottom: 15px;
-
+    margin-bottom: 14px;
 }
 
 
+/* ICONO */
+
 .doc-icon {
 
-    width: 50px;
+    width: 48px;
+    height: 48px;
 
-    height: 50px;
+    flex-shrink: 0;
 
     border-radius: 13px;
 
     display: grid;
-
     place-items: center;
 
-    font-size: 25px;
+    font-size: 24px;
 
-    background: #07131f;
+    background:
+        #07131f;
 
     border:
         1px solid
         #173b55;
-
 }
 
+
+/* INFORMACIÓN */
 
 .doc-info {
-
     flex: 1;
-
 }
 
-
 .doc-info h3 {
+
+    color: #ffffff;
 
     font-size: 16px;
 
     margin-bottom: 5px;
-
 }
 
+
+/* =========================
+   VIGENTE
+========================= */
 
 .vigente {
 
-    color: #26d58e;
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    color: var(--green) !important;
 
     font-size: 13px;
 
+    font-weight: 600;
+
 }
 
+
+/* PUNTO VERDE */
+
+.vigente::first-letter {
+    color: var(--green);
+}
+
+
+/* PROTEGIDO */
 
 .protegido {
 
-    color: #f0b84b;
+    color: var(--yellow) !important;
 
     font-size: 13px;
 
+    font-weight: 600;
 }
 
+
+/* =========================
+   BOTÓN
+========================= */
 
 .doc-card button {
 
     width: 100%;
 
-    height: 48px;
+    height: 44px;
 
     border: none;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
     background:
-        linear-gradient(
-            135deg,
-            #078ff2,
-            #087ce1
-        );
+        var(--blue);
 
-    color: white;
+    color: #ffffff !important;
 
-    font-size: 13px;
+    font-size: 12px;
 
-    font-weight: bold;
+    font-weight: 700;
 
-    letter-spacing: .3px;
+    letter-spacing: .4px;
 
     cursor: pointer;
 
+    text-align: center;
+
+    transition:
+        background .2s,
+        transform .1s;
 }
 
+.doc-card button:hover {
+
+    background:
+        var(--blue-dark);
+}
 
 .doc-card button:active {
 
-    transform: scale(.98);
-
+    transform:
+        scale(.98);
 }
 
 
@@ -466,9 +415,7 @@ body {
     padding:
         5px
         16px;
-
 }
-
 
 .extra-card {
 
@@ -480,8 +427,7 @@ body {
 
     width: 100%;
 
-    padding:
-        15px;
+    padding: 15px;
 
     margin-bottom: 9px;
 
@@ -491,35 +437,28 @@ body {
 
     border-radius: 14px;
 
-    background: #0c131d;
+    background:
+        #0c131d;
 
     cursor: pointer;
-
 }
-
 
 .extra-card > span {
 
     font-size: 20px;
-
 }
-
 
 .extra-card div {
 
     flex: 1;
-
 }
-
 
 .extra-card strong {
 
     display: block;
 
     font-size: 13px;
-
 }
-
 
 .extra-card small {
 
@@ -530,16 +469,13 @@ body {
     color: var(--muted);
 
     font-size: 10px;
-
 }
-
 
 .extra-card b {
 
     color: #697789;
 
     font-size: 24px;
-
 }
 
 
@@ -555,25 +491,19 @@ footer {
         28px
         20px
         35px;
-
 }
-
 
 .footer-brand {
 
     font-size: 19px;
 
     font-weight: bold;
-
 }
-
 
 .footer-brand span {
 
     color: var(--blue);
-
 }
-
 
 footer p {
 
@@ -584,9 +514,7 @@ footer p {
     letter-spacing: 2px;
 
     margin-top: 4px;
-
 }
-
 
 footer small {
 
@@ -597,7 +525,6 @@ footer small {
     font-size: 9px;
 
     margin-top: 11px;
-
 }
 
 
@@ -623,16 +550,12 @@ footer small {
     padding: 15px;
 
     z-index: 20;
-
 }
-
 
 .hidden {
 
     display: none;
-
 }
-
 
 .modal-box {
 
@@ -640,7 +563,8 @@ footer small {
 
     max-width: 450px;
 
-    background: #0c141e;
+    background:
+        #0c141e;
 
     border:
         1px solid
@@ -648,19 +572,17 @@ footer small {
 
     border-radius: 20px;
 
-    padding: 25px 20px;
+    padding:
+        25px
+        20px;
 
     position: relative;
-
 }
-
 
 .modal-box h3 {
 
     margin-bottom: 10px;
-
 }
-
 
 .modal-box p {
 
@@ -669,16 +591,13 @@ footer small {
     line-height: 1.5;
 
     font-size: 14px;
-
 }
-
 
 .close {
 
     position: absolute;
 
     right: 13px;
-
     top: 8px;
 
     border: none;
@@ -688,16 +607,13 @@ footer small {
     color: #8d99a8;
 
     font-size: 28px;
-
 }
 
 
 @media (min-width: 700px) {
 
     body {
-
         padding: 25px 0;
-
     }
 
     .app {
@@ -709,7 +625,5 @@ footer small {
         border-radius: 24px;
 
         overflow: hidden;
-
     }
-
 }
