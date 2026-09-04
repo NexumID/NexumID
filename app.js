@@ -1,162 +1,412 @@
-const documentos = {
+// ==========================================
+// NEXUMID + SUPABASE
+// ==========================================
 
-    soap: {
-        titulo: "SOAP",
-        texto: "Aquí aparecerá el documento SOAP del vehículo."
-    },
+const SUPABASE_URL = "https://tkrugleneazdeqhxxkvr.supabase.co";
 
-    revision: {
-        titulo: "Revisión Técnica",
-        texto: "Aquí aparecerá el documento de revisión técnica."
-    },
+const SUPABASE_KEY = "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
 
-    permiso: {
-        titulo: "Permiso de Circulación",
-        texto: "Aquí aparecerá el permiso de circulación."
-    },
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
-    gases: {
-        titulo: "Certificado de Gases",
-        texto: "Aquí aparecerá el certificado de gases."
-    },
 
-    padron: {
-        titulo: "Padrón",
-        texto: "Este documento tendrá acceso protegido."
+// ==========================================
+// VEHÍCULO DE PRUEBA
+// ==========================================
+
+const PATENTE = "AB-CD-12";
+
+let vehiculoActual = null;
+let documentosActuales = [];
+
+
+// ==========================================
+// CARGAR VEHÍCULO
+// ==========================================
+
+async function cargarVehiculo() {
+
+    try {
+
+        const { data, error } = await db
+            .from("vehiculos")
+            .select("*")
+            .eq("patente", PATENTE)
+            .single();
+
+        if (error) {
+            console.error("Error cargando vehículo:", error);
+            return;
+        }
+
+        if (!data) {
+            console.error("Vehículo no encontrado");
+            return;
+        }
+
+        vehiculoActual = data;
+
+        console.log("Vehículo cargado:", data);
+
+        mostrarVehiculo(data);
+
+        await cargarDocumentos(data.id);
+
+    } catch (error) {
+
+        console.error("Error:", error);
+
     }
 
-};
+}
 
 
-function verDocumento(tipo) {
+// ==========================================
+// MOSTRAR VEHÍCULO EN LA PÁGINA
+// ==========================================
 
-    const documento =
-        documentos[tipo];
+function mostrarVehiculo(vehiculo) {
 
-    if (!documento) return;
+    const patente = document.querySelector(".vehicle-info h1");
+    const descripcion = document.querySelector(".vehicle-info p");
 
+    if (patente) {
 
-    document.getElementById(
-        "modal-content"
-    ).innerHTML = `
+        patente.textContent = vehiculo.patente;
 
-        <h3>
-            ${documento.titulo}
-        </h3>
+    }
 
-        <p>
-            ${documento.texto}
-        </p>
+    if (descripcion) {
 
-        <br>
+        descripcion.textContent =
+            `${vehiculo.marca} ${vehiculo.modelo} · ${vehiculo.anio}`;
 
-        <small
-            style="color:#079cff">
+    }
 
-            NexumID · Identidad Digital Vehicular
-
-        </small>
-
-    `;
+}
 
 
-    document.getElementById(
-        "modal"
-    ).classList.remove(
-        "hidden"
+// ==========================================
+// CARGAR DOCUMENTOS
+// ==========================================
+
+async function cargarDocumentos(vehiculoId) {
+
+    try {
+
+        const { data, error } = await db
+            .from("documentos")
+            .select("*")
+            .eq("vehiculo_id", vehiculoId)
+            .order("created_at", {
+                ascending: true
+            });
+
+        if (error) {
+
+            console.error(
+                "Error cargando documentos:",
+                error
+            );
+
+            return;
+        }
+
+        documentosActuales = data || [];
+
+        console.log(
+            "Documentos cargados:",
+            documentosActuales
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando documentos:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// BUSCAR DOCUMENTO
+// ==========================================
+
+function buscarDocumento(tipo) {
+
+    return documentosActuales.find(
+        documento => documento.tipo === tipo
     );
 
 }
 
+
+// ==========================================
+// VER DOCUMENTO
+// ==========================================
+
+async function verDocumento(tipo) {
+
+    const documento = buscarDocumento(tipo);
+
+    if (!documento) {
+
+        mostrarModal(
+            "Documento no disponible",
+            "Este documento todavía no está cargado para este vehículo."
+        );
+
+        return;
+    }
+
+
+    // PADRÓN PROTEGIDO
+
+    if (documento.protegido === true) {
+
+        mostrarModal(
+            "Documento protegido",
+            `
+            <p>Este documento requiere autorización.</p>
+
+            <button
+                class="modal-action"
+                onclick="cerrarModal()">
+                CERRAR
+            </button>
+            `
+        );
+
+        return;
+    }
+
+
+    // DOCUMENTO DISPONIBLE
+
+    mostrarModal(
+        documento.nombre || "Documento",
+        `
+        <p>
+            Documento disponible en NexumID.
+        </p>
+
+        <p class="document-file">
+            ${documento.archivo}
+        </p>
+
+        <button
+            class="modal-action"
+            onclick="abrirArchivo('${escapeHtml(documento.archivo)}')">
+
+            VER DOCUMENTO
+
+        </button>
+        `
+    );
+
+}
+
+
+// ==========================================
+// ABRIR ARCHIVO
+// ==========================================
+
+async function abrirArchivo(ruta) {
+
+    try {
+
+        const { data, error } =
+            await db.storage
+                .from("documentos")
+                .createSignedUrl(ruta, 300);
+
+        if (error) {
+
+            console.error(
+                "Error creando URL:",
+                error
+            );
+
+            mostrarModal(
+                "No se pudo abrir",
+                "El documento existe, pero todavía debemos configurar el acceso al archivo."
+            );
+
+            return;
+        }
+
+        if (data && data.signedUrl) {
+
+            window.open(
+                data.signedUrl,
+                "_blank"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+// ==========================================
+// CONTACTO DE EMERGENCIA
+// ==========================================
 
 function mostrarContacto() {
 
-    document.getElementById(
-        "modal-content"
-    ).innerHTML = `
+    if (!vehiculoActual) {
 
-        <h3>
-            Contacto de emergencia
-        </h3>
+        mostrarModal(
+            "Contacto de emergencia",
+            "Cargando información..."
+        );
 
+        return;
+    }
+
+    mostrarModal(
+        "Contacto de emergencia",
+        `
         <p>
-            Aquí aparecerá el contacto
-            configurado por el propietario.
+            Información disponible para este vehículo.
         </p>
 
-    `;
-
-
-    document.getElementById(
-        "modal"
-    ).classList.remove(
-        "hidden"
+        <p>
+            <strong>
+                Contacto:
+            </strong>
+            ${vehiculoActual.contacto_emergencia || "No registrado"}
+        </p>
+        `
     );
 
 }
 
 
+// ==========================================
+// INFORMACIÓN DEL VEHÍCULO
+// ==========================================
+
 function mostrarInfo() {
 
-    document.getElementById(
-        "modal-content"
-    ).innerHTML = `
+    if (!vehiculoActual) {
 
-        <h3>
-            Información del vehículo
-        </h3>
+        mostrarModal(
+            "Información del vehículo",
+            "Cargando información..."
+        );
 
+        return;
+    }
+
+    mostrarModal(
+        "Información del vehículo",
+        `
         <p>
             <strong>Patente:</strong>
-            AB-CD-12
+            ${vehiculoActual.patente}
         </p>
 
         <p>
-            <strong>Vehículo:</strong>
-            Chevrolet Sail
+            <strong>Marca:</strong>
+            ${vehiculoActual.marca}
+        </p>
+
+        <p>
+            <strong>Modelo:</strong>
+            ${vehiculoActual.modelo}
         </p>
 
         <p>
             <strong>Año:</strong>
-            2020
+            ${vehiculoActual.anio}
         </p>
 
-    `;
-
-
-    document.getElementById(
-        "modal"
-    ).classList.remove(
-        "hidden"
+        <p>
+            <strong>Color:</strong>
+            ${vehiculoActual.color}
+        </p>
+        `
     );
 
 }
 
+
+// ==========================================
+// MODAL
+// ==========================================
+
+function mostrarModal(titulo, contenido) {
+
+    const modal =
+        document.getElementById("modal");
+
+    const modalContent =
+        document.getElementById("modal-content");
+
+    if (!modal || !modalContent) {
+        return;
+    }
+
+    modalContent.innerHTML = `
+        <h2>${titulo}</h2>
+        ${contenido}
+    `;
+
+    modal.classList.remove("hidden");
+
+}
+
+
+// ==========================================
+// CERRAR MODAL
+// ==========================================
 
 function cerrarModal() {
 
-    document.getElementById(
-        "modal"
-    ).classList.add(
-        "hidden"
-    );
+    const modal =
+        document.getElementById("modal");
+
+    if (modal) {
+
+        modal.classList.add("hidden");
+
+    }
 
 }
 
 
-document.getElementById(
-    "modal"
-).addEventListener(
-    "click",
-    function(event) {
+// ==========================================
+// SEGURIDAD BÁSICA HTML
+// ==========================================
 
-        if (
-            event.target === this
-        ) {
+function escapeHtml(text) {
 
-            cerrarModal();
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
-        }
+}
 
-    }
+
+// ==========================================
+// INICIAR NEXUMID
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    cargarVehiculo
 );
