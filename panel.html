@@ -214,6 +214,24 @@ label{
     padding:30px;
 }
 
+.pin-box{
+    margin-top:15px;
+    padding:15px;
+    background:#080d13;
+    border:1px solid #1595ff;
+    border-radius:12px;
+    text-align:center;
+}
+
+.pin-number{
+    display:block;
+    font-size:34px;
+    font-weight:bold;
+    letter-spacing:8px;
+    color:white;
+    margin-top:8px;
+}
+
 </style>
 </head>
 
@@ -447,6 +465,39 @@ function ocultarFormulario(){
 }
 
 
+// GENERAR HASH SHA-256
+
+async function generarHashSHA256(texto){
+
+    const encoder =
+    new TextEncoder();
+
+    const datos =
+    encoder.encode(texto);
+
+    const hashBuffer =
+    await crypto.subtle.digest(
+        "SHA-256",
+        datos
+    );
+
+    const hashArray =
+    Array.from(
+        new Uint8Array(hashBuffer)
+    );
+
+    return hashArray
+    .map(
+        byte =>
+        byte
+        .toString(16)
+        .padStart(2,"0")
+    )
+    .join("");
+
+}
+
+
 // CREAR VEHICULO
 
 async function crearVehiculo(){
@@ -455,10 +506,12 @@ async function crearVehiculo(){
         data: sessionData
     } = await supabaseClient.auth.getSession();
 
+
     if(!sessionData.session){
 
         alert("La sesión expiró.");
         window.location.href="admin.html";
+
         return;
 
     }
@@ -511,8 +564,13 @@ async function crearVehiculo(){
     }
 
 
+    // ==========================================
+    // CREAR VEHÍCULO
+    // ==========================================
+
     const {
-        error
+        data: vehiculo,
+        error: vehiculoError
     } = await supabaseClient
     .from("vehiculos")
     .insert({
@@ -524,26 +582,125 @@ async function crearVehiculo(){
         color:color,
         contacto_emergencia:contacto
 
-    });
+    })
+    .select()
+    .single();
 
 
-    if(error){
+    if(vehiculoError){
 
-        console.error(error);
+        console.error(vehiculoError);
 
         mostrarError(
             "No se pudo crear el vehículo: "
-            + error.message
+            + vehiculoError.message
         );
 
         return;
     }
 
 
-    mostrarExito(
-        "Vehículo creado correctamente."
-    );
+    // ==========================================
+    // GENERAR PIN DE 4 DIGITOS
+    // ==========================================
 
+    const pin =
+    Math.floor(
+        1000 + Math.random() * 9000
+    ).toString();
+
+
+    // ==========================================
+    // GENERAR HASH
+    // ==========================================
+
+    const pinHash =
+    await generarHashSHA256(pin);
+
+
+    // ==========================================
+    // GUARDAR ACCESO
+    // ==========================================
+
+    const {
+        error: accesoError
+    } = await supabaseClient
+    .from("vehiculo_acceso")
+    .insert({
+
+        vehiculo_id:vehiculo.id,
+
+        pin_hash:pinHash,
+
+        intentos:0,
+
+        bloqueado_hasta:null
+
+    });
+
+
+    // ==========================================
+    // SI FALLA EL ACCESO
+    // ==========================================
+
+    if(accesoError){
+
+        console.error(accesoError);
+
+
+        // Intentar eliminar el vehículo
+        // para no dejarlo sin PIN.
+
+        await supabaseClient
+        .from("vehiculos")
+        .delete()
+        .eq("id",vehiculo.id);
+
+
+        mostrarError(
+            "No se pudo crear el acceso PIN: "
+            + accesoError.message
+        );
+
+        return;
+    }
+
+
+    // ==========================================
+    // MOSTRAR RESULTADO
+    // ==========================================
+
+    document.getElementById("mensaje").innerHTML = `
+
+        <div class="success">
+
+            <strong>
+                Vehículo creado correctamente.
+            </strong>
+
+            <div class="pin-box">
+
+                PIN DE ACCESO
+
+                <span class="pin-number">
+                    ${pin}
+                </span>
+
+            </div>
+
+            <br>
+
+            Guarda este PIN para entregárselo
+            al propietario del vehículo.
+
+        </div>
+
+    `;
+
+
+    // ==========================================
+    // LIMPIAR FORMULARIO
+    // ==========================================
 
     document.getElementById("patente").value="";
     document.getElementById("marca").value="";
@@ -997,9 +1154,6 @@ async function subirDocumento(tipo,nombreTipo){
         console.error(dbError);
 
 
-        // Si se subió pero falló el registro,
-        // intentamos borrar el archivo.
-
         await supabaseClient
         .storage
         .from("documentos")
@@ -1046,209 +1200,4 @@ function verDocumento(ruta){
         window.open(
             data.publicUrl,
             "_blank"
-        );
-
-    }
-
-}
-
-
-// ELIMINAR DOCUMENTO
-
-async function eliminarDocumento(
-    id,
-    ruta
-){
-
-    const confirmar =
-    confirm(
-        "¿Eliminar este documento?"
-    );
-
-
-    if(!confirmar)
-        return;
-
-
-    const {
-        error:dbError
-    } = await supabaseClient
-    .from("documentos")
-    .delete()
-    .eq("id",id);
-
-
-    if(dbError){
-
-        mostrarMensajeDocumento(
-            "No se pudo eliminar el registro: "
-            + dbError.message,
-            false
-        );
-
-        return;
-    }
-
-
-    const {
-        error:storageError
-    } = await supabaseClient
-    .storage
-    .from("documentos")
-    .remove([ruta]);
-
-
-    if(storageError){
-
-        console.error(storageError);
-
-        mostrarMensajeDocumento(
-            "El registro fue eliminado, pero el archivo no pudo eliminarse.",
-            false
-        );
-
-    }else{
-
-        mostrarMensajeDocumento(
-            "Documento eliminado.",
-            true
-        );
-
-    }
-
-
-    cargarDocumentos();
-
-}
-
-
-// MENSAJE DOCUMENTOS
-
-function mostrarMensajeDocumento(
-    texto,
-    exito
-){
-
-    const elemento =
-    document.getElementById(
-        "mensajeDocumentos"
-    );
-
-
-    if(exito){
-
-        elemento.innerHTML =
-        `<div class="success">${texto}</div>`;
-
-    }else{
-
-        elemento.innerHTML =
-        `<div class="error">${texto}</div>`;
-
-    }
-
-}
-
-
-// VOLVER AL PANEL
-
-function volverPanel(){
-
-    vehiculoActual=null;
-
-
-    document
-    .getElementById("vistaDocumentos")
-    .classList.add("hidden");
-
-
-    document
-    .getElementById("vistaPanel")
-    .classList.remove("hidden");
-
-
-    document
-    .getElementById("mensajeDocumentos")
-    .innerHTML="";
-
-}
-
-
-// VER PERFIL
-
-function verPerfil(vehiculo){
-
-    const url =
-    "index.html?patente="
-    + encodeURIComponent(
-        vehiculo.patente
-    );
-
-
-    window.location.href=url;
-
-}
-
-
-// CERRAR SESION
-
-async function cerrarSesion(){
-
-    await supabaseClient
-    .auth
-    .signOut();
-
-    window.location.href="admin.html";
-
-}
-
-
-// INICIAR
-
-async function iniciar(){
-
-    const {
-        data:sessionData
-    } =
-    await supabaseClient
-    .auth
-    .getSession();
-
-
-    if(!sessionData.session){
-
-        window.location.href="admin.html";
-
-        return;
-    }
-
-
-    const {
-        data:userData
-    } =
-    await supabaseClient
-    .auth
-    .getUser();
-
-
-    if(!userData.user){
-
-        window.location.href="admin.html";
-
-        return;
-    }
-
-
-    cargarVehiculos();
-
-}
-
-
-// INICIAR APP
-
-iniciar();
-
-</script>
-
-</body>
-</html>
+       
