@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>NexumID - Panel</title>
 
@@ -62,7 +65,7 @@ body{
     cursor:pointer;
 }
 
-/* TITULO */
+/* TITULOS */
 
 .title{
     font-size:22px;
@@ -82,6 +85,10 @@ body{
     font-weight:bold;
     cursor:pointer;
     margin-bottom:25px;
+}
+
+.new-button:active{
+    opacity:.8;
 }
 
 /* FORMULARIO */
@@ -120,6 +127,11 @@ input{
     padding:13px;
     margin-bottom:15px;
     font-size:15px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#078cff;
 }
 
 .save-button{
@@ -131,6 +143,10 @@ input{
     border-radius:8px;
     font-weight:bold;
     cursor:pointer;
+}
+
+.save-button:disabled{
+    opacity:.6;
 }
 
 .cancel-button{
@@ -242,15 +258,19 @@ input{
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
+    <!-- HEADER -->
+
     <div class="header">
 
         <div>
+
             <div class="logo">
                 NEXUM<span>ID</span>
             </div>
@@ -258,96 +278,149 @@ input{
             <div class="subtitle">
                 IDENTIDAD DIGITAL VEHICULAR
             </div>
+
         </div>
 
-        <button class="logout" onclick="cerrarSesion()">
+        <button
+            class="logout"
+            onclick="cerrarSesion()">
+
             SALIR
+
         </button>
 
     </div>
 
+
+    <!-- TITULO -->
 
     <div class="title">
         Panel de Administración
     </div>
 
 
-    <div id="error" class="error"></div>
+    <!-- MENSAJES -->
 
-    <div id="success" class="success"></div>
+    <div
+        id="error"
+        class="error">
+    </div>
+
+    <div
+        id="success"
+        class="success">
+    </div>
 
 
-    <button class="new-button" onclick="mostrarFormulario()">
+    <!-- NUEVO VEHICULO -->
+
+    <button
+        class="new-button"
+        onclick="mostrarFormulario()">
+
         + NUEVO VEHÍCULO
+
     </button>
 
 
     <!-- FORMULARIO -->
 
-    <div id="formulario" class="form-box">
+    <div
+        id="formulario"
+        class="form-box">
 
         <div class="form-title">
             Registrar vehículo
         </div>
 
-        <label>Patente</label>
+
+        <label>
+            Patente
+        </label>
+
         <input
             id="patente"
             type="text"
             placeholder="Ej: AB-CD-12"
-        >
+            autocomplete="off">
 
-        <label>Marca</label>
+
+        <label>
+            Marca
+        </label>
+
         <input
             id="marca"
             type="text"
             placeholder="Ej: Chevrolet"
-        >
+            autocomplete="off">
 
-        <label>Modelo</label>
+
+        <label>
+            Modelo
+        </label>
+
         <input
             id="modelo"
             type="text"
             placeholder="Ej: Sail"
-        >
+            autocomplete="off">
 
-        <label>Año</label>
+
+        <label>
+            Año
+        </label>
+
         <input
             id="anio"
             type="number"
             placeholder="Ej: 2020"
-        >
+            inputmode="numeric">
 
-        <label>Color</label>
+
+        <label>
+            Color
+        </label>
+
         <input
             id="color"
             type="text"
             placeholder="Ej: Blanco"
-        >
+            autocomplete="off">
 
-        <label>Contacto de emergencia</label>
+
+        <label>
+            Contacto de emergencia
+        </label>
+
         <input
             id="contacto"
             type="text"
             placeholder="Ej: +56912345678"
-        >
+            autocomplete="off">
+
 
         <button
             class="save-button"
-            onclick="crearVehiculo()"
-        >
+            onclick="crearVehiculo()">
+
             CREAR VEHÍCULO
+
         </button>
+
 
         <button
             class="cancel-button"
-            onclick="ocultarFormulario()"
-        >
+            onclick="ocultarFormulario()">
+
             CANCELAR
+
         </button>
 
     </div>
 
+
+    <!-- LISTA -->
 
     <div class="title">
         Vehículos registrados
@@ -377,6 +450,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
 
+
 const supabaseClient =
 supabase.createClient(
     SUPABASE_URL,
@@ -398,13 +472,25 @@ async function iniciar(){
 
     try{
 
+        /*
+         * Obtener sesión actual.
+         * Supabase puede refrescarla si corresponde.
+         */
+
         const {
             data,
             error
-        } = await supabaseClient.auth.getUser();
+        } =
+        await supabaseClient
+        .auth
+        .getSession();
 
 
-        if(error || !data.user){
+        if(
+            error ||
+            !data ||
+            !data.session
+        ){
 
             window.location.href =
                 "admin.html";
@@ -413,11 +499,49 @@ async function iniciar(){
         }
 
 
+        /*
+         * Confirmar usuario autenticado.
+         */
+
+        const {
+            data: userData,
+            error: userError
+        } =
+        await supabaseClient
+        .auth
+        .getUser();
+
+
+        if(
+            userError ||
+            !userData ||
+            !userData.user
+        ){
+
+            await supabaseClient
+                .auth
+                .signOut();
+
+            window.location.href =
+                "admin.html";
+
+            return;
+        }
+
+
+        /*
+         * Sesión correcta.
+         */
+
         cargarVehiculos();
+
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Error iniciando panel:",
+            error
+        );
 
         window.location.href =
             "admin.html";
@@ -446,33 +570,43 @@ async function cargarVehiculos(){
     const {
         data,
         error
-    } = await supabaseClient
-        .from("vehiculos")
-        .select("*")
-        .order(
-            "created_at",
-            {
-                ascending:false
-            }
-        );
+    } =
+    await supabaseClient
+    .from("vehiculos")
+    .select("*")
+    .order(
+        "created_at",
+        {
+            ascending:false
+        }
+    );
 
 
     if(error){
 
-        console.error(error);
+        console.error(
+            "Error cargando vehículos:",
+            error
+        );
+
 
         mostrarError(
             "No se pudieron cargar los vehículos."
         );
 
+
         contenedor.innerHTML =
             '<div class="message">Error al cargar vehículos.</div>';
+
 
         return;
     }
 
 
-    if(!data || data.length === 0){
+    if(
+        !data ||
+        data.length === 0
+    ){
 
         contenedor.innerHTML =
             '<div class="message">Todavía no hay vehículos registrados.</div>';
@@ -492,6 +626,7 @@ async function cargarVehiculos(){
                     "div"
                 );
 
+
             tarjeta.className =
                 "vehicle-card";
 
@@ -504,6 +639,7 @@ async function cargarVehiculos(){
                     )}
                 </div>
 
+
                 <div class="vehicle-name">
                     ${escapeHTML(
                         vehiculo.marca || ""
@@ -512,6 +648,7 @@ async function cargarVehiculos(){
                         vehiculo.modelo || ""
                     )}
                 </div>
+
 
                 <div class="vehicle-info">
 
@@ -536,16 +673,19 @@ async function cargarVehiculos(){
 
                     <button
                         class="action documents"
-                        onclick="verDocumentos('${vehiculo.id}')"
-                    >
+                        onclick="verDocumentos('${vehiculo.id}')">
+
                         DOCUMENTOS
+
                     </button>
+
 
                     <button
                         class="action"
-                        onclick="verVehiculo('${vehiculo.patente}')"
-                    >
+                        onclick="verVehiculo('${vehiculo.patente}')">
+
                         VER PERFIL
+
                     </button>
 
                 </div>
@@ -572,6 +712,49 @@ async function crearVehiculo(){
     ocultarMensajes();
 
 
+    /*
+     * 1. COMPROBAR SESIÓN
+     */
+
+    const {
+        data: sessionData,
+        error: sessionError
+    } =
+    await supabaseClient
+    .auth
+    .getSession();
+
+
+    if(
+        sessionError ||
+        !sessionData ||
+        !sessionData.session
+    ){
+
+        mostrarError(
+            "La sesión expiró. Ingresa nuevamente."
+        );
+
+
+        setTimeout(
+            function(){
+
+                window.location.href =
+                    "admin.html";
+
+            },
+            1500
+        );
+
+
+        return;
+    }
+
+
+    /*
+     * 2. DATOS
+     */
+
     const patente =
         document
         .getElementById("patente")
@@ -597,7 +780,8 @@ async function crearVehiculo(){
     const anio =
         document
         .getElementById("anio")
-        .value;
+        .value
+        .trim();
 
 
     const color =
@@ -614,6 +798,10 @@ async function crearVehiculo(){
         .trim();
 
 
+    /*
+     * 3. VALIDAR
+     */
+
     if(
         !patente ||
         !marca ||
@@ -629,70 +817,122 @@ async function crearVehiculo(){
     }
 
 
+    /*
+     * 4. BOTÓN
+     */
+
     const boton =
         document.querySelector(
             ".save-button"
         );
 
 
-    boton.disabled = true;
+    boton.disabled =
+        true;
+
 
     boton.innerText =
         "GUARDANDO...";
 
 
+    /*
+     * 5. INSERTAR
+     */
+
     const {
         data,
         error
-    } = await supabaseClient
-        .from("vehiculos")
-        .insert({
+    } =
+    await supabaseClient
+    .from("vehiculos")
+    .insert({
 
-            patente: patente,
+        patente:
+            patente,
 
-            marca: marca,
+        marca:
+            marca,
 
-            modelo: modelo,
+        modelo:
+            modelo,
 
-            anio: parseInt(anio),
+        anio:
+            parseInt(
+                anio,
+                10
+            ),
 
-            color: color,
+        color:
+            color,
 
-            contacto_emergencia:
-                contacto
+        contacto_emergencia:
+            contacto
 
-        })
-        .select()
-        .single();
+    })
+    .select()
+    .single();
 
 
-    boton.disabled = false;
+    /*
+     * 6. RESTAURAR BOTÓN
+     */
+
+    boton.disabled =
+        false;
+
 
     boton.innerText =
         "CREAR VEHÍCULO";
 
 
+    /*
+     * 7. ERROR
+     */
+
     if(error){
 
-        console.error(error);
+        console.error(
+            "ERROR SUPABASE:",
+            error
+        );
+
 
         mostrarError(
             "No se pudo crear el vehículo: "
             + error.message
         );
 
+
         return;
     }
 
+
+    /*
+     * 8. ÉXITO
+     */
 
     mostrarExito(
         "Vehículo creado correctamente."
     );
 
 
+    /*
+     * 9. LIMPIAR
+     */
+
     limpiarFormulario();
 
+
+    /*
+     * 10. CERRAR FORMULARIO
+     */
+
     ocultarFormulario();
+
+
+    /*
+     * 11. ACTUALIZAR LISTA
+     */
 
     cargarVehiculos();
 
@@ -705,9 +945,15 @@ async function crearVehiculo(){
 
 function mostrarFormulario(){
 
+    ocultarMensajes();
+
+
     document
-        .getElementById("formulario")
-        .classList.add("active");
+    .getElementById(
+        "formulario"
+    )
+    .classList
+    .add("active");
 
 }
 
@@ -715,8 +961,11 @@ function mostrarFormulario(){
 function ocultarFormulario(){
 
     document
-        .getElementById("formulario")
-        .classList.remove("active");
+    .getElementById(
+        "formulario"
+    )
+    .classList
+    .remove("active");
 
 }
 
@@ -724,28 +973,45 @@ function ocultarFormulario(){
 function limpiarFormulario(){
 
     document
-        .getElementById("patente")
-        .value = "";
+    .getElementById(
+        "patente"
+    )
+    .value = "";
+
 
     document
-        .getElementById("marca")
-        .value = "";
+    .getElementById(
+        "marca"
+    )
+    .value = "";
+
 
     document
-        .getElementById("modelo")
-        .value = "";
+    .getElementById(
+        "modelo"
+    )
+    .value = "";
+
 
     document
-        .getElementById("anio")
-        .value = "";
+    .getElementById(
+        "anio"
+    )
+    .value = "";
+
 
     document
-        .getElementById("color")
-        .value = "";
+    .getElementById(
+        "color"
+    )
+    .value = "";
+
 
     document
-        .getElementById("contacto")
-        .value = "";
+    .getElementById(
+        "contacto"
+    )
+    .value = "";
 
 }
 
@@ -754,12 +1020,20 @@ function limpiarFormulario(){
    VER PERFIL
 ========================================= */
 
-function verVehiculo(patente){
+function verVehiculo(
+    patente
+){
 
     window.open(
+
         "index.html?patente="
-        + encodeURIComponent(patente),
+        +
+        encodeURIComponent(
+            patente
+        ),
+
         "_blank"
+
     );
 
 }
@@ -769,7 +1043,9 @@ function verVehiculo(patente){
    DOCUMENTOS
 ========================================= */
 
-function verDocumentos(id){
+function verDocumentos(
+    id
+){
 
     alert(
         "Aquí agregaremos el administrador de documentos de este vehículo."
@@ -779,12 +1055,15 @@ function verDocumentos(id){
 
 
 /* =========================================
-   CERRAR SESION
+   CERRAR SESIÓN
 ========================================= */
 
 async function cerrarSesion(){
 
-    await supabaseClient.auth.signOut();
+    await supabaseClient
+        .auth
+        .signOut();
+
 
     window.location.href =
         "admin.html";
@@ -796,13 +1075,19 @@ async function cerrarSesion(){
    MENSAJES
 ========================================= */
 
-function mostrarError(texto){
+function mostrarError(
+    texto
+){
 
     const elemento =
-        document.getElementById("error");
+        document.getElementById(
+            "error"
+        );
+
 
     elemento.innerText =
         texto;
+
 
     elemento.style.display =
         "block";
@@ -810,13 +1095,19 @@ function mostrarError(texto){
 }
 
 
-function mostrarExito(texto){
+function mostrarExito(
+    texto
+){
 
     const elemento =
-        document.getElementById("success");
+        document.getElementById(
+            "success"
+        );
+
 
     elemento.innerText =
         texto;
+
 
     elemento.style.display =
         "block";
@@ -828,12 +1119,14 @@ function ocultarMensajes(){
 
     document.getElementById(
         "error"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 
 
     document.getElementById(
         "success"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 
 }
 
@@ -842,14 +1135,36 @@ function ocultarMensajes(){
    SEGURIDAD HTML
 ========================================= */
 
-function escapeHTML(texto){
+function escapeHTML(
+    texto
+){
 
     return String(texto)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
