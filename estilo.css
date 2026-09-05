@@ -71,31 +71,12 @@ body {
 
 .brand {
     display: flex;
-    align-items: center;
+    flex-direction: column;
 
-    gap: 10px;
+    gap: 3px;
 }
 
-.brand-mark {
-    width: 38px;
-    height: 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid #294054;
-    border-radius: 10px;
-
-    background: #080e15;
-
-    color: var(--azul);
-
-    font-size: 21px;
-    font-weight: bold;
-}
-
-.brand-name {
+.brand strong {
     color: white;
 
     font-size: 24px;
@@ -104,13 +85,7 @@ body {
     letter-spacing: -1px;
 }
 
-.brand-name span {
-    color: var(--azul);
-}
-
-.brand-sub {
-    margin-top: 3px;
-
+.brand span {
     color: #778596;
 
     font-size: 7px;
@@ -118,17 +93,31 @@ body {
     letter-spacing: 2px;
 }
 
-.status-dot {
+.status {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--secundario);
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+.status span {
     width: 9px;
     height: 9px;
 
     border-radius: 50%;
 
-    background: var(--azul);
+    background: var(--verde);
 
     box-shadow:
         0 0 12px
-        rgba(7,156,255,.7);
+        rgba(36,217,139,.7);
 }
 
 
@@ -136,7 +125,7 @@ body {
    VEHÍCULO
 ===================================== */
 
-.hero {
+.vehicle-hero {
     margin: 0 24px;
 
     overflow: hidden;
@@ -165,23 +154,8 @@ body {
             #142231,
             #070b10
         );
-}
 
-.photo-placeholder {
     font-size: 70px;
-}
-
-.photo-overlay {
-    position: absolute;
-
-    inset: 0;
-
-    background:
-        linear-gradient(
-            to bottom,
-            transparent 45%,
-            rgba(5,8,13,.95)
-        );
 }
 
 .vehicle-info {
@@ -193,6 +167,13 @@ body {
         22px;
 
     margin-top: -32px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(13,20,32,.96) 28%
+        );
 }
 
 .eyebrow {
@@ -225,10 +206,10 @@ body {
 
 
 /* =====================================
-   DOCUMENTACIÓN
+   DOCUMENTOS
 ===================================== */
 
-.documents {
+.documents-section {
     padding:
         24px
         24px
@@ -239,8 +220,8 @@ body {
     margin-bottom: 16px;
 }
 
-.section-title h2 {
-    margin-top: 5px;
+.section-title span {
+    display: block;
 
     color: white;
 
@@ -248,13 +229,30 @@ body {
     font-weight: 700;
 }
 
+.section-title small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--verde);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+.documents-list {
+    width: 100%;
+}
+
 
 /* =====================================
    TARJETA DOCUMENTO
 ===================================== */
 
-.doc-card {
-
+.document-card {
     width: 100%;
 
     margin-bottom: 12px;
@@ -276,35 +274,18 @@ body {
 
     color: white;
 
-    text-align: left;
-
-}
-
-
-/* =====================================
-   PARTE SUPERIOR
-===================================== */
-
-.doc-top {
-
-    width: 100%;
-
     display: flex;
-
     align-items: center;
 
     gap: 13px;
-
-    margin-bottom: 15px;
 }
 
 
 /* =====================================
-   ICONO
+   ICONO DOCUMENTO
 ===================================== */
 
-.doc-icon {
-
+.document-icon {
     width: 48px;
     height: 48px;
 
@@ -329,115 +310,82 @@ body {
 
 
 /* =====================================
-   INFORMACIÓN
+   INFORMACIÓN DOCUMENTO
 ===================================== */
 
-.doc-info {
-
+.document-info {
     flex: 1;
+
+    min-width: 0;
 }
 
-.doc-info h3 {
+.document-info strong {
+    display: block;
 
-    color: #ffffff;
+    color: white;
 
-    font-size: 16px;
+    font-size: 15px;
 
     font-weight: 700;
 
-    margin-bottom: 6px;
+    line-height: 1.25;
 }
 
-
-/* =====================================
-   ESTADO VERDE
-===================================== */
-
-.vigente {
-
+.document-info small {
     display: block;
 
-    color:
-        var(--verde) !important;
+    margin-top: 6px;
 
-    font-size: 13px;
+    color: var(--verde);
 
-    font-weight: 600;
-}
-
-.vigente::first-letter {
-
-    color:
-        var(--verde) !important;
-}
-
-
-.protegido {
-
-    display: block;
-
-    color:
-        var(--amarillo) !important;
-
-    font-size: 13px;
+    font-size: 12px;
 
     font-weight: 600;
 }
 
 
 /* =====================================
-   BOTÓN VER DOCUMENTO
+   BOTÓN DOCUMENTO
 ===================================== */
 
-.doc-card button {
+.document-card button {
+    width: 62px;
+    height: 42px;
 
-    appearance: none;
-    -webkit-appearance: none;
-
-    display: block;
-
-    width: 100%;
-    height: 48px;
-
-    margin: 0;
-
-    padding: 0;
+    flex-shrink: 0;
 
     border: 0;
 
-    outline: none;
+    border-radius: 10px;
 
-    border-radius: 11px;
+    background: var(--azul);
 
-    background:
-        var(--azul) !important;
-
-    color:
-        #ffffff !important;
+    color: white;
 
     font-family:
         Arial,
         Helvetica,
         sans-serif;
 
-    font-size: 13px;
+    font-size: 11px;
 
     font-weight: 700;
-
-    letter-spacing: .3px;
-
-    text-align: center;
 
     cursor: pointer;
 }
 
-.doc-card button:active {
+.document-card button:active {
+    transform: scale(.96);
+}
 
-    background:
-        #067ddf !important;
+.document-card button:disabled {
+    background: #1a2430;
 
-    transform:
-        scale(.985);
+    color: #667486;
+
+    cursor: default;
+
+    transform: none;
 }
 
 
@@ -445,15 +393,13 @@ body {
    INFORMACIÓN EXTRA
 ===================================== */
 
-.extras {
-
+.extras-section {
     padding:
         5px
         24px;
 }
 
 .extra-card {
-
     width: 100%;
 
     display: flex;
@@ -481,7 +427,6 @@ body {
 }
 
 .extra-card > span {
-
     width: 30px;
 
     text-align: center;
@@ -490,12 +435,10 @@ body {
 }
 
 .extra-card div {
-
     flex: 1;
 }
 
 .extra-card strong {
-
     display: block;
 
     color: white;
@@ -504,7 +447,6 @@ body {
 }
 
 .extra-card small {
-
     display: block;
 
     margin-top: 4px;
@@ -514,62 +456,353 @@ body {
     font-size: 10px;
 }
 
-.extra-card b {
-
-    color: #6c7a8b;
-
-    font-size: 24px;
-}
-
 
 /* =====================================
    PIE
 ===================================== */
 
 footer {
-
     padding:
         28px
         20px
         35px;
 
     text-align: center;
-}
-
-.footer-brand {
 
     color: white;
 
-    font-size: 19px;
+    font-size: 16px;
+}
+
+
+/* =====================================
+   PANTALLA PIN
+===================================== */
+
+.pin-screen {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    padding:
+        55px
+        24px
+        30px;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(7,140,255,.14),
+            transparent 35%
+        ),
+        var(--fondo);
+}
+
+
+/* =====================================
+   MARCA PIN
+===================================== */
+
+.pin-brand {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-bottom: 55px;
+}
+
+.pin-logo {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        #294054;
+
+    border-radius: 12px;
+
+    background: #080e15;
+
+    color: var(--azul);
+
+    font-size: 23px;
 
     font-weight: 800;
 }
 
-.footer-brand span {
+.pin-brand strong {
+    display: block;
 
-    color: var(--azul);
+    color: white;
+
+    font-size: 25px;
+
+    font-weight: 800;
 }
 
-footer p {
+.pin-brand span {
+    display: block;
 
-    margin-top: 4px;
+    margin-top: 3px;
 
-    color: #697687;
+    color: #778596;
 
     font-size: 7px;
 
     letter-spacing: 2px;
 }
 
-footer small {
+
+/* =====================================
+   TARJETA PIN
+===================================== */
+
+.pin-card {
+    width: 100%;
+
+    max-width: 390px;
+
+    padding: 30px 24px;
+
+    border:
+        1px solid
+        var(--borde);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #101927,
+            #0b121c
+        );
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.25);
+}
+
+.pin-icon {
+    width: 64px;
+    height: 64px;
+
+    margin:
+        0 auto
+        18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        #17405d;
+
+    border-radius: 18px;
+
+    background: #07131f;
+
+    font-size: 29px;
+}
+
+.pin-card h1 {
+    color: white;
+
+    font-size: 23px;
+
+    margin-bottom: 10px;
+}
+
+.pin-card p {
+    color: var(--secundario);
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    margin-bottom: 20px;
+}
+
+
+/* =====================================
+   PATENTE PIN
+===================================== */
+
+.pin-patente {
+    display: inline-block;
+
+    margin-bottom: 20px;
+
+    padding:
+        8px
+        16px;
+
+    border:
+        1px solid
+        #294054;
+
+    border-radius: 9px;
+
+    background: #080e15;
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    letter-spacing: 3px;
+}
+
+
+/* =====================================
+   INPUT PIN
+===================================== */
+
+.pin-input {
+    width: 100%;
+
+    height: 58px;
 
     display: block;
 
-    margin-top: 11px;
+    margin-bottom: 14px;
+
+    border:
+        1px solid
+        #294054;
+
+    border-radius: 13px;
+
+    outline: none;
+
+    background:
+        #070e16;
+
+    color: white;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 27px;
+
+    font-weight: 700;
+
+    letter-spacing: 10px;
+
+    text-align: center;
+}
+
+.pin-input:focus {
+    border-color: var(--azul);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(7,140,255,.12);
+}
+
+
+/* =====================================
+   BOTÓN PIN
+===================================== */
+
+.modal-action {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding:
+        0
+        18px;
+
+    border: 0;
+
+    border-radius: 11px;
+
+    background:
+        var(--azul);
+
+    color: white;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: .4px;
+
+    cursor: pointer;
+}
+
+.modal-action:active {
+    transform: scale(.985);
+}
+
+.modal-action:disabled {
+    opacity: .65;
+
+    cursor: default;
+}
+
+
+/* =====================================
+   ERROR PIN
+===================================== */
+
+.pin-error {
+    min-height: 20px;
+
+    margin-top: 13px;
+
+    color: #ff6b6b;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+}
+
+
+/* =====================================
+   FOOTER PIN
+===================================== */
+
+.pin-footer {
+    margin-top: auto;
+
+    padding-top: 45px;
 
     color: #596676;
 
     font-size: 9px;
+
+    letter-spacing: 1px;
+
+    text-align: center;
 }
 
 
@@ -578,7 +811,6 @@ footer small {
 ===================================== */
 
 .modal {
-
     position: fixed;
 
     inset: 0;
@@ -598,18 +830,20 @@ footer small {
 }
 
 .modal.hidden {
-
     display: none;
 }
 
 .modal-box {
-
     width: 100%;
+
     max-width: 450px;
 
     position: relative;
 
-    padding: 25px 20px;
+    padding:
+        30px
+        20px
+        25px;
 
     border:
         1px solid
@@ -621,14 +855,16 @@ footer small {
         #0c141e;
 }
 
-.modal-box h3 {
-
-    margin-bottom: 10px;
+.modal-box h2 {
+    margin-bottom: 12px;
 
     color: white;
+
+    font-size: 20px;
 }
 
 .modal-box p {
+    margin-bottom: 14px;
 
     color: #9ba8b7;
 
@@ -638,11 +874,12 @@ footer small {
 }
 
 .close {
-
     position: absolute;
 
     top: 7px;
     right: 13px;
+
+    width: auto;
 
     border: 0;
 
@@ -657,7 +894,7 @@ footer small {
 
 
 /* =====================================
-   PANTALLAS GRANDES
+   ESCRITORIO
 ===================================== */
 
 @media (min-width: 700px) {
@@ -667,7 +904,6 @@ footer small {
     }
 
     .app {
-
         overflow: hidden;
 
         border:
