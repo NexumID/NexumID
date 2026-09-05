@@ -1,10 +1,12 @@
 // ==========================================
 // NEXUMID + SUPABASE
+// ACCESO MEDIANTE PIN
 // ==========================================
 
 const SUPABASE_URL = "https://tkrugleneazdeqhxxkvr.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
+const SUPABASE_KEY =
+    "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
 
 const db = window.supabase.createClient(
     SUPABASE_URL,
@@ -13,122 +15,731 @@ const db = window.supabase.createClient(
 
 
 // ==========================================
-// VEHÍCULO DE PRUEBA
+// PATENTE DESDE LA URL
+// Ejemplo:
+// https://nexumid.github.io/NexumID/?patente=AB-CD-12
 // ==========================================
 
-const PATENTE = "AB-CD-12";
+const parametros =
+    new URLSearchParams(window.location.search);
+
+const PATENTE = (
+    parametros.get("patente") || "AB-CD-12"
+)
+    .trim()
+    .toUpperCase();
+
+
+// ==========================================
+// VARIABLES
+// ==========================================
 
 let vehiculoActual = null;
+
 let documentosActuales = [];
 
+let accesoAutorizado = false;
+
 
 // ==========================================
-// CARGAR VEHÍCULO
+// INICIAR
 // ==========================================
 
-async function cargarVehiculo() {
+document.addEventListener(
+    "DOMContentLoaded",
+    iniciarNexumID
+);
 
-    try {
 
-        const { data, error } = await db
-            .from("vehiculos")
-            .select("*")
-            .eq("patente", PATENTE)
-            .single();
+function iniciarNexumID() {
 
-        if (error) {
-            console.error("Error cargando vehículo:", error);
-            return;
-        }
-
-        if (!data) {
-            console.error("Vehículo no encontrado");
-            return;
-        }
-
-        vehiculoActual = data;
-
-        console.log("Vehículo cargado:", data);
-
-        mostrarVehiculo(data);
-
-        await cargarDocumentos(data.id);
-
-    } catch (error) {
-
-        console.error("Error:", error);
-
-    }
+    mostrarPantallaPIN();
 
 }
 
 
 // ==========================================
-// MOSTRAR VEHÍCULO EN LA PÁGINA
+// PANTALLA PIN
 // ==========================================
 
-function mostrarVehiculo(vehiculo) {
+function mostrarPantallaPIN() {
 
-    const patente = document.querySelector(".vehicle-info h1");
-    const descripcion = document.querySelector(".vehicle-info p");
+    const app =
+        document.querySelector(".app");
 
-    if (patente) {
-
-        patente.textContent = vehiculo.patente;
-
+    if (!app) {
+        return;
     }
 
-    if (descripcion) {
+    app.innerHTML = `
 
-        descripcion.textContent =
-            `${vehiculo.marca} ${vehiculo.modelo} · ${vehiculo.anio}`;
+        <div class="pin-screen">
 
+            <div class="pin-brand">
+
+                <div class="pin-logo">
+                    N
+                </div>
+
+                <div>
+
+                    <strong>
+                        NexumID
+                    </strong>
+
+                    <span>
+                        Identidad Digital Vehicular
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="pin-card">
+
+                <div class="pin-icon">
+                    🔐
+                </div>
+
+
+                <h1>
+                    Acceso protegido
+                </h1>
+
+
+                <p>
+                    Ingresa el PIN de 4 dígitos
+                    para acceder a la información
+                    de tu vehículo.
+                </p>
+
+
+                <div class="pin-patente">
+
+                    ${escapeHtml(PATENTE)}
+
+                </div>
+
+
+                <input
+                    id="pin-input"
+                    class="pin-input"
+                    type="tel"
+                    inputmode="numeric"
+                    maxlength="4"
+                    autocomplete="off"
+                    placeholder="••••"
+                />
+
+
+                <button
+                    id="pin-button"
+                    class="modal-action"
+                    type="button"
+                    onclick="validarPIN()">
+
+                    ACCEDER
+
+                </button>
+
+
+                <div
+                    id="pin-error"
+                    class="pin-error">
+                </div>
+
+            </div>
+
+
+            <div class="pin-footer">
+
+                NexumID · by Smart Box Connect
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    const input =
+        document.getElementById("pin-input");
+
+
+    if (!input) {
+        return;
     }
+
+
+    input.focus();
+
+
+    input.addEventListener(
+        "input",
+        function () {
+
+            this.value =
+                this.value
+                    .replace(/\D/g, "")
+                    .slice(0, 4);
+
+        }
+    );
+
+
+    input.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Enter" &&
+                this.value.length === 4
+            ) {
+
+                validarPIN();
+
+            }
+
+        }
+    );
 
 }
 
 
 // ==========================================
-// CARGAR DOCUMENTOS
+// VALIDAR PIN
 // ==========================================
 
-async function cargarDocumentos(vehiculoId) {
+async function validarPIN() {
+
+    const input =
+        document.getElementById("pin-input");
+
+    const button =
+        document.getElementById("pin-button");
+
+    const errorBox =
+        document.getElementById("pin-error");
+
+
+    if (!input) {
+        return;
+    }
+
+
+    const pin =
+        input.value.trim();
+
+
+    if (!/^\d{4}$/.test(pin)) {
+
+        mostrarErrorPIN(
+            "Ingresa un PIN válido de 4 dígitos."
+        );
+
+        return;
+
+    }
+
+
+    if (button) {
+
+        button.disabled = true;
+
+        button.textContent =
+            "VERIFICANDO...";
+
+    }
+
+
+    if (errorBox) {
+
+        errorBox.textContent = "";
+
+    }
+
 
     try {
 
-        const { data, error } = await db
-            .from("documentos")
-            .select("*")
-            .eq("vehiculo_id", vehiculoId)
-            .order("created_at", {
-                ascending: true
-            });
+        const { data, error } =
+            await db.functions.invoke(
+                "nexumid-pin",
+                {
+                    body: {
+                        patente: PATENTE,
+                        pin: pin
+                    }
+                }
+            );
+
 
         if (error) {
 
             console.error(
-                "Error cargando documentos:",
+                "Error Edge Function:",
                 error
             );
 
+            mostrarErrorPIN(
+                "No fue posible verificar el PIN."
+            );
+
             return;
+
         }
 
-        documentosActuales = data || [];
+
+        if (
+            !data ||
+            data.success !== true
+        ) {
+
+            mostrarErrorPIN(
+                data?.error ||
+                "PIN incorrecto."
+            );
+
+            return;
+
+        }
+
+
+        // ======================================
+        // ACCESO AUTORIZADO
+        // ======================================
+
+        accesoAutorizado = true;
+
+
+        vehiculoActual =
+            data.vehiculo || null;
+
+
+        documentosActuales =
+            data.documentos || [];
+
 
         console.log(
-            "Documentos cargados:",
-            documentosActuales
+            "Acceso autorizado:",
+            data
         );
+
+
+        mostrarPerfil();
+
 
     } catch (error) {
 
         console.error(
-            "Error cargando documentos:",
+            "Error:",
             error
         );
 
+
+        mostrarErrorPIN(
+            "Ocurrió un error. Intenta nuevamente."
+        );
+
+
+    } finally {
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.textContent =
+                "ACCEDER";
+
+        }
+
     }
+
+}
+
+
+// ==========================================
+// ERROR PIN
+// ==========================================
+
+function mostrarErrorPIN(mensaje) {
+
+    const errorBox =
+        document.getElementById(
+            "pin-error"
+        );
+
+
+    if (errorBox) {
+
+        errorBox.textContent =
+            mensaje;
+
+    }
+
+}
+
+
+// ==========================================
+// MOSTRAR PERFIL
+// ==========================================
+
+function mostrarPerfil() {
+
+    const app =
+        document.querySelector(".app");
+
+
+    if (
+        !app ||
+        !vehiculoActual
+    ) {
+
+        return;
+
+    }
+
+
+    app.innerHTML = `
+
+        <div class="topbar">
+
+            <div class="brand">
+
+                <strong>
+                    NexumID
+                </strong>
+
+                <span>
+                    IDENTIDAD DIGITAL VEHICULAR
+                </span>
+
+            </div>
+
+
+            <div class="status">
+
+                <span></span>
+
+                PROTEGIDO
+
+            </div>
+
+        </div>
+
+
+        <section class="vehicle-hero">
+
+            <div class="vehicle-photo">
+                🚗
+            </div>
+
+
+            <div class="vehicle-info">
+
+                <div class="eyebrow">
+                    MI VEHÍCULO
+                </div>
+
+
+                <h1>
+
+                    ${escapeHtml(
+                        vehiculoActual.patente
+                    )}
+
+                </h1>
+
+
+                <p>
+
+                    ${escapeHtml(
+                        vehiculoActual.marca || ""
+                    )}
+
+                    ${escapeHtml(
+                        vehiculoActual.modelo || ""
+                    )}
+
+                    ·
+
+                    ${escapeHtml(
+                        vehiculoActual.anio || ""
+                    )}
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <section class="documents-section">
+
+            <div class="section-title">
+
+                <span>
+                    DOCUMENTOS
+                </span>
+
+                <small>
+                    ACCESO AUTORIZADO
+                </small>
+
+            </div>
+
+
+            <div
+                id="documents-list"
+                class="documents-list">
+
+            </div>
+
+        </section>
+
+
+        <section class="extras-section">
+
+
+            <div
+                class="extra-card"
+                onclick="mostrarContacto()">
+
+                <span>
+                    🚨
+                </span>
+
+
+                <div>
+
+                    <strong>
+                        Contacto de emergencia
+                    </strong>
+
+                    <small>
+                        Información del vehículo
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="extra-card"
+                onclick="mostrarInfo()">
+
+                <span>
+                    🚗
+                </span>
+
+
+                <div>
+
+                    <strong>
+                        Información del vehículo
+                    </strong>
+
+                    <small>
+                        Datos registrados
+                    </small>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <footer>
+
+            NexumID · by Smart Box Connect
+
+        </footer>
+
+
+        <div
+            id="modal"
+            class="modal hidden">
+
+            <div class="modal-box">
+
+                <button
+                    class="close"
+                    type="button"
+                    onclick="cerrarModal()">
+
+                    ×
+
+                </button>
+
+
+                <div
+                    id="modal-content">
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    mostrarDocumentos();
+
+}
+
+
+// ==========================================
+// MOSTRAR DOCUMENTOS
+// ==========================================
+
+function mostrarDocumentos() {
+
+    const lista =
+        document.getElementById(
+            "documents-list"
+        );
+
+
+    if (!lista) {
+        return;
+    }
+
+
+    const tipos = [
+
+        {
+            tipo: "soap",
+            nombre: "SOAP",
+            icono: "🛡️"
+        },
+
+        {
+            tipo: "revision",
+            nombre: "Revisión Técnica",
+            icono: "🔧"
+        },
+
+        {
+            tipo: "permiso",
+            nombre: "Permiso de Circulación",
+            icono: "📄"
+        },
+
+        {
+            tipo: "gases",
+            nombre: "Certificado de Gases",
+            icono: "📋"
+        },
+
+        {
+            tipo: "padron",
+            nombre: "Padrón",
+            icono: "🔐"
+        }
+
+    ];
+
+
+    lista.innerHTML =
+        tipos.map(documento => {
+
+            const encontrado =
+                buscarDocumento(
+                    documento.tipo
+                );
+
+
+            if (encontrado) {
+
+                return `
+
+                    <div class="document-card">
+
+                        <div class="document-icon">
+
+                            ${documento.icono}
+
+                        </div>
+
+
+                        <div class="document-info">
+
+                            <strong>
+
+                                ${documento.nombre}
+
+                            </strong>
+
+
+                            <small>
+
+                                ● Disponible
+
+                            </small>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            onclick="verDocumento('${documento.tipo}')">
+
+                            VER
+
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            return `
+
+                <div class="document-card">
+
+                    <div class="document-icon">
+
+                        ${documento.icono}
+
+                    </div>
+
+
+                    <div class="document-info">
+
+                        <strong>
+
+                            ${documento.nombre}
+
+                        </strong>
+
+
+                        <small>
+
+                            No disponible
+
+                        </small>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        disabled>
+
+                        —
+
+                    </button>
+
+                </div>
+
+            `;
+
+        }).join("");
 
 }
 
@@ -140,7 +751,11 @@ async function cargarDocumentos(vehiculoId) {
 function buscarDocumento(tipo) {
 
     return documentosActuales.find(
-        documento => documento.tipo === tipo
+        documento =>
+            String(documento.tipo)
+                .toLowerCase() ===
+            String(tipo)
+                .toLowerCase()
     );
 
 }
@@ -150,62 +765,79 @@ function buscarDocumento(tipo) {
 // VER DOCUMENTO
 // ==========================================
 
-async function verDocumento(tipo) {
+function verDocumento(tipo) {
 
-    const documento = buscarDocumento(tipo);
+    if (!accesoAutorizado) {
+
+        mostrarModal(
+            "Acceso protegido",
+            `
+                <p>
+                    Debes ingresar el PIN
+                    para acceder a los documentos.
+                </p>
+            `
+        );
+
+        return;
+
+    }
+
+
+    const documento =
+        buscarDocumento(tipo);
+
 
     if (!documento) {
 
         mostrarModal(
             "Documento no disponible",
-            "Este documento todavía no está cargado para este vehículo."
+            `
+                <p>
+                    Este documento todavía
+                    no está cargado para este vehículo.
+                </p>
+            `
         );
 
         return;
+
     }
 
 
-    // PADRÓN PROTEGIDO
-
-    if (documento.protegido === true) {
+    if (!documento.url) {
 
         mostrarModal(
-            "Documento protegido",
+            "Documento no disponible",
             `
-            <p>Este documento requiere autorización.</p>
-
-            <button
-                class="modal-action"
-                onclick="cerrarModal()">
-                CERRAR
-            </button>
+                <p>
+                    No fue posible generar
+                    el acceso temporal al documento.
+                </p>
             `
         );
 
         return;
+
     }
 
-
-    // DOCUMENTO DISPONIBLE
 
     mostrarModal(
         documento.nombre || "Documento",
         `
-        <p>
-            Documento disponible en NexumID.
-        </p>
+            <p>
+                Documento disponible.
+            </p>
 
-        <p class="document-file">
-            ${documento.archivo}
-        </p>
 
-        <button
-            class="modal-action"
-            onclick="abrirArchivo('${escapeHtml(documento.archivo)}')">
+            <button
+                class="modal-action"
+                type="button"
+                onclick="abrirDocumentoSeguro('${escapeHtml(documento.url)}')">
 
-            VER DOCUMENTO
+                VER DOCUMENTO
 
-        </button>
+            </button>
         `
     );
 
@@ -213,47 +845,20 @@ async function verDocumento(tipo) {
 
 
 // ==========================================
-// ABRIR ARCHIVO
+// ABRIR DOCUMENTO SEGURO
 // ==========================================
 
-async function abrirArchivo(ruta) {
+function abrirDocumentoSeguro(url) {
 
-    try {
-
-        const { data, error } =
-            await db.storage
-                .from("documentos")
-                .createSignedUrl(ruta, 300);
-
-        if (error) {
-
-            console.error(
-                "Error creando URL:",
-                error
-            );
-
-            mostrarModal(
-                "No se pudo abrir",
-                "El documento existe, pero todavía debemos configurar el acceso al archivo."
-            );
-
-            return;
-        }
-
-        if (data && data.signedUrl) {
-
-            window.open(
-                data.signedUrl,
-                "_blank"
-            );
-
-        }
-
-    } catch (error) {
-
-        console.error(error);
-
+    if (!accesoAutorizado) {
+        return;
     }
+
+
+    window.open(
+        url,
+        "_blank"
+    );
 
 }
 
@@ -268,25 +873,53 @@ function mostrarContacto() {
 
         mostrarModal(
             "Contacto de emergencia",
-            "Cargando información..."
+            `
+                <p>
+                    Cargando información...
+                </p>
+            `
         );
 
         return;
+
     }
+
+
+    const contacto =
+        vehiculoActual.contacto_emergencia ||
+        "No registrado";
+
 
     mostrarModal(
         "Contacto de emergencia",
         `
-        <p>
-            Información disponible para este vehículo.
-        </p>
+            <p>
 
-        <p>
-            <strong>
-                Contacto:
-            </strong>
-            ${vehiculoActual.contacto_emergencia || "No registrado"}
-        </p>
+                <strong>
+                    Contacto:
+                </strong>
+
+                ${escapeHtml(contacto)}
+
+            </p>
+
+
+            ${
+                contacto !== "No registrado"
+                ?
+                `
+                    <button
+                        class="modal-action"
+                        type="button"
+                        onclick="window.location.href='tel:${escapeHtml(contacto)}'">
+
+                        LLAMAR
+
+                    </button>
+                `
+                :
+                ""
+            }
         `
     );
 
@@ -303,39 +936,86 @@ function mostrarInfo() {
 
         mostrarModal(
             "Información del vehículo",
-            "Cargando información..."
+            `
+                <p>
+                    Cargando información...
+                </p>
+            `
         );
 
         return;
+
     }
+
 
     mostrarModal(
         "Información del vehículo",
         `
-        <p>
-            <strong>Patente:</strong>
-            ${vehiculoActual.patente}
-        </p>
 
-        <p>
-            <strong>Marca:</strong>
-            ${vehiculoActual.marca}
-        </p>
+            <p>
 
-        <p>
-            <strong>Modelo:</strong>
-            ${vehiculoActual.modelo}
-        </p>
+                <strong>
+                    Patente:
+                </strong>
 
-        <p>
-            <strong>Año:</strong>
-            ${vehiculoActual.anio}
-        </p>
+                ${escapeHtml(
+                    vehiculoActual.patente
+                )}
 
-        <p>
-            <strong>Color:</strong>
-            ${vehiculoActual.color}
-        </p>
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Marca:
+                </strong>
+
+                ${escapeHtml(
+                    vehiculoActual.marca
+                )}
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Modelo:
+                </strong>
+
+                ${escapeHtml(
+                    vehiculoActual.modelo
+                )}
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Año:
+                </strong>
+
+                ${escapeHtml(
+                    vehiculoActual.anio
+                )}
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Color:
+                </strong>
+
+                ${escapeHtml(
+                    vehiculoActual.color
+                )}
+
+            </p>
+
         `
     );
 
@@ -346,24 +1026,47 @@ function mostrarInfo() {
 // MODAL
 // ==========================================
 
-function mostrarModal(titulo, contenido) {
+function mostrarModal(
+    titulo,
+    contenido
+) {
 
     const modal =
-        document.getElementById("modal");
+        document.getElementById(
+            "modal"
+        );
+
 
     const modalContent =
-        document.getElementById("modal-content");
+        document.getElementById(
+            "modal-content"
+        );
 
-    if (!modal || !modalContent) {
+
+    if (
+        !modal ||
+        !modalContent
+    ) {
+
         return;
+
     }
 
+
     modalContent.innerHTML = `
-        <h2>${titulo}</h2>
+
+        <h2>
+            ${escapeHtml(titulo)}
+        </h2>
+
         ${contenido}
+
     `;
 
-    modal.classList.remove("hidden");
+
+    modal.classList.remove(
+        "hidden"
+    );
 
 }
 
@@ -375,11 +1078,16 @@ function mostrarModal(titulo, contenido) {
 function cerrarModal() {
 
     const modal =
-        document.getElementById("modal");
+        document.getElementById(
+            "modal"
+        );
+
 
     if (modal) {
 
-        modal.classList.add("hidden");
+        modal.classList.add(
+            "hidden"
+        );
 
     }
 
@@ -387,26 +1095,33 @@ function cerrarModal() {
 
 
 // ==========================================
-// SEGURIDAD BÁSICA HTML
+// SEGURIDAD HTML
 // ==========================================
 
 function escapeHtml(text) {
 
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    return String(
+        text ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
-
-
-// ==========================================
-// INICIAR NEXUMID
-// ==========================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    cargarVehiculo
-);
