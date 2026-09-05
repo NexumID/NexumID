@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>NexumID - Panel</title>
 
@@ -20,245 +17,204 @@ content="width=device-width, initial-scale=1.0">
 body{
     margin:0;
     background:#05080d;
-    color:#fff;
+    color:white;
     font-family:Arial,Helvetica,sans-serif;
 }
 
 .container{
-    width:100%;
     max-width:900px;
     margin:auto;
-    padding:20px;
+    padding:24px;
 }
-
-/* HEADER */
 
 .header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:25px;
+    margin-bottom:40px;
 }
 
 .logo{
-    font-size:24px;
+    font-size:28px;
     font-weight:bold;
-    letter-spacing:1px;
 }
 
 .logo span{
-    color:#078cff;
+    color:#1595ff;
 }
 
 .subtitle{
-    color:#9da9b8;
-    font-size:12px;
-    margin-top:4px;
-}
-
-.logout{
-    border:1px solid #263444;
-    background:#101720;
-    color:#fff;
-    border-radius:8px;
-    padding:10px 14px;
-    cursor:pointer;
-}
-
-/* TITULOS */
-
-.title{
-    font-size:22px;
-    margin-bottom:18px;
-}
-
-/* BOTON NUEVO */
-
-.new-button{
-    width:100%;
-    border:0;
-    background:#078cff;
-    color:white;
-    padding:15px;
-    border-radius:10px;
+    color:#9aa4b5;
+    margin-top:6px;
     font-size:16px;
-    font-weight:bold;
+}
+
+button{
+    border:none;
+    border-radius:14px;
+    padding:16px 20px;
+    font-size:16px;
     cursor:pointer;
-    margin-bottom:25px;
 }
 
-.new-button:active{
-    opacity:.8;
+.btn-primary{
+    width:100%;
+    background:#1595ff;
+    color:white;
+    font-weight:bold;
+    font-size:20px;
 }
 
-/* FORMULARIO */
+.btn-secondary{
+    background:#111923;
+    color:white;
+    border:1px solid #263342;
+}
 
-.form-box{
-    display:none;
-    background:#0d141e;
-    border:1px solid #1d2a38;
-    border-radius:12px;
+.btn-blue{
+    background:#111923;
+    color:#1595ff;
+    border:1px solid #263342;
+    width:100%;
+}
+
+.btn-danger{
+    background:#111923;
+    color:#ff7070;
+    border:1px solid #263342;
+}
+
+h1{
+    font-size:36px;
+    font-weight:400;
+    margin-bottom:30px;
+}
+
+h2{
+    font-size:28px;
+    font-weight:400;
+    margin-top:40px;
+}
+
+.form-card{
+    background:#0d141d;
+    border:1px solid #263342;
+    border-radius:18px;
     padding:20px;
-    margin-bottom:25px;
-}
-
-.form-box.active{
-    display:block;
-}
-
-.form-title{
-    font-size:18px;
-    margin-bottom:18px;
-}
-
-label{
-    display:block;
-    font-size:13px;
-    color:#aeb9c7;
-    margin-bottom:6px;
+    margin-top:20px;
 }
 
 input{
     width:100%;
+    padding:15px;
+    margin-top:8px;
+    margin-bottom:16px;
+    border-radius:10px;
+    border:1px solid #263342;
     background:#080d13;
     color:white;
-    border:1px solid #263544;
-    border-radius:8px;
-    padding:13px;
-    margin-bottom:15px;
-    font-size:15px;
-    outline:none;
+    font-size:16px;
 }
 
-input:focus{
-    border-color:#078cff;
+label{
+    color:#aeb8c7;
+    font-size:14px;
 }
 
-.save-button{
-    width:100%;
-    background:#24d98b;
-    color:#06120d;
-    border:0;
-    padding:14px;
-    border-radius:8px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.save-button:disabled{
-    opacity:.6;
-}
-
-.cancel-button{
-    width:100%;
-    background:#151d27;
-    color:white;
-    border:1px solid #293747;
-    padding:13px;
-    border-radius:8px;
-    margin-top:10px;
-    cursor:pointer;
-}
-
-/* VEHICULOS */
-
-.vehicle-card{
-    background:#0d141e;
-    border:1px solid #1d2a38;
-    border-radius:12px;
-    padding:18px;
-    margin-bottom:14px;
+.vehicle{
+    background:#0d141d;
+    border:1px solid #263342;
+    border-radius:18px;
+    padding:28px;
+    margin-top:20px;
 }
 
 .vehicle-patente{
-    font-size:20px;
+    font-size:30px;
     font-weight:bold;
-    color:#078cff;
-    margin-bottom:6px;
+    color:#1595ff;
 }
 
 .vehicle-name{
-    font-size:16px;
-    margin-bottom:5px;
+    font-size:20px;
+    margin-top:10px;
 }
 
 .vehicle-info{
-    color:#9da9b8;
-    font-size:13px;
-    margin-bottom:15px;
+    color:#9da8b8;
+    margin-top:10px;
+    line-height:1.5;
 }
 
-.vehicle-actions{
-    display:flex;
-    gap:10px;
-}
-
-.action{
-    flex:1;
-    padding:11px;
-    border-radius:8px;
-    border:1px solid #263544;
-    background:#111923;
-    color:#fff;
-    cursor:pointer;
-}
-
-.documents{
-    color:#078cff;
-}
-
-/* MENSAJES */
-
-.message{
-    text-align:center;
-    color:#8f9aaa;
-    padding:30px 10px;
-}
-
-.error{
-    background:#301719;
-    border:1px solid #713034;
-    color:#ff9a9f;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:15px;
-    display:none;
+.vehicle-buttons{
+    display:grid;
+    gap:12px;
+    margin-top:24px;
 }
 
 .success{
-    background:#102b21;
-    border:1px solid #1e6549;
-    color:#62e8ae;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:15px;
+    background:#0d3026;
+    border:1px solid #197553;
+    color:#65e3b1;
+    padding:18px;
+    border-radius:14px;
+    margin-bottom:20px;
+}
+
+.error{
+    background:#321414;
+    border:1px solid #743030;
+    color:#ff8888;
+    padding:18px;
+    border-radius:14px;
+    margin-bottom:20px;
+}
+
+.hidden{
     display:none;
 }
 
-/* MOVIL */
+.back{
+    margin-bottom:25px;
+}
 
-@media(max-width:600px){
+.doc-card{
+    background:#0d141d;
+    border:1px solid #263342;
+    border-radius:18px;
+    padding:20px;
+    margin-top:16px;
+}
 
-    .container{
-        padding:15px;
-    }
+.doc-title{
+    font-size:20px;
+    font-weight:bold;
+}
 
-    .header{
-        align-items:flex-start;
-    }
+.doc-status{
+    color:#9da8b8;
+    margin-top:8px;
+    margin-bottom:18px;
+}
 
-    .logo{
-        font-size:21px;
-    }
+.doc-actions{
+    display:grid;
+    gap:10px;
+}
 
-    .vehicle-actions{
-        flex-direction:column;
-    }
+.file-input{
+    padding:12px;
+    background:#080d13;
+    border:1px solid #263342;
+}
 
+.loading{
+    text-align:center;
+    color:#9da8b8;
+    padding:30px;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -270,7 +226,6 @@ input:focus{
     <div class="header">
 
         <div>
-
             <div class="logo">
                 NEXUM<span>ID</span>
             </div>
@@ -278,160 +233,126 @@ input:focus{
             <div class="subtitle">
                 IDENTIDAD DIGITAL VEHICULAR
             </div>
-
         </div>
 
-        <button
-            class="logout"
-            onclick="cerrarSesion()">
-
+        <button class="btn-secondary" onclick="cerrarSesion()">
             SALIR
-
         </button>
 
     </div>
 
 
-    <!-- TITULO -->
+    <!-- PANEL PRINCIPAL -->
 
-    <div class="title">
-        Panel de Administración
-    </div>
+    <div id="vistaPanel">
 
+        <h1>Panel de Administración</h1>
 
-    <!-- MENSAJES -->
+        <div id="mensaje"></div>
 
-    <div
-        id="error"
-        class="error">
-    </div>
-
-    <div
-        id="success"
-        class="success">
-    </div>
+        <button
+            class="btn-primary"
+            onclick="mostrarFormulario()">
+            + NUEVO VEHÍCULO
+        </button>
 
 
-    <!-- NUEVO VEHICULO -->
+        <!-- FORMULARIO VEHICULO -->
 
-    <button
-        class="new-button"
-        onclick="mostrarFormulario()">
+        <div
+            id="formularioVehiculo"
+            class="form-card hidden">
 
-        + NUEVO VEHÍCULO
+            <h2 style="margin-top:0;">
+                Nuevo vehículo
+            </h2>
 
-    </button>
+            <label>Patente</label>
+            <input
+                id="patente"
+                type="text"
+                placeholder="AB-CD-12">
 
+            <label>Marca</label>
+            <input
+                id="marca"
+                type="text"
+                placeholder="Chevrolet">
 
-    <!-- FORMULARIO -->
+            <label>Modelo</label>
+            <input
+                id="modelo"
+                type="text"
+                placeholder="Sail">
 
-    <div
-        id="formulario"
-        class="form-box">
+            <label>Año</label>
+            <input
+                id="anio"
+                type="number"
+                placeholder="2020">
 
-        <div class="form-title">
-            Registrar vehículo
+            <label>Color</label>
+            <input
+                id="color"
+                type="text"
+                placeholder="Blanco">
+
+            <label>Contacto de emergencia</label>
+            <input
+                id="contacto"
+                type="text"
+                placeholder="+56912345678">
+
+            <button
+                class="btn-primary"
+                onclick="crearVehiculo()">
+                CREAR VEHÍCULO
+            </button>
+
+            <br><br>
+
+            <button
+                class="btn-secondary"
+                style="width:100%;"
+                onclick="ocultarFormulario()">
+                CANCELAR
+            </button>
+
         </div>
 
 
-        <label>
-            Patente
-        </label>
+        <h2>Vehículos registrados</h2>
 
-        <input
-            id="patente"
-            type="text"
-            placeholder="Ej: AB-CD-12"
-            autocomplete="off">
+        <div id="listaVehiculos">
 
+            <div class="loading">
+                Cargando vehículos...
+            </div>
 
-        <label>
-            Marca
-        </label>
-
-        <input
-            id="marca"
-            type="text"
-            placeholder="Ej: Chevrolet"
-            autocomplete="off">
-
-
-        <label>
-            Modelo
-        </label>
-
-        <input
-            id="modelo"
-            type="text"
-            placeholder="Ej: Sail"
-            autocomplete="off">
-
-
-        <label>
-            Año
-        </label>
-
-        <input
-            id="anio"
-            type="number"
-            placeholder="Ej: 2020"
-            inputmode="numeric">
-
-
-        <label>
-            Color
-        </label>
-
-        <input
-            id="color"
-            type="text"
-            placeholder="Ej: Blanco"
-            autocomplete="off">
-
-
-        <label>
-            Contacto de emergencia
-        </label>
-
-        <input
-            id="contacto"
-            type="text"
-            placeholder="Ej: +56912345678"
-            autocomplete="off">
-
-
-        <button
-            class="save-button"
-            onclick="crearVehiculo()">
-
-            CREAR VEHÍCULO
-
-        </button>
-
-
-        <button
-            class="cancel-button"
-            onclick="ocultarFormulario()">
-
-            CANCELAR
-
-        </button>
-
-    </div>
-
-
-    <!-- LISTA -->
-
-    <div class="title">
-        Vehículos registrados
-    </div>
-
-
-    <div id="listaVehiculos">
-
-        <div class="message">
-            Cargando vehículos...
         </div>
+
+    </div>
+
+
+    <!-- VISTA DOCUMENTOS -->
+
+    <div
+        id="vistaDocumentos"
+        class="hidden">
+
+        <button
+            class="btn-secondary back"
+            onclick="volverPanel()">
+            ← VOLVER
+        </button>
+
+        <h1>Documentos</h1>
+
+        <div id="infoVehiculo"></div>
+
+        <div id="mensajeDocumentos"></div>
+
+        <div id="listaDocumentos"></div>
 
     </div>
 
@@ -440,16 +361,11 @@ input:focus{
 
 <script>
 
-/* =========================================
-   SUPABASE
-========================================= */
-
 const SUPABASE_URL =
 "https://tkrugleneazdeqhxxkvr.supabase.co";
 
 const SUPABASE_KEY =
 "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
-
 
 const supabaseClient =
 supabase.createClient(
@@ -458,467 +374,184 @@ supabase.createClient(
 );
 
 
-/* =========================================
-   INICIO
-========================================= */
+// TIPOS DE DOCUMENTOS
 
-document.addEventListener(
-    "DOMContentLoaded",
-    iniciar
-);
+const tiposDocumentos = [
 
+    {
+        tipo:"soap",
+        nombre:"SOAP"
+    },
 
-async function iniciar(){
+    {
+        tipo:"revision_tecnica",
+        nombre:"REVISIÓN TÉCNICA"
+    },
 
-    try{
+    {
+        tipo:"permiso_circulacion",
+        nombre:"PERMISO DE CIRCULACIÓN"
+    },
 
-        const {
-            data,
-            error
-        } =
-        await supabaseClient
-        .auth
-        .getSession();
+    {
+        tipo:"certificado_gases",
+        nombre:"CERTIFICADO DE GASES"
+    },
 
-
-        if(
-            error ||
-            !data ||
-            !data.session
-        ){
-
-            window.location.href =
-                "admin.html";
-
-            return;
-        }
-
-
-        const {
-            data: userData,
-            error: userError
-        } =
-        await supabaseClient
-        .auth
-        .getUser();
-
-
-        if(
-            userError ||
-            !userData ||
-            !userData.user
-        ){
-
-            await supabaseClient
-                .auth
-                .signOut();
-
-            window.location.href =
-                "admin.html";
-
-            return;
-        }
-
-
-        cargarVehiculos();
-
-
-    }catch(error){
-
-        console.error(
-            "Error iniciando panel:",
-            error
-        );
-
-        window.location.href =
-            "admin.html";
-
+    {
+        tipo:"padron",
+        nombre:"PADRÓN"
     }
+
+];
+
+
+// VEHICULO ACTUAL
+
+let vehiculoActual = null;
+
+
+// MENSAJES
+
+function mostrarExito(texto){
+
+    document.getElementById("mensaje").innerHTML =
+    `<div class="success">${texto}</div>`;
+
+}
+
+function mostrarError(texto){
+
+    document.getElementById("mensaje").innerHTML =
+    `<div class="error">${texto}</div>`;
 
 }
 
 
-/* =========================================
-   CARGAR VEHICULOS
-========================================= */
+// FORMULARIO
 
-async function cargarVehiculos(){
+function mostrarFormulario(){
 
-    const contenedor =
-        document.getElementById(
-            "listaVehiculos"
-        );
+    document
+    .getElementById("formularioVehiculo")
+    .classList.remove("hidden");
 
+}
 
-    contenedor.innerHTML =
-        '<div class="message">Cargando vehículos...</div>';
+function ocultarFormulario(){
 
-
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-    .from("vehiculos")
-    .select("*")
-    .order(
-        "created_at",
-        {
-            ascending:false
-        }
-    );
-
-
-    if(error){
-
-        console.error(
-            "Error cargando vehículos:",
-            error
-        );
-
-
-        mostrarError(
-            "No se pudieron cargar los vehículos: "
-            + error.message
-        );
-
-
-        contenedor.innerHTML =
-            '<div class="message">Error al cargar vehículos.</div>';
-
-
-        return;
-    }
-
-
-    if(
-        !data ||
-        data.length === 0
-    ){
-
-        contenedor.innerHTML =
-            '<div class="message">Todavía no hay vehículos registrados.</div>';
-
-        return;
-    }
-
-
-    contenedor.innerHTML = "";
-
-
-    data.forEach(
-        vehiculo => {
-
-            const tarjeta =
-                document.createElement(
-                    "div"
-                );
-
-
-            tarjeta.className =
-                "vehicle-card";
-
-
-            tarjeta.innerHTML = `
-
-                <div class="vehicle-patente">
-                    ${escapeHTML(
-                        vehiculo.patente || ""
-                    )}
-                </div>
-
-
-                <div class="vehicle-name">
-                    ${escapeHTML(
-                        vehiculo.marca || ""
-                    )}
-                    ${escapeHTML(
-                        vehiculo.modelo || ""
-                    )}
-                </div>
-
-
-                <div class="vehicle-info">
-
-                    Año:
-                    ${escapeHTML(
-                        String(
-                            vehiculo.anio || ""
-                        )
-                    )}
-
-                    <br>
-
-                    Color:
-                    ${escapeHTML(
-                        vehiculo.color || ""
-                    )}
-
-                </div>
-
-
-                <div class="vehicle-actions">
-
-                    <button
-                        class="action documents"
-                        onclick="verDocumentos('${vehiculo.id}')">
-
-                        DOCUMENTOS
-
-                    </button>
-
-
-                    <button
-                        class="action"
-                        onclick="verVehiculo('${vehiculo.patente}')">
-
-                        VER PERFIL
-
-                    </button>
-
-                </div>
-
-            `;
-
-
-            contenedor.appendChild(
-                tarjeta
-            );
-
-        }
-    );
+    document
+    .getElementById("formularioVehiculo")
+    .classList.add("hidden");
 
 }
 
 
-/* =========================================
-   CREAR VEHICULO
-========================================= */
+// CREAR VEHICULO
 
 async function crearVehiculo(){
 
-    ocultarMensajes();
-
-
-    const boton =
-        document.querySelector(
-            ".save-button"
-        );
-
-
-    /*
-     * COMPROBAR SESIÓN
-     */
-
-    boton.disabled =
-        true;
-
-    boton.innerText =
-        "COMPROBANDO...";
-
-
     const {
-        data: sessionData,
-        error: sessionError
-    } =
-    await supabaseClient
-    .auth
-    .getSession();
+        data: sessionData
+    } = await supabaseClient.auth.getSession();
 
+    if(!sessionData.session){
 
-    if(
-        sessionError ||
-        !sessionData ||
-        !sessionData.session
-    ){
-
-        boton.disabled =
-            false;
-
-        boton.innerText =
-            "CREAR VEHÍCULO";
-
-
-        mostrarError(
-            "La sesión expiró. Ingresa nuevamente."
-        );
-
-
-        setTimeout(
-            function(){
-
-                window.location.href =
-                    "admin.html";
-
-            },
-            1500
-        );
-
-
+        alert("La sesión expiró.");
+        window.location.href="admin.html";
         return;
+
     }
 
 
-    /*
-     * DATOS
-     */
-
     const patente =
-        document
-        .getElementById("patente")
-        .value
-        .trim()
-        .toUpperCase();
-
+    document.getElementById("patente")
+    .value
+    .trim()
+    .toUpperCase();
 
     const marca =
-        document
-        .getElementById("marca")
-        .value
-        .trim();
-
+    document.getElementById("marca")
+    .value
+    .trim();
 
     const modelo =
-        document
-        .getElementById("modelo")
-        .value
-        .trim();
-
+    document.getElementById("modelo")
+    .value
+    .trim();
 
     const anio =
-        document
-        .getElementById("anio")
-        .value
-        .trim();
-
+    document.getElementById("anio")
+    .value;
 
     const color =
-        document
-        .getElementById("color")
-        .value
-        .trim();
-
+    document.getElementById("color")
+    .value
+    .trim();
 
     const contacto =
-        document
-        .getElementById("contacto")
-        .value
-        .trim();
+    document.getElementById("contacto")
+    .value
+    .trim();
 
-
-    /*
-     * VALIDACIÓN
-     */
 
     if(
         !patente ||
         !marca ||
         !modelo ||
-        !anio
+        !anio ||
+        !color
     ){
 
-        boton.disabled =
-            false;
-
-        boton.innerText =
-            "CREAR VEHÍCULO";
-
-
         mostrarError(
-            "Completa patente, marca, modelo y año."
+            "Completa todos los campos obligatorios."
         );
-
 
         return;
     }
 
 
-    /*
-     * INSERT
-     *
-     * IMPORTANTE:
-     * NO usamos .select()
-     * NO usamos .single()
-     */
-
-    boton.innerText =
-        "GUARDANDO...";
-
-
     const {
         error
-    } =
-    await supabaseClient
+    } = await supabaseClient
     .from("vehiculos")
     .insert({
 
-        patente:
-            patente,
-
-        marca:
-            marca,
-
-        modelo:
-            modelo,
-
-        anio:
-            parseInt(
-                anio,
-                10
-            ),
-
-        color:
-            color,
-
-        contacto_emergencia:
-            contacto
+        patente:patente,
+        marca:marca,
+        modelo:modelo,
+        anio:parseInt(anio),
+        color:color,
+        contacto_emergencia:contacto
 
     });
 
 
-    /*
-     * RESTAURAR BOTÓN
-     */
-
-    boton.disabled =
-        false;
-
-    boton.innerText =
-        "CREAR VEHÍCULO";
-
-
-    /*
-     * ERROR
-     */
-
     if(error){
 
-        console.error(
-            "ERROR SUPABASE:",
-            error
-        );
-
+        console.error(error);
 
         mostrarError(
             "No se pudo crear el vehículo: "
             + error.message
         );
 
-
         return;
     }
 
-
-    /*
-     * ÉXITO
-     */
 
     mostrarExito(
         "Vehículo creado correctamente."
     );
 
 
-    limpiarFormulario();
+    document.getElementById("patente").value="";
+    document.getElementById("marca").value="";
+    document.getElementById("modelo").value="";
+    document.getElementById("anio").value="";
+    document.getElementById("color").value="";
+    document.getElementById("contacto").value="";
+
 
     ocultarFormulario();
 
@@ -927,234 +560,693 @@ async function crearVehiculo(){
 }
 
 
-/* =========================================
-   FORMULARIO
-========================================= */
+// CARGAR VEHICULOS
 
-function mostrarFormulario(){
+async function cargarVehiculos(){
 
-    ocultarMensajes();
-
-
-    document
-    .getElementById(
-        "formulario"
-    )
-    .classList
-    .add("active");
-
-}
-
-
-function ocultarFormulario(){
-
-    document
-    .getElementById(
-        "formulario"
-    )
-    .classList
-    .remove("active");
-
-}
-
-
-function limpiarFormulario(){
-
-    document
-    .getElementById(
-        "patente"
-    )
-    .value = "";
-
-
-    document
-    .getElementById(
-        "marca"
-    )
-    .value = "";
-
-
-    document
-    .getElementById(
-        "modelo"
-    )
-    .value = "";
-
-
-    document
-    .getElementById(
-        "anio"
-    )
-    .value = "";
-
-
-    document
-    .getElementById(
-        "color"
-    )
-    .value = "";
-
-
-    document
-    .getElementById(
-        "contacto"
-    )
-    .value = "";
-
-}
-
-
-/* =========================================
-   VER PERFIL
-========================================= */
-
-function verVehiculo(
-    patente
-){
-
-    window.open(
-
-        "index.html?patente="
-        +
-        encodeURIComponent(
-            patente
-        ),
-
-        "_blank"
-
+    const {
+        data,
+        error
+    } = await supabaseClient
+    .from("vehiculos")
+    .select("*")
+    .order(
+        "created_at",
+        {ascending:false}
     );
 
+
+    const contenedor =
+    document.getElementById("listaVehiculos");
+
+
+    if(error){
+
+        console.error(error);
+
+        contenedor.innerHTML =
+        `<div class="error">
+        Error al cargar vehículos:<br>
+        ${error.message}
+        </div>`;
+
+        return;
+    }
+
+
+    if(!data || data.length===0){
+
+        contenedor.innerHTML =
+        `<div class="loading">
+        Todavía no hay vehículos registrados.
+        </div>`;
+
+        return;
+    }
+
+
+    contenedor.innerHTML="";
+
+
+    data.forEach(vehiculo=>{
+
+        const div =
+        document.createElement("div");
+
+        div.className="vehicle";
+
+
+        div.innerHTML=`
+
+            <div class="vehicle-patente">
+                ${escapeHtml(vehiculo.patente)}
+            </div>
+
+            <div class="vehicle-name">
+                ${escapeHtml(vehiculo.marca)}
+                ${escapeHtml(vehiculo.modelo)}
+            </div>
+
+            <div class="vehicle-info">
+
+                Año:
+                ${vehiculo.anio}
+
+                <br>
+
+                Color:
+                ${escapeHtml(vehiculo.color)}
+
+            </div>
+
+            <div class="vehicle-buttons">
+
+                <button
+                    class="btn-blue"
+                    onclick='abrirDocumentos(${JSON.stringify(vehiculo)})'>
+                    DOCUMENTOS
+                </button>
+
+                <button
+                    class="btn-secondary"
+                    onclick='verPerfil(${JSON.stringify(vehiculo)})'>
+                    VER PERFIL
+                </button>
+
+            </div>
+
+        `;
+
+
+        contenedor.appendChild(div);
+
+    });
+
 }
 
 
-/* =========================================
-   DOCUMENTOS
-========================================= */
+// ESCAPAR HTML
 
-function verDocumentos(
-    id
-){
+function escapeHtml(text){
 
-    alert(
-        "Aquí agregaremos el administrador de documentos de este vehículo."
+    if(text===null || text===undefined)
+        return "";
+
+    return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+// ABRIR DOCUMENTOS
+
+async function abrirDocumentos(vehiculo){
+
+    vehiculoActual=vehiculo;
+
+
+    document
+    .getElementById("vistaPanel")
+    .classList.add("hidden");
+
+
+    document
+    .getElementById("vistaDocumentos")
+    .classList.remove("hidden");
+
+
+    document
+    .getElementById("infoVehiculo")
+    .innerHTML=`
+
+        <div class="vehicle">
+
+            <div class="vehicle-patente">
+                ${escapeHtml(vehiculo.patente)}
+            </div>
+
+            <div class="vehicle-name">
+                ${escapeHtml(vehiculo.marca)}
+                ${escapeHtml(vehiculo.modelo)}
+            </div>
+
+            <div class="vehicle-info">
+
+                Año: ${vehiculo.anio}
+                <br>
+                Color: ${escapeHtml(vehiculo.color)}
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    cargarDocumentos();
+
+}
+
+
+// CARGAR DOCUMENTOS
+
+async function cargarDocumentos(){
+
+    const contenedor =
+    document.getElementById("listaDocumentos");
+
+
+    contenedor.innerHTML =
+    `<div class="loading">
+    Cargando documentos...
+    </div>`;
+
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+    .from("documentos")
+    .select("*")
+    .eq(
+        "vehiculo_id",
+        vehiculoActual.id
     );
 
+
+    if(error){
+
+        console.error(error);
+
+        contenedor.innerHTML =
+        `<div class="error">
+        Error al cargar documentos:<br>
+        ${error.message}
+        </div>`;
+
+        return;
+    }
+
+
+    contenedor.innerHTML="";
+
+
+    tiposDocumentos.forEach(tipo=>{
+
+        const documentos =
+        data.filter(
+            d => d.tipo === tipo.tipo
+        );
+
+
+        const documento =
+        documentos.length
+        ? documentos[0]
+        : null;
+
+
+        const div =
+        document.createElement("div");
+
+        div.className="doc-card";
+
+
+        let contenido="";
+
+
+        if(documento){
+
+            contenido=`
+
+                <div class="doc-title">
+                    ${tipo.nombre}
+                </div>
+
+                <div class="doc-status">
+
+                    ✓ ${escapeHtml(documento.nombre)}
+
+                </div>
+
+                <div class="doc-actions">
+
+                    <button
+                        class="btn-blue"
+                        onclick="verDocumento('${escapeHtml(documento.archivo)}')">
+                        VER DOCUMENTO
+                    </button>
+
+                    <button
+                        class="btn-danger"
+                        onclick="eliminarDocumento('${documento.id}','${escapeHtml(documento.archivo)}')">
+                        ELIMINAR
+                    </button>
+
+                </div>
+
+            `;
+
+        }else{
+
+            contenido=`
+
+                <div class="doc-title">
+                    ${tipo.nombre}
+                </div>
+
+                <div class="doc-status">
+                    Sin documento
+                </div>
+
+                <div class="doc-actions">
+
+                    <input
+                        type="file"
+                        class="file-input"
+                        id="archivo_${tipo.tipo}">
+
+                    <button
+                        class="btn-primary"
+                        onclick="subirDocumento('${tipo.tipo}','${tipo.nombre}')">
+
+                        SUBIR DOCUMENTO
+
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+
+
+        div.innerHTML=contenido;
+
+        contenedor.appendChild(div);
+
+    });
+
 }
 
 
-/* =========================================
-   CERRAR SESIÓN
-========================================= */
+// SUBIR DOCUMENTO
+
+async function subirDocumento(tipo,nombreTipo){
+
+    const input =
+    document.getElementById(
+        "archivo_"+tipo
+    );
+
+
+    if(!input || !input.files.length){
+
+        mostrarMensajeDocumento(
+            "Selecciona un archivo primero.",
+            false
+        );
+
+        return;
+    }
+
+
+    const archivo =
+    input.files[0];
+
+
+    if(archivo.size > 6 * 1024 * 1024){
+
+        mostrarMensajeDocumento(
+            "El archivo supera 6 MB. Para esta primera versión usaremos archivos pequeños.",
+            false
+        );
+
+        return;
+    }
+
+
+    const extension =
+    archivo.name.includes(".")
+    ? archivo.name
+        .split(".")
+        .pop()
+        .toLowerCase()
+    : "bin";
+
+
+    const nombreArchivo =
+    tipo
+    + "_"
+    + Date.now()
+    + "."
+    + extension;
+
+
+    const ruta =
+    vehiculoActual.patente
+    + "/"
+    + nombreArchivo;
+
+
+    mostrarMensajeDocumento(
+        "Subiendo documento...",
+        true
+    );
+
+
+    const {
+        error:uploadError
+    } = await supabaseClient
+    .storage
+    .from("documentos")
+    .upload(
+        ruta,
+        archivo,
+        {
+            contentType:
+            archivo.type ||
+            "application/octet-stream",
+
+            upsert:false
+        }
+    );
+
+
+    if(uploadError){
+
+        console.error(uploadError);
+
+        mostrarMensajeDocumento(
+            "Error al subir: "
+            + uploadError.message,
+            false
+        );
+
+        return;
+    }
+
+
+    // REGISTRAR EN LA TABLA
+
+    const {
+        error:dbError
+    } = await supabaseClient
+    .from("documentos")
+    .insert({
+
+        vehiculo_id:
+        vehiculoActual.id,
+
+        tipo:tipo,
+
+        nombre:archivo.name,
+
+        archivo:ruta,
+
+        protegido:false
+
+    });
+
+
+    if(dbError){
+
+        console.error(dbError);
+
+
+        // Si se subió pero falló el registro,
+        // intentamos borrar el archivo.
+
+        await supabaseClient
+        .storage
+        .from("documentos")
+        .remove([ruta]);
+
+
+        mostrarMensajeDocumento(
+            "El archivo se subió, pero no pudo registrarse en la base de datos: "
+            + dbError.message,
+            false
+        );
+
+        return;
+    }
+
+
+    mostrarMensajeDocumento(
+        nombreTipo
+        + " subido correctamente.",
+        true
+    );
+
+
+    cargarDocumentos();
+
+}
+
+
+// VER DOCUMENTO
+
+function verDocumento(ruta){
+
+    const {
+        data
+    } =
+    supabaseClient
+    .storage
+    .from("documentos")
+    .getPublicUrl(ruta);
+
+
+    if(data && data.publicUrl){
+
+        window.open(
+            data.publicUrl,
+            "_blank"
+        );
+
+    }
+
+}
+
+
+// ELIMINAR DOCUMENTO
+
+async function eliminarDocumento(
+    id,
+    ruta
+){
+
+    const confirmar =
+    confirm(
+        "¿Eliminar este documento?"
+    );
+
+
+    if(!confirmar)
+        return;
+
+
+    const {
+        error:dbError
+    } = await supabaseClient
+    .from("documentos")
+    .delete()
+    .eq("id",id);
+
+
+    if(dbError){
+
+        mostrarMensajeDocumento(
+            "No se pudo eliminar el registro: "
+            + dbError.message,
+            false
+        );
+
+        return;
+    }
+
+
+    const {
+        error:storageError
+    } = await supabaseClient
+    .storage
+    .from("documentos")
+    .remove([ruta]);
+
+
+    if(storageError){
+
+        console.error(storageError);
+
+        mostrarMensajeDocumento(
+            "El registro fue eliminado, pero el archivo no pudo eliminarse.",
+            false
+        );
+
+    }else{
+
+        mostrarMensajeDocumento(
+            "Documento eliminado.",
+            true
+        );
+
+    }
+
+
+    cargarDocumentos();
+
+}
+
+
+// MENSAJE DOCUMENTOS
+
+function mostrarMensajeDocumento(
+    texto,
+    exito
+){
+
+    const elemento =
+    document.getElementById(
+        "mensajeDocumentos"
+    );
+
+
+    if(exito){
+
+        elemento.innerHTML =
+        `<div class="success">${texto}</div>`;
+
+    }else{
+
+        elemento.innerHTML =
+        `<div class="error">${texto}</div>`;
+
+    }
+
+}
+
+
+// VOLVER AL PANEL
+
+function volverPanel(){
+
+    vehiculoActual=null;
+
+
+    document
+    .getElementById("vistaDocumentos")
+    .classList.add("hidden");
+
+
+    document
+    .getElementById("vistaPanel")
+    .classList.remove("hidden");
+
+
+    document
+    .getElementById("mensajeDocumentos")
+    .innerHTML="";
+
+}
+
+
+// VER PERFIL
+
+function verPerfil(vehiculo){
+
+    const url =
+    "index.html?patente="
+    + encodeURIComponent(
+        vehiculo.patente
+    );
+
+
+    window.location.href=url;
+
+}
+
+
+// CERRAR SESION
 
 async function cerrarSesion(){
 
     await supabaseClient
-        .auth
-        .signOut();
+    .auth
+    .signOut();
 
-
-    window.location.href =
-        "admin.html";
+    window.location.href="admin.html";
 
 }
 
 
-/* =========================================
-   MENSAJES
-========================================= */
+// INICIAR
 
-function mostrarError(
-    texto
-){
+async function iniciar(){
 
-    const elemento =
-        document.getElementById(
-            "error"
-        );
+    const {
+        data:sessionData
+    } =
+    await supabaseClient
+    .auth
+    .getSession();
 
 
-    elemento.innerText =
-        texto;
+    if(!sessionData.session){
+
+        window.location.href="admin.html";
+
+        return;
+    }
 
 
-    elemento.style.display =
-        "block";
-
-}
-
-
-function mostrarExito(
-    texto
-){
-
-    const elemento =
-        document.getElementById(
-            "success"
-        );
+    const {
+        data:userData
+    } =
+    await supabaseClient
+    .auth
+    .getUser();
 
 
-    elemento.innerText =
-        texto;
+    if(!userData.user){
+
+        window.location.href="admin.html";
+
+        return;
+    }
 
 
-    elemento.style.display =
-        "block";
+    cargarVehiculos();
 
 }
 
 
-function ocultarMensajes(){
+// INICIAR APP
 
-    document.getElementById(
-        "error"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "success"
-    ).style.display =
-        "none";
-
-}
-
-
-/* =========================================
-   SEGURIDAD HTML
-========================================= */
-
-function escapeHTML(
-    texto
-){
-
-    return String(texto)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
+iniciar();
 
 </script>
 
