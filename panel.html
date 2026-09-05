@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
 <title>NexumID - Panel</title>
 
@@ -216,16 +221,23 @@ label{
 
 .pin-box{
     margin-top:15px;
-    padding:15px;
+    padding:18px;
     background:#080d13;
     border:1px solid #1595ff;
     border-radius:12px;
     text-align:center;
 }
 
+.pin-label{
+    display:block;
+    color:#9da8b8;
+    font-size:14px;
+    letter-spacing:2px;
+}
+
 .pin-number{
     display:block;
-    font-size:34px;
+    font-size:38px;
     font-weight:bold;
     letter-spacing:8px;
     color:white;
@@ -233,157 +245,239 @@ label{
 }
 
 </style>
+
 </head>
+
 
 <body>
 
 <div class="container">
 
-    <!-- HEADER -->
 
-    <div class="header">
+<!-- HEADER -->
 
-        <div>
-            <div class="logo">
-                NEXUM<span>ID</span>
-            </div>
+<div class="header">
 
-            <div class="subtitle">
-                IDENTIDAD DIGITAL VEHICULAR
-            </div>
+    <div>
+
+        <div class="logo">
+            NEXUM<span>ID</span>
         </div>
 
-        <button class="btn-secondary" onclick="cerrarSesion()">
-            SALIR
-        </button>
+        <div class="subtitle">
+            IDENTIDAD DIGITAL VEHICULAR
+        </div>
 
     </div>
 
 
-    <!-- PANEL PRINCIPAL -->
+    <button
+        class="btn-secondary"
+        onclick="cerrarSesion()">
 
-    <div id="vistaPanel">
+        SALIR
 
-        <h1>Panel de Administración</h1>
+    </button>
 
-        <div id="mensaje"></div>
+</div>
+
+
+
+<!-- PANEL PRINCIPAL -->
+
+<div id="vistaPanel">
+
+    <h1>
+        Panel de Administración
+    </h1>
+
+
+    <div id="mensaje"></div>
+
+
+    <button
+        class="btn-primary"
+        onclick="mostrarFormulario()">
+
+        + NUEVO VEHÍCULO
+
+    </button>
+
+
+
+    <!-- FORMULARIO VEHICULO -->
+
+    <div
+        id="formularioVehiculo"
+        class="form-card hidden">
+
+
+        <h2 style="margin-top:0;">
+
+            Nuevo vehículo
+
+        </h2>
+
+
+        <label>
+            Patente
+        </label>
+
+        <input
+            id="patente"
+            type="text"
+            placeholder="AB-CD-12">
+
+
+
+        <label>
+            Marca
+        </label>
+
+        <input
+            id="marca"
+            type="text"
+            placeholder="Chevrolet">
+
+
+
+        <label>
+            Modelo
+        </label>
+
+        <input
+            id="modelo"
+            type="text"
+            placeholder="Sail">
+
+
+
+        <label>
+            Año
+        </label>
+
+        <input
+            id="anio"
+            type="number"
+            placeholder="2020">
+
+
+
+        <label>
+            Color
+        </label>
+
+        <input
+            id="color"
+            type="text"
+            placeholder="Blanco">
+
+
+
+        <label>
+            Contacto de emergencia
+        </label>
+
+        <input
+            id="contacto"
+            type="text"
+            placeholder="+56912345678">
+
+
 
         <button
             class="btn-primary"
-            onclick="mostrarFormulario()">
-            + NUEVO VEHÍCULO
+            onclick="crearVehiculo()">
+
+            CREAR VEHÍCULO
+
         </button>
 
 
-        <!-- FORMULARIO VEHICULO -->
-
-        <div
-            id="formularioVehiculo"
-            class="form-card hidden">
-
-            <h2 style="margin-top:0;">
-                Nuevo vehículo
-            </h2>
-
-            <label>Patente</label>
-            <input
-                id="patente"
-                type="text"
-                placeholder="AB-CD-12">
-
-            <label>Marca</label>
-            <input
-                id="marca"
-                type="text"
-                placeholder="Chevrolet">
-
-            <label>Modelo</label>
-            <input
-                id="modelo"
-                type="text"
-                placeholder="Sail">
-
-            <label>Año</label>
-            <input
-                id="anio"
-                type="number"
-                placeholder="2020">
-
-            <label>Color</label>
-            <input
-                id="color"
-                type="text"
-                placeholder="Blanco">
-
-            <label>Contacto de emergencia</label>
-            <input
-                id="contacto"
-                type="text"
-                placeholder="+56912345678">
-
-            <button
-                class="btn-primary"
-                onclick="crearVehiculo()">
-                CREAR VEHÍCULO
-            </button>
-
-            <br><br>
-
-            <button
-                class="btn-secondary"
-                style="width:100%;"
-                onclick="ocultarFormulario()">
-                CANCELAR
-            </button>
-
-        </div>
+        <br>
+        <br>
 
 
-        <h2>Vehículos registrados</h2>
+        <button
+            class="btn-secondary"
+            style="width:100%;"
+            onclick="ocultarFormulario()">
 
-        <div id="listaVehiculos">
+            CANCELAR
 
-            <div class="loading">
-                Cargando vehículos...
-            </div>
-
-        </div>
+        </button>
 
     </div>
 
 
-    <!-- VISTA DOCUMENTOS -->
 
-    <div
-        id="vistaDocumentos"
-        class="hidden">
+    <h2>
+        Vehículos registrados
+    </h2>
 
-        <button
-            class="btn-secondary back"
-            onclick="volverPanel()">
-            ← VOLVER
-        </button>
 
-        <h1>Documentos</h1>
+    <div id="listaVehiculos">
 
-        <div id="infoVehiculo"></div>
-
-        <div id="mensajeDocumentos"></div>
-
-        <div id="listaDocumentos"></div>
+        <div class="loading">
+            Cargando vehículos...
+        </div>
 
     </div>
 
 </div>
 
 
+
+<!-- VISTA DOCUMENTOS -->
+
+<div
+    id="vistaDocumentos"
+    class="hidden">
+
+
+    <button
+        class="btn-secondary back"
+        onclick="volverPanel()">
+
+        ← VOLVER
+
+    </button>
+
+
+    <h1>
+        Documentos
+    </h1>
+
+
+    <div id="infoVehiculo"></div>
+
+
+    <div id="mensajeDocumentos"></div>
+
+
+    <div id="listaDocumentos"></div>
+
+</div>
+
+
+</div>
+
+
+
 <script>
+
+
+// ==================================================
+// SUPABASE
+// ==================================================
 
 const SUPABASE_URL =
 "https://tkrugleneazdeqhxxkvr.supabase.co";
 
+
 const SUPABASE_KEY =
 "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
+
 
 const supabaseClient =
 supabase.createClient(
@@ -392,7 +486,10 @@ supabase.createClient(
 );
 
 
+
+// ==================================================
 // TIPOS DE DOCUMENTOS
+// ==================================================
 
 const tiposDocumentos = [
 
@@ -424,29 +521,46 @@ const tiposDocumentos = [
 ];
 
 
+
+// ==================================================
 // VEHICULO ACTUAL
+// ==================================================
 
 let vehiculoActual = null;
 
 
+
+// ==================================================
 // MENSAJES
+// ==================================================
 
 function mostrarExito(texto){
 
     document.getElementById("mensaje").innerHTML =
-    `<div class="success">${texto}</div>`;
+
+    `<div class="success">
+        ${texto}
+    </div>`;
 
 }
+
+
 
 function mostrarError(texto){
 
     document.getElementById("mensaje").innerHTML =
-    `<div class="error">${texto}</div>`;
+
+    `<div class="error">
+        ${texto}
+    </div>`;
 
 }
 
 
+
+// ==================================================
 // FORMULARIO
+// ==================================================
 
 function mostrarFormulario(){
 
@@ -455,6 +569,8 @@ function mostrarFormulario(){
     .classList.remove("hidden");
 
 }
+
+
 
 function ocultarFormulario(){
 
@@ -465,15 +581,20 @@ function ocultarFormulario(){
 }
 
 
+
+// ==================================================
 // GENERAR HASH SHA-256
+// ==================================================
 
 async function generarHashSHA256(texto){
 
     const encoder =
     new TextEncoder();
 
+
     const datos =
     encoder.encode(texto);
+
 
     const hashBuffer =
     await crypto.subtle.digest(
@@ -481,10 +602,12 @@ async function generarHashSHA256(texto){
         datos
     );
 
+
     const hashArray =
     Array.from(
         new Uint8Array(hashBuffer)
     );
+
 
     return hashArray
     .map(
@@ -498,55 +621,86 @@ async function generarHashSHA256(texto){
 }
 
 
+
+// ==================================================
 // CREAR VEHICULO
+// ==================================================
 
 async function crearVehiculo(){
 
+
+    // ----------------------------------------------
+    // COMPROBAR SESION
+    // ----------------------------------------------
+
     const {
         data: sessionData
-    } = await supabaseClient.auth.getSession();
+    } =
+    await supabaseClient.auth.getSession();
 
 
     if(!sessionData.session){
 
         alert("La sesión expiró.");
-        window.location.href="admin.html";
+
+        window.location.href =
+        "admin.html";
 
         return;
-
     }
 
 
+
+    // ----------------------------------------------
+    // OBTENER DATOS
+    // ----------------------------------------------
+
     const patente =
-    document.getElementById("patente")
+    document
+    .getElementById("patente")
     .value
     .trim()
     .toUpperCase();
 
+
     const marca =
-    document.getElementById("marca")
+    document
+    .getElementById("marca")
     .value
     .trim();
+
 
     const modelo =
-    document.getElementById("modelo")
+    document
+    .getElementById("modelo")
     .value
     .trim();
+
 
     const anio =
-    document.getElementById("anio")
+    document
+    .getElementById("anio")
     .value;
 
+
     const color =
-    document.getElementById("color")
+    document
+    .getElementById("color")
     .value
     .trim();
+
 
     const contacto =
-    document.getElementById("contacto")
+    document
+    .getElementById("contacto")
     .value
     .trim();
 
+
+
+    // ----------------------------------------------
+    // VALIDAR
+    // ----------------------------------------------
 
     if(
         !patente ||
@@ -564,22 +718,29 @@ async function crearVehiculo(){
     }
 
 
-    // ==========================================
-    // CREAR VEHÍCULO
-    // ==========================================
+
+    // ----------------------------------------------
+    // CREAR VEHICULO
+    // ----------------------------------------------
 
     const {
         data: vehiculo,
         error: vehiculoError
-    } = await supabaseClient
+    } =
+    await supabaseClient
     .from("vehiculos")
     .insert({
 
         patente:patente,
+
         marca:marca,
+
         modelo:modelo,
+
         anio:parseInt(anio),
+
         color:color,
+
         contacto_emergencia:contacto
 
     })
@@ -587,9 +748,14 @@ async function crearVehiculo(){
     .single();
 
 
+
     if(vehiculoError){
 
-        console.error(vehiculoError);
+        console.error(
+            "Error creando vehículo:",
+            vehiculoError
+        );
+
 
         mostrarError(
             "No se pudo crear el vehículo: "
@@ -600,37 +766,70 @@ async function crearVehiculo(){
     }
 
 
-    // ==========================================
-    // GENERAR PIN DE 4 DIGITOS
-    // ==========================================
+
+    // ----------------------------------------------
+    // GENERAR PIN
+    // ----------------------------------------------
 
     const pin =
+
     Math.floor(
-        1000 + Math.random() * 9000
+        1000 +
+        Math.random() * 9000
     ).toString();
 
 
-    // ==========================================
+
+    // ----------------------------------------------
     // GENERAR HASH
-    // ==========================================
+    // ----------------------------------------------
 
-    const pinHash =
-    await generarHashSHA256(pin);
+    let pinHash;
+
+    try{
+
+        pinHash =
+        await generarHashSHA256(pin);
+
+    }catch(error){
+
+        console.error(
+            "Error generando hash:",
+            error
+        );
 
 
-    // ==========================================
+        await supabaseClient
+        .from("vehiculos")
+        .delete()
+        .eq("id",vehiculo.id);
+
+
+        mostrarError(
+            "No se pudo generar el PIN."
+        );
+
+        return;
+    }
+
+
+
+    // ----------------------------------------------
     // GUARDAR ACCESO
-    // ==========================================
+    // ----------------------------------------------
 
     const {
         error: accesoError
-    } = await supabaseClient
+    } =
+    await supabaseClient
     .from("vehiculo_acceso")
     .insert({
 
-        vehiculo_id:vehiculo.id,
+        vehiculo_id:
+        vehiculo.id,
 
-        pin_hash:pinHash,
+        pin_hash:
+        pinHash,
 
         intentos:0,
 
@@ -639,22 +838,39 @@ async function crearVehiculo(){
     });
 
 
-    // ==========================================
-    // SI FALLA EL ACCESO
-    // ==========================================
+
+    // ----------------------------------------------
+    // SI FALLA EL PIN
+    // ----------------------------------------------
 
     if(accesoError){
 
-        console.error(accesoError);
+        console.error(
+            "Error creando acceso:",
+            accesoError
+        );
 
 
-        // Intentar eliminar el vehículo
-        // para no dejarlo sin PIN.
+        // Intentamos eliminar el vehículo
+        // para no dejar un vehículo sin PIN.
 
+        const {
+            error:rollbackError
+        } =
         await supabaseClient
         .from("vehiculos")
         .delete()
         .eq("id",vehiculo.id);
+
+
+        if(rollbackError){
+
+            console.error(
+                "Error eliminando vehículo:",
+                rollbackError
+            );
+
+        }
 
 
         mostrarError(
@@ -666,11 +882,14 @@ async function crearVehiculo(){
     }
 
 
-    // ==========================================
-    // MOSTRAR RESULTADO
-    // ==========================================
 
-    document.getElementById("mensaje").innerHTML = `
+    // ----------------------------------------------
+    // MOSTRAR PIN
+    // ----------------------------------------------
+
+    document
+    .getElementById("mensaje")
+    .innerHTML = `
 
         <div class="success">
 
@@ -678,9 +897,13 @@ async function crearVehiculo(){
                 Vehículo creado correctamente.
             </strong>
 
+
             <div class="pin-box">
 
-                PIN DE ACCESO
+                <span class="pin-label">
+                    PIN DE ACCESO
+                </span>
+
 
                 <span class="pin-number">
                     ${pin}
@@ -688,7 +911,9 @@ async function crearVehiculo(){
 
             </div>
 
+
             <br>
+
 
             Guarda este PIN para entregárselo
             al propietario del vehículo.
@@ -698,91 +923,324 @@ async function crearVehiculo(){
     `;
 
 
-    // ==========================================
-    // LIMPIAR FORMULARIO
-    // ==========================================
 
-    document.getElementById("patente").value="";
-    document.getElementById("marca").value="";
-    document.getElementById("modelo").value="";
-    document.getElementById("anio").value="";
-    document.getElementById("color").value="";
-    document.getElementById("contacto").value="";
+    // ----------------------------------------------
+    // LIMPIAR FORMULARIO
+    // ----------------------------------------------
+
+    document
+    .getElementById("patente")
+    .value = "";
+
+
+    document
+    .getElementById("marca")
+    .value = "";
+
+
+    document
+    .getElementById("modelo")
+    .value = "";
+
+
+    document
+    .getElementById("anio")
+    .value = "";
+
+
+    document
+    .getElementById("color")
+    .value = "";
+
+
+    document
+    .getElementById("contacto")
+    .value = "";
+
 
 
     ocultarFormulario();
+
 
     cargarVehiculos();
 
 }
 
 
+
+// ==================================================
 // CARGAR VEHICULOS
+// ==================================================
 
 async function cargarVehiculos(){
 
-    const {
-        data,
-        error
-    } = await supabaseClient
-    .from("vehiculos")
-    .select("*")
-    .order(
-        "created_at",
-        {ascending:false}
+
+    const contenedor =
+    document.getElementById(
+        "listaVehiculos"
     );
 
 
-    const contenedor =
-    document.getElementById("listaVehiculos");
+    try{
 
 
-    if(error){
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+        .from("vehiculos")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+
+        if(error){
+
+            console.error(error);
+
+
+            contenedor.innerHTML =
+
+            `<div class="error">
+
+                Error al cargar vehículos:<br>
+
+                ${escapeHtml(error.message)}
+
+            </div>`;
+
+            return;
+        }
+
+
+
+        if(!data || data.length===0){
+
+            contenedor.innerHTML =
+
+            `<div class="loading">
+
+                Todavía no hay vehículos registrados.
+
+            </div>`;
+
+            return;
+        }
+
+
+
+        contenedor.innerHTML = "";
+
+
+
+        data.forEach(
+            vehiculo => {
+
+                const div =
+                document.createElement("div");
+
+
+                div.className =
+                "vehicle";
+
+
+                div.innerHTML = `
+
+                    <div class="vehicle-patente">
+
+                        ${escapeHtml(
+                            vehiculo.patente
+                        )}
+
+                    </div>
+
+
+                    <div class="vehicle-name">
+
+                        ${escapeHtml(
+                            vehiculo.marca
+                        )}
+
+                        ${escapeHtml(
+                            vehiculo.modelo
+                        )}
+
+                    </div>
+
+
+                    <div class="vehicle-info">
+
+                        Año:
+                        ${vehiculo.anio}
+
+                        <br>
+
+                        Color:
+                        ${escapeHtml(
+                            vehiculo.color
+                        )}
+
+                    </div>
+
+
+                    <div class="vehicle-buttons">
+
+
+                        <button
+                            class="btn-blue"
+                            onclick='abrirDocumentos(${JSON.stringify(vehiculo)})'>
+
+                            DOCUMENTOS
+
+                        </button>
+
+
+                        <button
+                            class="btn-secondary"
+                            onclick='verPerfil(${JSON.stringify(vehiculo)})'>
+
+                            VER PERFIL
+
+                        </button>
+
+
+                    </div>
+
+                `;
+
+
+                contenedor.appendChild(div);
+
+            }
+        );
+
+    }catch(error){
 
         console.error(error);
 
+
         contenedor.innerHTML =
+
         `<div class="error">
-        Error al cargar vehículos:<br>
-        ${error.message}
+
+            Error inesperado al cargar vehículos.
+
         </div>`;
 
-        return;
+    }
+
+}
+
+
+
+// ==================================================
+// ESCAPAR HTML
+// ==================================================
+
+function escapeHtml(text){
+
+    if(
+        text === null ||
+        text === undefined
+    ){
+
+        return "";
+
     }
 
 
-    if(!data || data.length===0){
+    return String(text)
 
-        contenedor.innerHTML =
-        `<div class="loading">
-        Todavía no hay vehículos registrados.
-        </div>`;
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
 
-        return;
-    }
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
 
 
-    contenedor.innerHTML="";
+
+// ==================================================
+// ABRIR DOCUMENTOS
+// ==================================================
+
+async function abrirDocumentos(
+    vehiculo
+){
+
+    vehiculoActual =
+    vehiculo;
 
 
-    data.forEach(vehiculo=>{
+    document
+    .getElementById(
+        "vistaPanel"
+    )
+    .classList.add("hidden");
 
-        const div =
-        document.createElement("div");
 
-        div.className="vehicle";
+    document
+    .getElementById(
+        "vistaDocumentos"
+    )
+    .classList.remove("hidden");
 
 
-        div.innerHTML=`
+    document
+    .getElementById(
+        "infoVehiculo"
+    )
+    .innerHTML = `
+
+        <div class="vehicle">
 
             <div class="vehicle-patente">
-                ${escapeHtml(vehiculo.patente)}
+
+                ${escapeHtml(
+                    vehiculo.patente
+                )}
+
             </div>
 
+
             <div class="vehicle-name">
-                ${escapeHtml(vehiculo.marca)}
-                ${escapeHtml(vehiculo.modelo)}
+
+                ${escapeHtml(
+                    vehiculo.marca
+                )}
+
+                ${escapeHtml(
+                    vehiculo.modelo
+                )}
+
             </div>
+
 
             <div class="vehicle-info">
 
@@ -792,90 +1250,9 @@ async function cargarVehiculos(){
                 <br>
 
                 Color:
-                ${escapeHtml(vehiculo.color)}
-
-            </div>
-
-            <div class="vehicle-buttons">
-
-                <button
-                    class="btn-blue"
-                    onclick='abrirDocumentos(${JSON.stringify(vehiculo)})'>
-                    DOCUMENTOS
-                </button>
-
-                <button
-                    class="btn-secondary"
-                    onclick='verPerfil(${JSON.stringify(vehiculo)})'>
-                    VER PERFIL
-                </button>
-
-            </div>
-
-        `;
-
-
-        contenedor.appendChild(div);
-
-    });
-
-}
-
-
-// ESCAPAR HTML
-
-function escapeHtml(text){
-
-    if(text===null || text===undefined)
-        return "";
-
-    return String(text)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-
-// ABRIR DOCUMENTOS
-
-async function abrirDocumentos(vehiculo){
-
-    vehiculoActual=vehiculo;
-
-
-    document
-    .getElementById("vistaPanel")
-    .classList.add("hidden");
-
-
-    document
-    .getElementById("vistaDocumentos")
-    .classList.remove("hidden");
-
-
-    document
-    .getElementById("infoVehiculo")
-    .innerHTML=`
-
-        <div class="vehicle">
-
-            <div class="vehicle-patente">
-                ${escapeHtml(vehiculo.patente)}
-            </div>
-
-            <div class="vehicle-name">
-                ${escapeHtml(vehiculo.marca)}
-                ${escapeHtml(vehiculo.modelo)}
-            </div>
-
-            <div class="vehicle-info">
-
-                Año: ${vehiculo.anio}
-                <br>
-                Color: ${escapeHtml(vehiculo.color)}
+                ${escapeHtml(
+                    vehiculo.color
+                )}
 
             </div>
 
@@ -889,24 +1266,34 @@ async function abrirDocumentos(vehiculo){
 }
 
 
+
+// ==================================================
 // CARGAR DOCUMENTOS
+// ==================================================
 
 async function cargarDocumentos(){
 
     const contenedor =
-    document.getElementById("listaDocumentos");
+    document.getElementById(
+        "listaDocumentos"
+    );
 
 
     contenedor.innerHTML =
+
     `<div class="loading">
-    Cargando documentos...
+
+        Cargando documentos...
+
     </div>`;
+
 
 
     const {
         data,
         error
-    } = await supabaseClient
+    } =
+    await supabaseClient
     .from("documentos")
     .select("*")
     .eq(
@@ -915,289 +1302,60 @@ async function cargarDocumentos(){
     );
 
 
+
     if(error){
 
         console.error(error);
 
+
         contenedor.innerHTML =
+
         `<div class="error">
-        Error al cargar documentos:<br>
-        ${error.message}
+
+            Error al cargar documentos:<br>
+
+            ${escapeHtml(
+                error.message
+            )}
+
         </div>`;
 
         return;
     }
 
 
-    contenedor.innerHTML="";
 
+    contenedor.innerHTML = "";
 
-    tiposDocumentos.forEach(tipo=>{
 
-        const documentos =
-        data.filter(
-            d => d.tipo === tipo.tipo
-        );
 
+    tiposDocumentos.forEach(
+        tipo => {
 
-        const documento =
-        documentos.length
-        ? documentos[0]
-        : null;
 
+            const documentos =
+            data.filter(
+                d =>
+                d.tipo === tipo.tipo
+            );
 
-        const div =
-        document.createElement("div");
 
-        div.className="doc-card";
+            const documento =
+            documentos.length
+            ? documentos[0]
+            : null;
 
 
-        let contenido="";
+            const div =
+            document.createElement("div");
 
 
-        if(documento){
+            div.className =
+            "doc-card";
 
-            contenido=`
 
-                <div class="doc-title">
-                    ${tipo.nombre}
-                </div>
+            let contenido = "";
 
-                <div class="doc-status">
 
-                    ✓ ${escapeHtml(documento.nombre)}
 
-                </div>
-
-                <div class="doc-actions">
-
-                    <button
-                        class="btn-blue"
-                        onclick="verDocumento('${escapeHtml(documento.archivo)}')">
-                        VER DOCUMENTO
-                    </button>
-
-                    <button
-                        class="btn-danger"
-                        onclick="eliminarDocumento('${documento.id}','${escapeHtml(documento.archivo)}')">
-                        ELIMINAR
-                    </button>
-
-                </div>
-
-            `;
-
-        }else{
-
-            contenido=`
-
-                <div class="doc-title">
-                    ${tipo.nombre}
-                </div>
-
-                <div class="doc-status">
-                    Sin documento
-                </div>
-
-                <div class="doc-actions">
-
-                    <input
-                        type="file"
-                        class="file-input"
-                        id="archivo_${tipo.tipo}">
-
-                    <button
-                        class="btn-primary"
-                        onclick="subirDocumento('${tipo.tipo}','${tipo.nombre}')">
-
-                        SUBIR DOCUMENTO
-
-                    </button>
-
-                </div>
-
-            `;
-
-        }
-
-
-        div.innerHTML=contenido;
-
-        contenedor.appendChild(div);
-
-    });
-
-}
-
-
-// SUBIR DOCUMENTO
-
-async function subirDocumento(tipo,nombreTipo){
-
-    const input =
-    document.getElementById(
-        "archivo_"+tipo
-    );
-
-
-    if(!input || !input.files.length){
-
-        mostrarMensajeDocumento(
-            "Selecciona un archivo primero.",
-            false
-        );
-
-        return;
-    }
-
-
-    const archivo =
-    input.files[0];
-
-
-    if(archivo.size > 6 * 1024 * 1024){
-
-        mostrarMensajeDocumento(
-            "El archivo supera 6 MB. Para esta primera versión usaremos archivos pequeños.",
-            false
-        );
-
-        return;
-    }
-
-
-    const extension =
-    archivo.name.includes(".")
-    ? archivo.name
-        .split(".")
-        .pop()
-        .toLowerCase()
-    : "bin";
-
-
-    const nombreArchivo =
-    tipo
-    + "_"
-    + Date.now()
-    + "."
-    + extension;
-
-
-    const ruta =
-    vehiculoActual.patente
-    + "/"
-    + nombreArchivo;
-
-
-    mostrarMensajeDocumento(
-        "Subiendo documento...",
-        true
-    );
-
-
-    const {
-        error:uploadError
-    } = await supabaseClient
-    .storage
-    .from("documentos")
-    .upload(
-        ruta,
-        archivo,
-        {
-            contentType:
-            archivo.type ||
-            "application/octet-stream",
-
-            upsert:false
-        }
-    );
-
-
-    if(uploadError){
-
-        console.error(uploadError);
-
-        mostrarMensajeDocumento(
-            "Error al subir: "
-            + uploadError.message,
-            false
-        );
-
-        return;
-    }
-
-
-    // REGISTRAR EN LA TABLA
-
-    const {
-        error:dbError
-    } = await supabaseClient
-    .from("documentos")
-    .insert({
-
-        vehiculo_id:
-        vehiculoActual.id,
-
-        tipo:tipo,
-
-        nombre:archivo.name,
-
-        archivo:ruta,
-
-        protegido:false
-
-    });
-
-
-    if(dbError){
-
-        console.error(dbError);
-
-
-        await supabaseClient
-        .storage
-        .from("documentos")
-        .remove([ruta]);
-
-
-        mostrarMensajeDocumento(
-            "El archivo se subió, pero no pudo registrarse en la base de datos: "
-            + dbError.message,
-            false
-        );
-
-        return;
-    }
-
-
-    mostrarMensajeDocumento(
-        nombreTipo
-        + " subido correctamente.",
-        true
-    );
-
-
-    cargarDocumentos();
-
-}
-
-
-// VER DOCUMENTO
-
-function verDocumento(ruta){
-
-    const {
-        data
-    } =
-    supabaseClient
-    .storage
-    .from("documentos")
-    .getPublicUrl(ruta);
-
-
-    if(data && data.publicUrl){
-
-        window.open(
-            data.publicUrl,
-            "_blank"
-       
+          
