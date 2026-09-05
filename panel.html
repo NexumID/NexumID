@@ -472,11 +472,6 @@ async function iniciar(){
 
     try{
 
-        /*
-         * Obtener sesión actual.
-         * Supabase puede refrescarla si corresponde.
-         */
-
         const {
             data,
             error
@@ -498,10 +493,6 @@ async function iniciar(){
             return;
         }
 
-
-        /*
-         * Confirmar usuario autenticado.
-         */
 
         const {
             data: userData,
@@ -528,10 +519,6 @@ async function iniciar(){
             return;
         }
 
-
-        /*
-         * Sesión correcta.
-         */
 
         cargarVehiculos();
 
@@ -591,7 +578,8 @@ async function cargarVehiculos(){
 
 
         mostrarError(
-            "No se pudieron cargar los vehículos."
+            "No se pudieron cargar los vehículos: "
+            + error.message
         );
 
 
@@ -712,9 +700,22 @@ async function crearVehiculo(){
     ocultarMensajes();
 
 
+    const boton =
+        document.querySelector(
+            ".save-button"
+        );
+
+
     /*
-     * 1. COMPROBAR SESIÓN
+     * COMPROBAR SESIÓN
      */
+
+    boton.disabled =
+        true;
+
+    boton.innerText =
+        "COMPROBANDO...";
+
 
     const {
         data: sessionData,
@@ -730,6 +731,13 @@ async function crearVehiculo(){
         !sessionData ||
         !sessionData.session
     ){
+
+        boton.disabled =
+            false;
+
+        boton.innerText =
+            "CREAR VEHÍCULO";
+
 
         mostrarError(
             "La sesión expiró. Ingresa nuevamente."
@@ -752,7 +760,7 @@ async function crearVehiculo(){
 
 
     /*
-     * 2. DATOS
+     * DATOS
      */
 
     const patente =
@@ -799,7 +807,7 @@ async function crearVehiculo(){
 
 
     /*
-     * 3. VALIDAR
+     * VALIDACIÓN
      */
 
     if(
@@ -809,38 +817,35 @@ async function crearVehiculo(){
         !anio
     ){
 
+        boton.disabled =
+            false;
+
+        boton.innerText =
+            "CREAR VEHÍCULO";
+
+
         mostrarError(
             "Completa patente, marca, modelo y año."
         );
+
 
         return;
     }
 
 
     /*
-     * 4. BOTÓN
+     * INSERT
+     *
+     * IMPORTANTE:
+     * NO usamos .select()
+     * NO usamos .single()
      */
-
-    const boton =
-        document.querySelector(
-            ".save-button"
-        );
-
-
-    boton.disabled =
-        true;
-
 
     boton.innerText =
         "GUARDANDO...";
 
 
-    /*
-     * 5. INSERTAR
-     */
-
     const {
-        data,
         error
     } =
     await supabaseClient
@@ -868,25 +873,22 @@ async function crearVehiculo(){
         contacto_emergencia:
             contacto
 
-    })
-    .select()
-    .single();
+    });
 
 
     /*
-     * 6. RESTAURAR BOTÓN
+     * RESTAURAR BOTÓN
      */
 
     boton.disabled =
         false;
-
 
     boton.innerText =
         "CREAR VEHÍCULO";
 
 
     /*
-     * 7. ERROR
+     * ERROR
      */
 
     if(error){
@@ -908,7 +910,7 @@ async function crearVehiculo(){
 
 
     /*
-     * 8. ÉXITO
+     * ÉXITO
      */
 
     mostrarExito(
@@ -916,23 +918,9 @@ async function crearVehiculo(){
     );
 
 
-    /*
-     * 9. LIMPIAR
-     */
-
     limpiarFormulario();
 
-
-    /*
-     * 10. CERRAR FORMULARIO
-     */
-
     ocultarFormulario();
-
-
-    /*
-     * 11. ACTUALIZAR LISTA
-     */
 
     cargarVehiculos();
 
