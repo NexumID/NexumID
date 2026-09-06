@@ -6,7 +6,6 @@
 <title>NexumID - Panel</title>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box}
@@ -224,7 +223,10 @@ input{
     <div class="sub">IDENTIDAD DIGITAL VEHICULAR</div>
   </div>
 
-  <button class="secondary" onclick="salir()">
+  <button
+    id="btnSalir"
+    class="secondary"
+    type="button">
     SALIR
   </button>
 
@@ -237,7 +239,10 @@ input{
 
   <div id="mensaje"></div>
 
-  <button class="primary" onclick="mostrarNuevo()">
+  <button
+    id="btnNuevo"
+    class="primary"
+    type="button">
     + NUEVO VEHÍCULO
   </button>
 
@@ -266,16 +271,20 @@ input{
     <label>Contacto de emergencia</label>
     <input id="contacto" placeholder="+56912345678">
 
-    <button class="primary" onclick="crearVehiculo()">
+    <button
+      id="btnCrear"
+      class="primary"
+      type="button">
       CREAR VEHÍCULO
     </button>
 
     <br><br>
 
     <button
+      id="btnCancelar"
       class="secondary"
       style="width:100%"
-      onclick="cancelarNuevo()">
+      type="button">
       CANCELAR
     </button>
 
@@ -297,8 +306,9 @@ input{
 <section id="vistaVehiculo" class="hidden">
 
   <button
+    id="btnVolver"
     class="secondary back"
-    onclick="volverLista()">
+    type="button">
     ← VOLVER A VEHÍCULOS
   </button>
 
@@ -319,6 +329,10 @@ input{
 
 <script>
 
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
+
 const URL =
  "https://tkrugleneazdeqhxxkvr.supabase.co";
 
@@ -331,22 +345,14 @@ const REST =
 const STORAGE =
  URL+"/storage/v1";
 
-
-/*
- * Cliente Supabase.
- */
-
-const supabaseClient =
- window.supabase.createClient(
-  URL,
-  KEY
- );
-
-
 let token = null;
 
 let vehiculoActual = null;
 
+
+/* =========================================================
+   TIPOS DE DOCUMENTOS
+========================================================= */
 
 const tipos = [
  ["soap","SOAP"],
@@ -357,6 +363,9 @@ const tipos = [
 ];
 
 
+/* =========================================================
+   ESCAPAR HTML
+========================================================= */
 
 function esc(x){
 
@@ -370,57 +379,91 @@ function esc(x){
 }
 
 
+/* =========================================================
+   OBTENER TOKEN
+========================================================= */
 
-/*
- * OBTENER SESIÓN DIRECTAMENTE DESDE SUPABASE
- */
+function obtenerToken(){
 
-async function obtenerToken(){
+ const almacenes = [
+  localStorage,
+  sessionStorage
+ ];
 
- try{
+ for(const storage of almacenes){
 
-  const resultado =
-   await supabaseClient.auth.getSession();
+  for(let i=0;i<storage.length;i++){
+
+   const key =
+    storage.key(i);
+
+   if(
+    !key ||
+    !key.includes("auth-token")
+   )
+    continue;
+
+   try{
+
+    const valor =
+     storage.getItem(key);
+
+    if(!valor)
+     continue;
+
+    const obj =
+     JSON.parse(valor);
 
 
-  if(
-   resultado.error ||
-   !resultado.data ||
-   !resultado.data.session
-  ){
+    if(
+     obj &&
+     obj.access_token
+    ){
 
-   return null;
+     return obj.access_token;
+
+    }
+
+
+    if(
+     obj &&
+     obj.currentSession &&
+     obj.currentSession.access_token
+    ){
+
+     return obj.currentSession.access_token;
+
+    }
+
+
+   }catch(e){
+
+    console.warn(
+     "No se pudo leer sesión:",
+     key
+    );
+
+   }
 
   }
 
-
-  return resultado.data.session.access_token;
-
- }catch(e){
-
-  console.error(
-   "Error obteniendo sesión:",
-   e
-  );
-
-  return null;
-
  }
+
+ return null;
 
 }
 
 
-
-/*
- * API
- */
+/* =========================================================
+   API SUPABASE
+========================================================= */
 
 async function api(url,opt={}){
 
  if(!token){
 
   token =
-   await obtenerToken();
+   obtenerToken();
 
  }
 
@@ -452,7 +495,7 @@ async function api(url,opt={}){
  );
 
 
- const r =
+ const respuesta =
   await fetch(
    url,
    {
@@ -462,8 +505,8 @@ async function api(url,opt={}){
   );
 
 
- const text =
-  await r.text();
+ const texto =
+  await respuesta.text();
 
 
  let data = null;
@@ -472,24 +515,24 @@ async function api(url,opt={}){
  try{
 
   data =
-   text
-    ? JSON.parse(text)
+   texto
+    ? JSON.parse(texto)
     : null;
 
  }catch(e){
 
-  data = text;
+  data = texto;
 
  }
 
 
- if(!r.ok){
+ if(!respuesta.ok){
 
   throw Error(
    data?.message ||
    data?.hint ||
    data?.details ||
-   "Error HTTP "+r.status
+   "Error HTTP "+respuesta.status
   );
 
  }
@@ -500,29 +543,65 @@ async function api(url,opt={}){
 }
 
 
+/* =========================================================
+   MENSAJES
+========================================================= */
 
-/*
- * NUEVO VEHÍCULO
- */
+function mensaje(
+ texto,
+ tipo="error"
+){
+
+ document
+  .getElementById("mensaje")
+  .innerHTML =
+   '<div class="'+
+   tipo+
+   '">'+
+   texto+
+   "</div>";
+
+}
+
+
+function mensajeDoc(
+ texto,
+ tipo="error"
+){
+
+ document
+  .getElementById("mensajeDocs")
+  .innerHTML =
+   '<div class="'+
+   tipo+
+   '">'+
+   esc(texto)+
+   "</div>";
+
+}
+
+
+/* =========================================================
+   NUEVO VEHÍCULO
+========================================================= */
 
 function mostrarNuevo(){
 
- document
-  .getElementById("formNuevo")
-  .classList
-  .remove("hidden");
+ const form =
+  document.getElementById(
+   "formNuevo"
+  );
 
+ form.classList.remove(
+  "hidden"
+ );
 
  window.scrollTo({
-  top:
-   document
-    .getElementById("formNuevo")
-    .offsetTop-20,
+  top:form.offsetTop-20,
   behavior:"smooth"
  });
 
 }
-
 
 
 function cancelarNuevo(){
@@ -535,61 +614,26 @@ function cancelarNuevo(){
 }
 
 
-
-/*
- * MENSAJES
- */
-
-function mensaje(
- text,
- tipo="error"
-){
-
- document
-  .getElementById("mensaje")
-  .innerHTML =
-   '<div class="'+
-   tipo+
-   '">'+
-   text+
-   "</div>";
-
-}
-
-
-
-function mensajeDoc(
- text,
- tipo="error"
-){
-
- document
-  .getElementById("mensajeDocs")
-  .innerHTML =
-   '<div class="'+
-   tipo+
-   '">'+
-   esc(text)+
-   "</div>";
-
-}
-
-
-
-/*
- * CARGAR VEHÍCULOS
- */
+/* =========================================================
+   CARGAR VEHÍCULOS
+========================================================= */
 
 async function cargarVehiculos(){
 
  const lista =
-  document.getElementById("lista");
+  document.getElementById(
+   "lista"
+  );
+
+
+ lista.innerHTML =
+  '<div class="loading">Cargando vehículos...</div>';
 
 
  try{
 
   token =
-   await obtenerToken();
+   obtenerToken();
 
 
   if(!token){
@@ -601,14 +645,17 @@ async function cargarVehiculos(){
   }
 
 
-  const vs =
+  const vehiculos =
    await api(
     REST+
     "/vehiculos?select=*&order=created_at.desc"
    );
 
 
-  if(!vs || !vs.length){
+  if(
+   !vehiculos ||
+   !vehiculos.length
+  ){
 
    lista.innerHTML =
     '<div class="loading">'+
@@ -623,50 +670,88 @@ async function cargarVehiculos(){
   lista.innerHTML = "";
 
 
-  vs.forEach(v=>{
+  vehiculos.forEach(
+   v=>{
 
-   const card =
-    document.createElement("div");
-
-
-   card.className =
-    "card";
-
-
-   card.innerHTML =
-
-    '<div class="vehicle-patente">'+
-     esc(v.patente)+
-    "</div>"+
-
-    '<div class="vehicle-name">'+
-     esc(v.marca)+
-     " "+
-     esc(v.modelo)+
-    "</div>"+
-
-    '<div class="info">'+
-     "Año: "+
-     esc(v.anio)+
-     "<br>Color: "+
-     esc(v.color)+
-    "</div>"+
-
-    '<div class="actions">'+
-
-     '<button class="primary" '+
-     'onclick="gestionar(\''+
-     v.id+
-     '\')">'+
-     "GESTIONAR VEHÍCULO"+
-     "</button>"+
-
-    "</div>";
+    const card =
+     document.createElement(
+      "div"
+     );
 
 
-   lista.appendChild(card);
+    card.className =
+     "card";
 
-  });
+
+    const boton =
+     document.createElement(
+      "button"
+     );
+
+
+    boton.className =
+     "primary";
+
+
+    boton.type =
+     "button";
+
+
+    boton.textContent =
+     "GESTIONAR VEHÍCULO";
+
+
+    boton.addEventListener(
+     "click",
+     function(){
+
+      gestionar(
+       v.id
+      );
+
+     }
+    );
+
+
+    card.innerHTML =
+
+     '<div class="vehicle-patente">'+
+      esc(v.patente)+
+     "</div>"+
+
+     '<div class="vehicle-name">'+
+      esc(v.marca)+
+      " "+
+      esc(v.modelo)+
+     "</div>"+
+
+     '<div class="info">'+
+      "Año: "+
+      esc(v.anio)+
+      "<br>Color: "+
+      esc(v.color)+
+     "</div>"+
+
+     '<div class="actions" id="acciones_'+
+      esc(v.id)+
+     '"></div>';
+
+
+    lista.appendChild(
+     card
+    );
+
+
+    card
+     .querySelector(
+      ".actions"
+     )
+     .appendChild(
+      boton
+     );
+
+   }
+  );
 
 
  }catch(e){
@@ -679,12 +764,9 @@ async function cargarVehiculos(){
 
   lista.innerHTML =
    '<div class="error">'+
-
     "<strong>Error:</strong>"+
     "<br><br>"+
-
     esc(e.message)+
-
    "</div>";
 
  }
@@ -692,10 +774,9 @@ async function cargarVehiculos(){
 }
 
 
-
-/*
- * GESTIONAR VEHÍCULO
- */
+/* =========================================================
+   GESTIONAR VEHÍCULO
+========================================================= */
 
 async function gestionar(id){
 
@@ -724,20 +805,28 @@ async function gestionar(id){
 
 
   document
-   .getElementById("vistaLista")
+   .getElementById(
+    "vistaLista"
+   )
    .classList
    .add("hidden");
 
 
   document
-   .getElementById("vistaVehiculo")
+   .getElementById(
+    "vistaVehiculo"
+   )
    .classList
    .remove("hidden");
 
 
-  document
-   .getElementById("detalleVehiculo")
-   .innerHTML =
+  const detalle =
+   document.getElementById(
+    "detalleVehiculo"
+   );
+
+
+  detalle.innerHTML =
 
    '<div class="card">'+
 
@@ -767,46 +856,22 @@ async function gestionar(id){
 
     "</div>"+
 
-   "</div>";
+   "</div>"+
 
-
-  /*
-   * BOTONES
-   */
-
-  document
-   .getElementById("detalleVehiculo")
-   .innerHTML +=
 
    '<div class="actions">'+
 
-    '<button class="primary" '+
-    'onclick="regenerarPIN()">'+
-    "🔄 REGENERAR PIN"+
+    '<button id="btnRegenerar" class="primary" type="button">'+
+     "🔄 REGENERAR PIN"+
     "</button>"+
 
-    '<button class="secondary" '+
-    'style="width:100%;color:#ff7070;border-color:#743030" '+
-    'onclick="eliminarVehiculo()">'+
-    "ELIMINAR VEHÍCULO"+
+    '<button id="btnEliminar" class="secondary" type="button" '+
+    'style="width:100%;color:#ff7070;border-color:#743030">'+
+     "ELIMINAR VEHÍCULO"+
     "</button>"+
 
-   "</div>";
+   "</div>"+
 
-
-  /*
-   * ACCESO PÚBLICO
-   */
-
-  const enlace =
-   crearEnlacePublico(
-    vehiculoActual.patente
-   );
-
-
-  document
-   .getElementById("detalleVehiculo")
-   .innerHTML +=
 
    '<div class="card">'+
 
@@ -818,20 +883,16 @@ async function gestionar(id){
      "Este es el enlace que usarán el QR y la tarjeta NFC."+
     "</div>"+
 
-    '<div class="linkbox" id="enlacePublico">'+
-     esc(enlace)+
-    "</div>"+
+    '<div class="linkbox" id="enlacePublico"></div>'+
 
     '<div class="actions">'+
 
-     '<button class="primary" '+
-     'onclick="copiarEnlace()">'+
-     "COPIAR ENLACE"+
+     '<button id="btnCopiar" class="primary" type="button">'+
+      "COPIAR ENLACE"+
      "</button>"+
 
-     '<button class="secondary" '+
-     'onclick="mostrarQR()">'+
-     "GENERAR QR"+
+     '<button id="btnQR" class="secondary" type="button">'+
+      "GENERAR QR"+
      "</button>"+
 
     "</div>"+
@@ -839,6 +900,54 @@ async function gestionar(id){
     '<div id="qrArea" class="hidden"></div>'+
 
    "</div>";
+
+
+  document
+   .getElementById(
+    "btnRegenerar"
+   )
+   .addEventListener(
+    "click",
+    regenerarPIN
+   );
+
+
+  document
+   .getElementById(
+    "btnEliminar"
+   )
+   .addEventListener(
+    "click",
+    eliminarVehiculo
+   );
+
+
+  document
+   .getElementById(
+    "btnCopiar"
+   )
+   .addEventListener(
+    "click",
+    copiarEnlace
+   );
+
+
+  document
+   .getElementById(
+    "btnQR"
+   )
+   .addEventListener(
+    "click",
+    mostrarQR
+   );
+
+
+  document
+   .getElementById(
+    "enlacePublico"
+   )
+   .textContent =
+    enlaceActual();
 
 
   await cargarDocumentos();
@@ -863,10 +972,9 @@ async function gestionar(id){
 }
 
 
-
-/*
- * REGENERAR PIN
- */
+/* =========================================================
+   REGENERAR PIN
+========================================================= */
 
 async function regenerarPIN(){
 
@@ -926,14 +1034,11 @@ async function regenerarPIN(){
     body:
      JSON.stringify({
 
-      pin_hash:
-       hash,
+      pin_hash:hash,
 
-      intentos:
-       0,
+      intentos:0,
 
-      bloqueado_hasta:
-       null,
+      bloqueado_hasta:null,
 
       updated_at:
        new Date().toISOString()
@@ -972,18 +1077,9 @@ async function regenerarPIN(){
    "</div>";
 
 
-  window.scrollTo({
-   top:0,
-   behavior:"smooth"
-  });
-
-
  }catch(e){
 
-  console.error(
-   "Error regenerando PIN:",
-   e
-  );
+  console.error(e);
 
 
   const detalle =
@@ -1009,10 +1105,9 @@ async function regenerarPIN(){
 }
 
 
-
-/*
- * DOCUMENTOS
- */
+/* =========================================================
+   DOCUMENTOS
+========================================================= */
 
 async function cargarDocumentos(){
 
@@ -1046,95 +1141,130 @@ async function cargarDocumentos(){
   box.innerHTML = "";
 
 
-  tipos.forEach(t=>{
+  tipos.forEach(
+   t=>{
 
-   const doc =
-    (docs || [])
-     .find(
+    const doc =
+     (docs || []).find(
       x=>x.tipo===t[0]
      );
 
 
-   const d =
-    document.createElement(
-     "div"
+    const d =
+     document.createElement(
+      "div"
+     );
+
+
+    d.className =
+     "doc";
+
+
+    if(doc){
+
+     d.innerHTML =
+
+      '<div class="doc-title">'+
+       t[1]+
+      "</div>"+
+
+      '<div class="doc-status">'+
+       "✓ "+
+       esc(doc.nombre)+
+      "</div>"+
+
+      '<div class="actions">'+
+
+       '<button class="primary btnVer" type="button">'+
+        "VER DOCUMENTO"+
+       "</button>"+
+
+       '<button class="secondary btnDelDoc" type="button">'+
+        "ELIMINAR"+
+       "</button>"+
+
+      "</div>";
+
+
+     d
+      .querySelector(
+       ".btnVer"
+      )
+      .addEventListener(
+       "click",
+       function(){
+
+        verDocumento(
+         doc.archivo
+        );
+
+       }
+      );
+
+
+     d
+      .querySelector(
+       ".btnDelDoc"
+      )
+      .addEventListener(
+       "click",
+       function(){
+
+        eliminarDocumento(
+         doc.id,
+         doc.archivo
+        );
+
+       }
+      );
+
+
+    }else{
+
+     d.innerHTML =
+
+      '<div class="doc-title">'+
+       t[1]+
+      "</div>"+
+
+      '<div class="doc-status">'+
+       "Sin documento"+
+      "</div>"+
+
+      '<input type="file" id="file_'+
+       t[0]+
+      '">'+
+
+      '<button class="primary btnSubir" type="button">'+
+       "SUBIR DOCUMENTO"+
+      "</button>";
+
+
+     d
+      .querySelector(
+       ".btnSubir"
+      )
+      .addEventListener(
+       "click",
+       function(){
+
+        subirDocumento(
+         t[0],
+         t[1]
+        );
+
+       }
+      );
+
+    }
+
+
+    box.appendChild(
+     d
     );
 
-
-   d.className =
-    "doc";
-
-
-   if(doc){
-
-    d.innerHTML =
-
-     '<div class="doc-title">'+
-      t[1]+
-     "</div>"+
-
-     '<div class="doc-status">'+
-      "✓ "+
-      esc(doc.nombre)+
-     "</div>"+
-
-     '<div class="actions">'+
-
-      '<button class="primary" '+
-      'onclick="verDocumento(\''+
-      encodeURIComponent(
-       doc.archivo
-      )+
-      '\')">'+
-      "VER DOCUMENTO"+
-      "</button>"+
-
-      '<button class="secondary" '+
-      'onclick="eliminarDocumento(\''+
-      encodeURIComponent(
-       doc.id
-      )+
-      '\',\''+
-      encodeURIComponent(
-       doc.archivo
-      )+
-      '\')">'+
-      "ELIMINAR"+
-      "</button>"+
-
-     "</div>";
-
-   }else{
-
-    d.innerHTML =
-
-     '<div class="doc-title">'+
-      t[1]+
-     "</div>"+
-
-     '<div class="doc-status">'+
-      "Sin documento"+
-     "</div>"+
-
-     '<input type="file" id="file_'+
-      t[0]+
-     '">'+
-
-     '<button class="primary" '+
-     'onclick="subirDocumento(\''+
-     t[0]+
-     '\',\''+
-     t[1]+
-     '\')">'+
-     "SUBIR DOCUMENTO"+
-     "</button>";
-
    }
-
-
-   box.appendChild(d);
-
-  });
+  );
 
 
  }catch(e){
@@ -1149,10 +1279,9 @@ async function cargarDocumentos(){
 }
 
 
-
-/*
- * ENLACE PÚBLICO
- */
+/* =========================================================
+   ENLACE
+========================================================= */
 
 function crearEnlacePublico(patente){
 
@@ -1168,7 +1297,6 @@ function crearEnlacePublico(patente){
 }
 
 
-
 function enlaceActual(){
 
  return crearEnlacePublico(
@@ -1178,10 +1306,9 @@ function enlaceActual(){
 }
 
 
-
-/*
- * COPIAR ENLACE
- */
+/* =========================================================
+   COPIAR ENLACE
+========================================================= */
 
 async function copiarEnlace(){
 
@@ -1214,10 +1341,9 @@ async function copiarEnlace(){
 }
 
 
-
-/*
- * QR
- */
+/* =========================================================
+   QR
+========================================================= */
 
 function mostrarQR(){
 
@@ -1278,25 +1404,21 @@ function mostrarQR(){
    text:
     enlaceActual(),
 
-   width:
-    220,
+   width:220,
 
-   height:
-    220,
+   height:220,
 
    correctLevel:
     QRCode.CorrectLevel.M
-
   }
  );
 
 }
 
 
-
-/*
- * SUBIR DOCUMENTO
- */
+/* =========================================================
+   SUBIR DOCUMENTO
+========================================================= */
 
 async function subirDocumento(
  tipo,
@@ -1393,8 +1515,8 @@ async function subirDocumento(
       "false"
     },
 
-    body:
-     file
+    body:file
+
    }
 
   );
@@ -1425,325 +1547,4 @@ async function subirDocumento(
       tipo:
        tipo,
 
-      nombre:
-       file.name,
-
-      archivo:
-       ruta,
-
-      protegido:
-       false
-
-     })
-
-   }
-
-  );
-
-
-  mensajeDoc(
-   nombre+
-   " subido correctamente.",
-   "success"
-  );
-
-
-  await cargarDocumentos();
-
-
- }catch(e){
-
-  console.error(e);
-
-
-  mensajeDoc(
-   "Error al subir: "+
-   e.message
-  );
-
- }
-
-}
-
-
-
-/*
- * VER DOCUMENTO
- */
-
-async function verDocumento(
- codificado
-){
-
- try{
-
-  const ruta =
-   decodeURIComponent(
-    codificado
-   );
-
-
-  const r =
-   await api(
-
-    STORAGE+
-    "/object/sign/documentos/"+
-    ruta
-     .split("/")
-     .map(
-      encodeURIComponent
-     )
-     .join("/"),
-
-    {
-     method:"POST",
-
-     headers:{
-      "Content-Type":
-       "application/json"
-     },
-
-     body:
-      JSON.stringify({
-       expiresIn:300
-      })
-
-    }
-
-   );
-
-
-  const signed =
-   r?.signedURL ||
-   r?.signedUrl;
-
-
-  if(!signed){
-
-   throw Error(
-    "No se pudo generar el enlace."
-   );
-
-  }
-
-
-  window.open(
-
-   signed.startsWith("http")
-    ?
-    signed
-    :
-    STORAGE+signed,
-
-   "_blank"
-
-  );
-
-
- }catch(e){
-
-  mensajeDoc(
-   "No se pudo abrir: "+
-   e.message
-  );
-
- }
-
-}
-
-
-
-/*
- * ELIMINAR DOCUMENTO
- */
-
-async function eliminarDocumento(
- idCod,
- rutaCod
-){
-
- if(
-  !confirm(
-   "¿Eliminar este documento?"
-  )
- )
-  return;
-
-
- try{
-
-  const id =
-   decodeURIComponent(
-    idCod
-   );
-
-
-  const ruta =
-   decodeURIComponent(
-    rutaCod
-   );
-
-
-  await api(
-
-   REST+
-   "/documentos?id=eq."+
-   encodeURIComponent(id),
-
-   {
-    method:"DELETE"
-   }
-
-  );
-
-
-  try{
-
-   await api(
-
-    STORAGE+
-    "/object/remove/documentos",
-
-    {
-     method:"POST",
-
-     headers:{
-      "Content-Type":
-       "application/json"
-     },
-
-     body:
-      JSON.stringify([
-       ruta
-      ])
-
-    }
-
-   );
-
-  }catch(e){
-
-   console.warn(
-    "No se pudo borrar archivo:",
-    e
-   );
-
-  }
-
-
-  mensajeDoc(
-   "Documento eliminado.",
-   "success"
-  );
-
-
-  await cargarDocumentos();
-
-
- }catch(e){
-
-  mensajeDoc(
-   "No se pudo eliminar: "+
-   e.message
-  );
-
- }
-
-}
-
-
-
-/*
- * CREAR VEHÍCULO
- */
-
-async function crearVehiculo(){
-
- try{
-
-  const v = {
-
-   patente:
-    document
-     .getElementById("patente")
-     .value
-     .trim()
-     .toUpperCase(),
-
-   marca:
-    document
-     .getElementById("marca")
-     .value
-     .trim(),
-
-   modelo:
-    document
-     .getElementById("modelo")
-     .value
-     .trim(),
-
-   anio:
-    parseInt(
-     document
-      .getElementById("anio")
-      .value
-    ),
-
-   color:
-    document
-     .getElementById("color")
-     .value
-     .trim(),
-
-   contacto_emergencia:
-    document
-     .getElementById("contacto")
-     .value
-     .trim()
-
-  };
-
-
-  if(
-   !v.patente ||
-   !v.marca ||
-   !v.modelo ||
-   !v.anio ||
-   !v.color
-  ){
-
-   throw Error(
-    "Completa los campos obligatorios."
-   );
-
-  }
-
-
-  const r =
-   await api(
-
-    REST+
-    "/vehiculos",
-
-    {
-     method:"POST",
-
-     headers:{
-      "Content-Type":
-       "application/json",
-
-      "Prefer":
-       "return=representation"
-     },
-
-     body:
-      JSON.stringify(v)
-
-    }
-
-   );
-
-
-  const veh =
-   Array.isArray(r)
-   
+     
