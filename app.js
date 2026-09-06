@@ -224,7 +224,7 @@ function mostrarPerfil() {
                                 background-image:url('${escapeHtml(fotoUrl)}');
                                 background-size:cover;
                                 background-position:center;
-                                opacity:.2875;
+                                opacity:.40;
                                 filter:saturate(.9);
                                 transform:scale(1.02);
                             "
@@ -238,8 +238,8 @@ function mostrarPerfil() {
                                     linear-gradient(
                                         to bottom,
                                         rgba(5,8,13,.10) 0%,
-                                        rgba(5,8,13,.32) 38%,
-                                        rgba(13,20,32,.96) 100%
+                                        rgba(5,8,13,.22) 38%,
+                                        rgba(13,20,32,.88) 100%
                                     );
                             "
                         ></div>
