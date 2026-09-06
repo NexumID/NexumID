@@ -3,74 +3,528 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NexumID - Prueba</title>
-
+<title>NexumID - Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
-body{
-    margin:0;
-    background:#05080d;
-    color:white;
-    font-family:Arial,sans-serif;
-    padding:30px;
-}
-button{
-    display:block;
-    width:100%;
-    padding:18px;
-    margin:15px 0;
-    border:0;
-    border-radius:14px;
-    background:#1595ff;
-    color:white;
-    font-size:18px;
-    font-weight:bold;
-}
-#resultado{
-    margin-top:25px;
-    padding:20px;
-    border-radius:14px;
-    background:#0d3026;
-    border:1px solid #197553;
-    color:#65e3b1;
-}
+*{box-sizing:border-box}body{margin:0;background:#05080d;color:#fff;font-family:Arial,sans-serif}
+.container{max-width:900px;margin:auto;padding:24px}.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+.logo{font-size:28px;font-weight:bold}.logo span{color:#1595ff}.subtitle{color:#9aa4b5;margin-top:6px}
+button{border:0;border-radius:14px;padding:16px 20px;font-size:16px;cursor:pointer}
+.btn-primary{width:100%;background:#1595ff;color:#fff;font-weight:bold;font-size:20px}.btn-secondary{background:#111923;color:#fff;border:1px solid #263342}
+.btn-blue{background:#111923;color:#1595ff;border:1px solid #263342;width:100%}.btn-danger{background:#111923;color:#ff7070;border:1px solid #743030;width:100%}
+h1{font-size:36px;font-weight:400;margin-bottom:30px}h2{font-size:28px;font-weight:400;margin-top:40px}
+.form-card,.vehicle,.doc-card{background:#0d141d;border:1px solid #263342;border-radius:18px;padding:20px;margin-top:20px}.vehicle{padding:28px}
+input{width:100%;padding:15px;margin:8px 0 16px;border-radius:10px;border:1px solid #263342;background:#080d13;color:#fff;font-size:16px}
+label{color:#aeb8c7;font-size:14px}.vehicle-patente{font-size:30px;font-weight:bold;color:#1595ff}.vehicle-name{font-size:20px;margin-top:10px}
+.vehicle-info{color:#9da8b8;margin-top:10px;line-height:1.5}.vehicle-buttons,.doc-actions{display:grid;gap:12px;margin-top:20px}
+.success{background:#0d3026;border:1px solid #197553;color:#65e3b1;padding:18px;border-radius:14px;margin-bottom:20px}
+.error{background:#321414;border:1px solid #743030;color:#ff8888;padding:18px;border-radius:14px;margin-bottom:20px}
+.hidden{display:none!important}.back{margin-bottom:25px}.doc-title{font-size:20px;font-weight:bold}.doc-status{color:#9da8b8;margin:8px 0 18px}
+.loading{text-align:center;color:#9da8b8;padding:30px}.pin-box{margin-top:15px;padding:18px;background:#080d13;border:1px solid #1595ff;border-radius:12px;text-align:center}
+.pin-label{display:block;color:#9da8b8;font-size:14px;letter-spacing:2px}.pin-number{display:block;font-size:38px;font-weight:bold;letter-spacing:8px;margin-top:8px}
+.linkbox{word-break:break-all;background:#080d13;border:1px solid #263342;border-radius:12px;padding:14px;color:#9da8b8;margin-top:12px}
+.qrbox{background:#fff;border-radius:14px;padding:18px;width:max-content;max-width:100%;margin:18px auto;text-align:center}
 </style>
 </head>
-
 <body>
+<div class="container">
+<div class="header">
+<div><div class="logo">NEXUM<span>ID</span></div><div class="subtitle">IDENTIDAD DIGITAL VEHICULAR</div></div>
+<button id="btnSalir" class="btn-secondary" type="button">SALIR</button>
+</div>
 
-<h1>NexumID</h1>
+<div id="vistaPanel">
+<h1>Panel de Administración</h1>
+<div id="mensaje"></div>
+<button id="btnNuevo" class="btn-primary" type="button">+ NUEVO VEHÍCULO</button>
 
-<p>PRUEBA DE JAVASCRIPT</p>
+<div id="formularioVehiculo" class="form-card hidden">
+<h2 style="margin-top:0">Nuevo vehículo</h2>
+<label>Patente</label><input id="patente" placeholder="AB-CD-12">
+<label>Marca</label><input id="marca" placeholder="Chevrolet">
+<label>Modelo</label><input id="modelo" placeholder="Sail">
+<label>Año</label><input id="anio" type="number" placeholder="2020">
+<label>Color</label><input id="color" placeholder="Blanco">
+<label>Contacto de emergencia</label><input id="contacto" placeholder="+56912345678">
+<button id="btnCrear" class="btn-primary" type="button">CREAR VEHÍCULO</button><br><br>
+<button id="btnCancelar" class="btn-secondary" style="width:100%" type="button">CANCELAR</button>
+</div>
 
-<button id="btnPrueba">
-PROBAR JAVASCRIPT
-</button>
+<h2>Vehículos registrados</h2>
+<div id="listaVehiculos"><div class="loading">Iniciando panel...</div></div>
+</div>
 
-<button id="btnSalir">
-SALIR
-</button>
-
-<div id="resultado">
-Esperando prueba...
+<div id="vistaDocumentos" class="hidden">
+<button id="btnVolver" class="btn-secondary back" type="button">← VOLVER</button>
+<h1>Documentos</h1>
+<div id="infoVehiculo"></div><div id="mensajeDocumentos"></div><div id="listaDocumentos"></div>
+</div>
 </div>
 
 <script>
+(function(){
+"use strict";
 
-document.getElementById("btnPrueba").addEventListener("click", function(){
+const URL="https://tkrugleneazdeqhxxkvr.supabase.co";
 
-    document.getElementById("resultado").textContent =
-        "✓ JAVASCRIPT FUNCIONANDO CORRECTAMENTE";
+/* MISMA CLAVE PÚBLICA QUE DEBE USAR EL ADMINISTRADOR */
+const KEY="sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
 
+let db=null;
+let vehiculoActual=null;
+
+const tipos=[
+["soap","SOAP"],
+["revision_tecnica","REVISIÓN TÉCNICA"],
+["permiso_circulacion","PERMISO DE CIRCULACIÓN"],
+["certificado_gases","CERTIFICADO DE GASES"],
+["padron","PADRÓN"]
+];
+
+const $=id=>document.getElementById(id);
+
+function esc(x){
+return String(x??"")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+}
+
+function mostrarMensaje(texto,tipo="error"){
+$("mensaje").innerHTML='<div class="'+tipo+'">'+esc(texto)+'</div>';
+}
+
+function mostrarDocMensaje(texto,tipo="error"){
+$("mensajeDocumentos").innerHTML='<div class="'+tipo+'">'+esc(texto)+'</div>';
+}
+
+function mostrarFormulario(){
+$("formularioVehiculo").classList.remove("hidden");
+$("patente").focus();
+}
+
+function ocultarFormulario(){
+$("formularioVehiculo").classList.add("hidden");
+}
+
+async function hash(texto){
+const data=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(texto));
+return Array.from(new Uint8Array(data)).map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+
+async function comprobarSesion(){
+const result=await db.auth.getSession();
+if(result.error)throw result.error;
+return !!result.data.session;
+}
+
+async function crearVehiculo(){
+try{
+if(!await comprobarSesion()){
+alert("La sesión expiró.");
+location.href="admin.html";
+return;
+}
+
+const patente=$("patente").value.trim().toUpperCase();
+const marca=$("marca").value.trim();
+const modelo=$("modelo").value.trim();
+const anio=$("anio").value.trim();
+const color=$("color").value.trim();
+const contacto=$("contacto").value.trim();
+
+if(!patente||!marca||!modelo||!anio||!color){
+mostrarMensaje("Completa todos los campos obligatorios.");
+return;
+}
+
+const r=await db.from("vehiculos").insert({
+patente,marca,modelo,anio:parseInt(anio,10),color,
+contacto_emergencia:contacto
+}).select().single();
+
+if(r.error)throw r.error;
+
+const pin=String(Math.floor(1000+Math.random()*9000));
+const pin_hash=await hash(pin);
+
+const a=await db.from("vehiculo_acceso").insert({
+vehiculo_id:r.data.id,
+pin_hash,
+intentos:0,
+bloqueado_hasta:null
 });
 
-document.getElementById("btnSalir").addEventListener("click", function(){
+if(a.error){
+await db.from("vehiculos").delete().eq("id",r.data.id);
+throw a.error;
+}
 
-    document.getElementById("resultado").textContent =
-        "✓ EL BOTÓN SALIR FUNCIONA";
+["patente","marca","modelo","anio","color","contacto"].forEach(id=>$(id).value="");
+ocultarFormulario();
 
+$("mensaje").innerHTML=
+'<div class="success"><strong>✓ VEHÍCULO CREADO</strong>'+
+'<div class="pin-box"><span class="pin-label">PIN DE ACCESO</span>'+
+'<span class="pin-number">'+esc(pin)+'</span></div>'+
+'<br>Guarda este PIN para entregárselo al propietario.</div>';
+
+await cargarVehiculos();
+
+}catch(e){
+console.error(e);
+mostrarMensaje("No se pudo crear el vehículo: "+(e.message||e));
+}
+}
+
+async function cargarVehiculos(){
+const box=$("listaVehiculos");
+box.innerHTML='<div class="loading">Cargando vehículos...</div>';
+
+try{
+const r=await db.from("vehiculos").select("*").order("created_at",{ascending:false});
+if(r.error)throw r.error;
+
+if(!r.data||!r.data.length){
+box.innerHTML='<div class="loading">Todavía no hay vehículos registrados.</div>';
+return;
+}
+
+box.innerHTML="";
+
+r.data.forEach(v=>{
+const card=document.createElement("div");
+card.className="vehicle";
+
+const patente=document.createElement("div");
+patente.className="vehicle-patente";
+patente.textContent=v.patente;
+
+const nombre=document.createElement("div");
+nombre.className="vehicle-name";
+nombre.textContent=(v.marca||"")+" "+(v.modelo||"");
+
+const info=document.createElement("div");
+info.className="vehicle-info";
+info.innerHTML="Año: "+esc(v.anio)+"<br>Color: "+esc(v.color);
+
+const botones=document.createElement("div");
+botones.className="vehicle-buttons";
+
+const docs=document.createElement("button");
+docs.className="btn-blue";
+docs.type="button";
+docs.textContent="DOCUMENTOS";
+docs.addEventListener("click",()=>abrirDocumentosPorId(v.id));
+
+const perfil=document.createElement("button");
+perfil.className="btn-secondary";
+perfil.type="button";
+perfil.textContent="VER PERFIL";
+perfil.addEventListener("click",()=>location.href="index.html?patente="+encodeURIComponent(v.patente));
+
+botones.append(docs,perfil);
+card.append(patente,nombre,info,botones);
+box.appendChild(card);
 });
 
+}catch(e){
+console.error(e);
+box.innerHTML='<div class="error"><strong>Error al cargar vehículos</strong><br><br>'+esc(e.message)+'</div>';
+}
+}
+
+async function abrirDocumentosPorId(id){
+try{
+const r=await db.from("vehiculos").select("*").eq("id",id).single();
+if(r.error)throw r.error;
+await abrirDocumentos(r.data);
+}catch(e){
+mostrarMensaje(e.message||"No se pudo abrir el vehículo.");
+}
+}
+
+async function abrirDocumentos(v){
+vehiculoActual=v;
+$("vistaPanel").classList.add("hidden");
+$("vistaDocumentos").classList.remove("hidden");
+
+$("infoVehiculo").innerHTML=
+'<div class="vehicle"><div class="vehicle-patente">'+esc(v.patente)+
+'</div><div class="vehicle-name">'+esc(v.marca)+" "+esc(v.modelo)+
+'</div><div class="vehicle-info">Año: '+esc(v.anio)+
+"<br>Color: "+esc(v.color)+
+"<br>Contacto: "+esc(v.contacto_emergencia||"No registrado")+
+"</div></div>";
+
+await cargarDocumentos();
+window.scrollTo(0,0);
+}
+
+async function cargarDocumentos(){
+const box=$("listaDocumentos");
+box.innerHTML='<div class="loading">Cargando documentos...</div>';
+
+try{
+const r=await db.from("documentos").select("*").eq("vehiculo_id",vehiculoActual.id);
+if(r.error)throw r.error;
+
+box.innerHTML="";
+
+tipos.forEach(t=>{
+const doc=(r.data||[]).find(x=>x.tipo===t[0]);
+const card=document.createElement("div");
+card.className="doc-card";
+
+const title=document.createElement("div");
+title.className="doc-title";
+title.textContent=t[1];
+card.appendChild(title);
+
+if(doc){
+const status=document.createElement("div");
+status.className="doc-status";
+status.textContent="✓ "+doc.nombre;
+
+const actions=document.createElement("div");
+actions.className="doc-actions";
+
+const ver=document.createElement("button");
+ver.className="btn-blue";
+ver.type="button";
+ver.textContent="VER DOCUMENTO";
+ver.addEventListener("click",()=>verDocumento(doc.archivo));
+
+const del=document.createElement("button");
+del.className="btn-danger";
+del.type="button";
+del.textContent="ELIMINAR";
+del.addEventListener("click",()=>eliminarDocumento(doc.id,doc.archivo));
+
+actions.append(ver,del);
+card.append(status,actions);
+}else{
+const status=document.createElement("div");
+status.className="doc-status";
+status.textContent="Sin documento";
+
+const input=document.createElement("input");
+input.type="file";
+input.id="archivo_"+t[0];
+
+const subir=document.createElement("button");
+subir.className="btn-primary";
+subir.type="button";
+subir.textContent="SUBIR DOCUMENTO";
+subir.addEventListener("click",()=>subirDocumento(t[0],t[1]));
+
+card.append(status,input,subir);
+}
+
+box.appendChild(card);
+});
+
+}catch(e){
+box.innerHTML='<div class="error">'+esc(e.message)+'</div>';
+}
+}
+
+async function subirDocumento(tipo,nombre){
+try{
+const input=$("archivo_"+tipo);
+if(!input||!input.files.length){
+mostrarDocMensaje("Selecciona un archivo.");
+return;
+}
+
+const file=input.files[0];
+if(file.size>6*1024*1024){
+mostrarDocMensaje("El archivo supera los 6 MB.");
+return;
+}
+
+const ext=file.name.includes(".")?file.name.split(".").pop().toLowerCase():"bin";
+const ruta=vehiculoActual.patente+"/"+tipo+"_"+Date.now()+"."+ext;
+
+const upload=await db.storage.from("documentos").upload(
+ruta,file,
+{contentType:file.type||"application/octet-stream",upsert:false}
+);
+
+if(upload.error)throw upload.error;
+
+const insert=await db.from("documentos").insert({
+vehiculo_id:vehiculoActual.id,
+tipo,
+nombre:file.name,
+archivo:ruta,
+protegido:true
+});
+
+if(insert.error){
+await db.storage.from("documentos").remove([ruta]);
+throw insert.error;
+}
+
+mostrarDocMensaje(nombre+" subido correctamente.","success");
+await cargarDocumentos();
+
+}catch(e){
+mostrarDocMensaje("Error al subir: "+e.message);
+}
+}
+
+async function verDocumento(ruta){
+try{
+const r=await db.storage.from("documentos").createSignedUrl(ruta,300);
+if(r.error)throw r.error;
+window.open(r.data.signedUrl,"_blank");
+}catch(e){
+mostrarDocMensaje("No se pudo abrir el documento: "+e.message);
+}
+}
+
+async function eliminarDocumento(id,ruta){
+if(!confirm("¿Eliminar este documento?"))return;
+
+try{
+const r=await db.from("documentos").delete().eq("id",id);
+if(r.error)throw r.error;
+
+const storage=await db.storage.from("documentos").remove([ruta]);
+if(storage.error)throw storage.error;
+
+mostrarDocMensaje("Documento eliminado.","success");
+await cargarDocumentos();
+
+}catch(e){
+mostrarDocMensaje("No se pudo eliminar: "+e.message);
+}
+}
+
+async function regenerarPIN(){
+if(!vehiculoActual)return;
+
+if(!confirm("¿Regenerar el PIN de "+vehiculoActual.patente+"?\n\nEl PIN anterior dejará de funcionar inmediatamente."))return;
+
+try{
+const pin=String(Math.floor(1000+Math.random()*9000));
+const pin_hash=await hash(pin);
+
+const r=await db.from("vehiculo_acceso")
+.update({
+pin_hash,
+intentos:0,
+bloqueado_hasta:null,
+updated_at:new Date().toISOString()
+})
+.eq("vehiculo_id",vehiculoActual.id);
+
+if(r.error)throw r.error;
+
+$("infoVehiculo").insertAdjacentHTML("afterend",
+'<div class="success"><strong>✓ PIN REGENERADO</strong>'+
+'<div class="pin-box"><span class="pin-label">NUEVO PIN DE ACCESO</span>'+
+'<span class="pin-number">'+esc(pin)+'</span></div>'+
+'<br>El PIN anterior ya no funciona.</div>'
+);
+
+}catch(e){
+$("infoVehiculo").insertAdjacentHTML("afterend",
+'<div class="error"><strong>No se pudo regenerar el PIN</strong><br><br>'+
+esc(e.message)+'</div>'
+);
+}
+}
+
+async function eliminarVehiculo(){
+if(!vehiculoActual)return;
+
+if(!confirm("¿ELIMINAR DEFINITIVAMENTE "+vehiculoActual.patente+"?\n\nSe eliminarán sus documentos y acceso."))return;
+
+try{
+const docs=await db.from("documentos").select("*").eq("vehiculo_id",vehiculoActual.id);
+if(docs.error)throw docs.error;
+
+for(const d of docs.data||[]){
+try{await db.storage.from("documentos").remove([d.archivo])}catch(e){}
+}
+
+const dr=await db.from("documentos").delete().eq("vehiculo_id",vehiculoActual.id);
+if(dr.error)throw dr.error;
+
+await db.from("vehiculo_acceso").delete().eq("vehiculo_id",vehiculoActual.id);
+
+const vr=await db.from("vehiculos").delete().eq("id",vehiculoActual.id);
+if(vr.error)throw vr.error;
+
+vehiculoActual=null;
+$("vistaDocumentos").classList.add("hidden");
+$("vistaPanel").classList.remove("hidden");
+mostrarMensaje("✓ VEHÍCULO ELIMINADO","success");
+await cargarVehiculos();
+window.scrollTo(0,0);
+
+}catch(e){
+mostrarMensaje("No se pudo eliminar: "+e.message);
+}
+}
+
+function volverPanel(){
+vehiculoActual=null;
+$("vistaDocumentos").classList.add("hidden");
+$("vistaPanel").classList.remove("hidden");
+$("mensajeDocumentos").innerHTML="";
+cargarVehiculos();
+window.scrollTo(0,0);
+}
+
+async function cerrarSesion(){
+try{if(db)await db.auth.signOut()}catch(e){}
+location.href="admin.html";
+}
+
+function prepararBotones(){
+$("btnNuevo").addEventListener("click",mostrarFormulario);
+$("btnCancelar").addEventListener("click",ocultarFormulario);
+$("btnCrear").addEventListener("click",crearVehiculo);
+$("btnSalir").addEventListener("click",cerrarSesion);
+$("btnVolver").addEventListener("click",volverPanel);
+}
+
+async function iniciar(){
+const box=$("listaVehiculos");
+
+try{
+box.innerHTML='<div class="loading">Conectando con NexumID...</div>';
+
+if(typeof supabase==="undefined"){
+throw new Error("No se cargó la librería de Supabase.");
+}
+
+db=supabase.createClient(URL,KEY);
+
+if(!await comprobarSesion()){
+box.innerHTML='<div class="error">Sesión no encontrada. Redirigiendo...</div>';
+setTimeout(()=>location.href="admin.html",1200);
+return;
+}
+
+await cargarVehiculos();
+
+}catch(e){
+console.error(e);
+box.innerHTML='<div class="error"><strong>Error iniciando el panel</strong><br><br>'+esc(e.message)+'</div>';
+}
+}
+
+prepararBotones();
+iniciar();
+
+})();
 </script>
-
 </body>
 </html>
