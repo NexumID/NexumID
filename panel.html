@@ -6,6 +6,7 @@
 <title>NexumID - Panel</title>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box}
@@ -316,23 +317,38 @@ input{
 </main>
 
 
-
 <script>
 
-const URL="https://tkrugleneazdeqhxxkvr.supabase.co";
+const URL =
+ "https://tkrugleneazdeqhxxkvr.supabase.co";
 
-const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcnVnbGVuZWF6ZGVxaHh4a3ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NTA4NjEsImV4cCI6MjEwNDEyNjg2MX0.R6yXQ9Ld4YYYRK_Fct99q9udqF6gEVN3qw-iqgvoCoA";
+const KEY =
+ "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcnVnbGVuZWF6ZGVxaHh4a3ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NTA4NjEsImV4cCI6MjEwNDEyNjg2MX0.R6yXQ9Ld4YYYRK_Fct99q9udqF6gEVN3qw-iqgvoCoA";
 
-const REST=URL+"/rest/v1";
+const REST =
+ URL+"/rest/v1";
 
-const STORAGE=URL+"/storage/v1";
-
-let token=null;
-
-let vehiculoActual=null;
+const STORAGE =
+ URL+"/storage/v1";
 
 
-const tipos=[
+/*
+ * Cliente Supabase.
+ */
+
+const supabaseClient =
+ window.supabase.createClient(
+  URL,
+  KEY
+ );
+
+
+let token = null;
+
+let vehiculoActual = null;
+
+
+const tipos = [
  ["soap","SOAP"],
  ["revision_tecnica","REVISIÓN TÉCNICA"],
  ["permiso_circulacion","PERMISO DE CIRCULACIÓN"],
@@ -341,99 +357,153 @@ const tipos=[
 ];
 
 
+
 function esc(x){
 
- return String(x??"")
- .replaceAll("&","&amp;")
- .replaceAll("<","&lt;")
- .replaceAll(">","&gt;")
- .replaceAll('"',"&quot;")
- .replaceAll("'","&#039;");
+ return String(x ?? "")
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
 
 }
 
 
-function obtenerToken(){
 
- for(const s of [localStorage,sessionStorage]){
+/*
+ * OBTENER SESIÓN DIRECTAMENTE DESDE SUPABASE
+ */
 
-  for(let i=0;i<s.length;i++){
+async function obtenerToken(){
 
-   const k=s.key(i);
+ try{
 
-   if(!k||!k.includes("auth-token"))
-    continue;
+  const resultado =
+   await supabaseClient.auth.getSession();
 
-   try{
 
-    const x=JSON.parse(s.getItem(k));
+  if(
+   resultado.error ||
+   !resultado.data ||
+   !resultado.data.session
+  ){
 
-    if(x.access_token)
-     return x.access_token;
-
-   }catch(e){}
+   return null;
 
   }
 
- }
 
- return null;
+  return resultado.data.session.access_token;
+
+ }catch(e){
+
+  console.error(
+   "Error obteniendo sesión:",
+   e
+  );
+
+  return null;
+
+ }
 
 }
 
 
+
+/*
+ * API
+ */
+
 async function api(url,opt={}){
 
- if(!token)
-  token=obtenerToken();
+ if(!token){
 
- if(!token)
+  token =
+   await obtenerToken();
+
+ }
+
+
+ if(!token){
+
   throw Error(
    "Sesión no encontrada. Vuelve a iniciar sesión."
   );
 
- const headers=new Headers(opt.headers||{});
+ }
 
- headers.set("apikey",KEY);
+
+ const headers =
+  new Headers(
+   opt.headers || {}
+  );
+
+
+ headers.set(
+  "apikey",
+  KEY
+ );
+
 
  headers.set(
   "Authorization",
   "Bearer "+token
  );
 
- const r=await fetch(
-  url,
-  {
-   ...opt,
-   headers
-  }
- );
 
- const text=await r.text();
+ const r =
+  await fetch(
+   url,
+   {
+    ...opt,
+    headers
+   }
+  );
 
- let data=null;
+
+ const text =
+  await r.text();
+
+
+ let data = null;
+
 
  try{
-  data=text?JSON.parse(text):null;
+
+  data =
+   text
+    ? JSON.parse(text)
+    : null;
+
  }catch(e){
-  data=text;
+
+  data = text;
+
  }
+
 
  if(!r.ok){
 
   throw Error(
-   data?.message||
-   data?.hint||
-   data?.details||
+   data?.message ||
+   data?.hint ||
+   data?.details ||
    "Error HTTP "+r.status
   );
 
  }
 
+
  return data;
 
 }
 
+
+
+/*
+ * NUEVO VEHÍCULO
+ */
 
 function mostrarNuevo(){
 
@@ -442,13 +512,17 @@ function mostrarNuevo(){
   .classList
   .remove("hidden");
 
+
  window.scrollTo({
   top:
-   document.getElementById("formNuevo").offsetTop-20,
+   document
+    .getElementById("formNuevo")
+    .offsetTop-20,
   behavior:"smooth"
  });
 
 }
+
 
 
 function cancelarNuevo(){
@@ -461,43 +535,82 @@ function cancelarNuevo(){
 }
 
 
-function mensaje(text,tipo="error"){
 
- document.getElementById("mensaje").innerHTML=
-  '<div class="'+tipo+'">'+text+"</div>";
+/*
+ * MENSAJES
+ */
+
+function mensaje(
+ text,
+ tipo="error"
+){
+
+ document
+  .getElementById("mensaje")
+  .innerHTML =
+   '<div class="'+
+   tipo+
+   '">'+
+   text+
+   "</div>";
 
 }
 
 
-function mensajeDoc(text,tipo="error"){
 
- document.getElementById("mensajeDocs").innerHTML=
-  '<div class="'+tipo+'">'+esc(text)+"</div>";
+function mensajeDoc(
+ text,
+ tipo="error"
+){
+
+ document
+  .getElementById("mensajeDocs")
+  .innerHTML =
+   '<div class="'+
+   tipo+
+   '">'+
+   esc(text)+
+   "</div>";
 
 }
 
+
+
+/*
+ * CARGAR VEHÍCULOS
+ */
 
 async function cargarVehiculos(){
 
- const lista=document.getElementById("lista");
+ const lista =
+  document.getElementById("lista");
+
 
  try{
 
-  token=obtenerToken();
+  token =
+   await obtenerToken();
 
-  if(!token)
+
+  if(!token){
+
    throw Error(
     "Sesión no encontrada. Vuelve a iniciar sesión."
    );
 
-  const vs=await api(
-   REST+
-   "/vehiculos?select=*&order=created_at.desc"
-  );
+  }
 
-  if(!vs.length){
 
-   lista.innerHTML=
+  const vs =
+   await api(
+    REST+
+    "/vehiculos?select=*&order=created_at.desc"
+   );
+
+
+  if(!vs || !vs.length){
+
+   lista.innerHTML =
     '<div class="loading">'+
     "No hay vehículos registrados."+
     "</div>";
@@ -506,28 +619,37 @@ async function cargarVehiculos(){
 
   }
 
-  lista.innerHTML="";
+
+  lista.innerHTML = "";
+
 
   vs.forEach(v=>{
 
-   const card=
+   const card =
     document.createElement("div");
 
-   card.className="card";
 
-   card.innerHTML=
+   card.className =
+    "card";
+
+
+   card.innerHTML =
 
     '<div class="vehicle-patente">'+
      esc(v.patente)+
     "</div>"+
 
     '<div class="vehicle-name">'+
-     esc(v.marca)+" "+esc(v.modelo)+
+     esc(v.marca)+
+     " "+
+     esc(v.modelo)+
     "</div>"+
 
     '<div class="info">'+
-     "Año: "+esc(v.anio)+
-     "<br>Color: "+esc(v.color)+
+     "Año: "+
+     esc(v.anio)+
+     "<br>Color: "+
+     esc(v.color)+
     "</div>"+
 
     '<div class="actions">'+
@@ -541,16 +663,28 @@ async function cargarVehiculos(){
 
     "</div>";
 
+
    lista.appendChild(card);
 
   });
 
+
  }catch(e){
 
-  lista.innerHTML=
+  console.error(
+   "Error cargando vehículos:",
+   e
+  );
+
+
+  lista.innerHTML =
    '<div class="error">'+
-   "<strong>Error:</strong><br><br>"+
-   esc(e.message)+
+
+    "<strong>Error:</strong>"+
+    "<br><br>"+
+
+    esc(e.message)+
+
    "</div>";
 
  }
@@ -559,29 +693,41 @@ async function cargarVehiculos(){
 
 
 
+/*
+ * GESTIONAR VEHÍCULO
+ */
+
 async function gestionar(id){
 
  try{
 
-  const vs=await api(
-   REST+
-   "/vehiculos?id=eq."+
-   encodeURIComponent(id)+
-   "&select=*"
-  );
+  const vs =
+   await api(
+    REST+
+    "/vehiculos?id=eq."+
+    encodeURIComponent(id)+
+    "&select=*"
+   );
 
-  if(!vs.length)
+
+  if(!vs.length){
+
    throw Error(
     "Vehículo no encontrado."
    );
 
-  vehiculoActual=vs[0];
+  }
+
+
+  vehiculoActual =
+   vs[0];
 
 
   document
    .getElementById("vistaLista")
    .classList
    .add("hidden");
+
 
   document
    .getElementById("vistaVehiculo")
@@ -591,7 +737,7 @@ async function gestionar(id){
 
   document
    .getElementById("detalleVehiculo")
-   .innerHTML=
+   .innerHTML =
 
    '<div class="card">'+
 
@@ -615,7 +761,7 @@ async function gestionar(id){
 
      "<br>Contacto: "+
      esc(
-      vehiculoActual.contacto_emergencia||
+      vehiculoActual.contacto_emergencia ||
       "No registrado"
      )+
 
@@ -625,7 +771,7 @@ async function gestionar(id){
 
 
   /*
-   * BOTONES DE GESTIÓN
+   * BOTONES
    */
 
   document
@@ -652,7 +798,7 @@ async function gestionar(id){
    * ACCESO PÚBLICO
    */
 
-  const enlace=
+  const enlace =
    crearEnlacePublico(
     vehiculoActual.patente
    );
@@ -697,6 +843,7 @@ async function gestionar(id){
 
   await cargarDocumentos();
 
+
   window.scrollTo({
    top:0,
    behavior:"smooth"
@@ -704,6 +851,8 @@ async function gestionar(id){
 
 
  }catch(e){
+
+  console.error(e);
 
   mensaje(
    esc(e.message)
@@ -715,13 +864,17 @@ async function gestionar(id){
 
 
 
+/*
+ * REGENERAR PIN
+ */
+
 async function regenerarPIN(){
 
  if(!vehiculoActual)
   return;
 
 
- const patente=
+ const patente =
   vehiculoActual.patente;
 
 
@@ -738,11 +891,7 @@ async function regenerarPIN(){
 
  try{
 
-  /*
-   * Generar PIN nuevo.
-   */
-
-  const pin=
+  const pin =
    String(
     Math.floor(
      1000+
@@ -751,17 +900,9 @@ async function regenerarPIN(){
    );
 
 
-  /*
-   * Convertir PIN a SHA-256.
-   */
-
-  const hash=
+  const hash =
    await sha(pin);
 
-
-  /*
-   * Actualizar acceso existente.
-   */
 
   await api(
 
@@ -782,29 +923,29 @@ async function regenerarPIN(){
       "return=minimal"
     },
 
-    body:JSON.stringify({
+    body:
+     JSON.stringify({
 
-     pin_hash:hash,
+      pin_hash:
+       hash,
 
-     intentos:0,
+      intentos:
+       0,
 
-     bloqueado_hasta:null,
+      bloqueado_hasta:
+       null,
 
-     updated_at:
-      new Date().toISOString()
+      updated_at:
+       new Date().toISOString()
 
-    })
+     })
 
    }
 
   );
 
 
-  /*
-   * Mostrar nuevo PIN.
-   */
-
-  const detalle=
+  const detalle =
    document.getElementById(
     "detalleVehiculo"
    );
@@ -845,7 +986,7 @@ async function regenerarPIN(){
   );
 
 
-  const detalle=
+  const detalle =
    document.getElementById(
     "detalleVehiculo"
    );
@@ -869,14 +1010,19 @@ async function regenerarPIN(){
 
 
 
+/*
+ * DOCUMENTOS
+ */
+
 async function cargarDocumentos(){
 
- const box=
+ const box =
   document.getElementById(
    "documentos"
   );
 
- box.innerHTML=
+
+ box.innerHTML =
   '<div class="loading">'+
   "Cargando documentos..."+
   "</div>";
@@ -884,7 +1030,7 @@ async function cargarDocumentos(){
 
  try{
 
-  const docs=
+  const docs =
    await api(
 
     REST+
@@ -897,28 +1043,31 @@ async function cargarDocumentos(){
    );
 
 
-  box.innerHTML="";
+  box.innerHTML = "";
 
 
   tipos.forEach(t=>{
 
-   const doc=
-    (docs||[]).find(
-     x=>x.tipo===t[0]
-    );
+   const doc =
+    (docs || [])
+     .find(
+      x=>x.tipo===t[0]
+     );
 
 
-   const d=
+   const d =
     document.createElement(
      "div"
     );
 
-   d.className="doc";
+
+   d.className =
+    "doc";
 
 
    if(doc){
 
-    d.innerHTML=
+    d.innerHTML =
 
      '<div class="doc-title">'+
       t[1]+
@@ -957,7 +1106,7 @@ async function cargarDocumentos(){
 
    }else{
 
-    d.innerHTML=
+    d.innerHTML =
 
      '<div class="doc-title">'+
       t[1]+
@@ -990,7 +1139,7 @@ async function cargarDocumentos(){
 
  }catch(e){
 
-  box.innerHTML=
+  box.innerHTML =
    '<div class="error">'+
    esc(e.message)+
    "</div>";
@@ -1001,14 +1150,20 @@ async function cargarDocumentos(){
 
 
 
+/*
+ * ENLACE PÚBLICO
+ */
+
 function crearEnlacePublico(patente){
 
- return "https://nexumid.github.io/NexumID/?patente="+
+ return (
+  "https://nexumid.github.io/NexumID/?patente="+
   encodeURIComponent(
    String(
-    patente||""
+    patente || ""
    ).toUpperCase()
-  );
+  )
+ );
 
 }
 
@@ -1017,16 +1172,20 @@ function crearEnlacePublico(patente){
 function enlaceActual(){
 
  return crearEnlacePublico(
-  vehiculoActual?.patente||""
+  vehiculoActual?.patente || ""
  );
 
 }
 
 
 
+/*
+ * COPIAR ENLACE
+ */
+
 async function copiarEnlace(){
 
- const enlace=
+ const enlace =
   enlaceActual();
 
 
@@ -1035,6 +1194,7 @@ async function copiarEnlace(){
   await navigator.clipboard.writeText(
    enlace
   );
+
 
   mensajeDoc(
    "✓ Enlace copiado al portapapeles.",
@@ -1055,9 +1215,13 @@ async function copiarEnlace(){
 
 
 
+/*
+ * QR
+ */
+
 function mostrarQR(){
 
- const area=
+ const area =
   document.getElementById(
    "qrArea"
   );
@@ -1072,7 +1236,7 @@ function mostrarQR(){
  );
 
 
- area.innerHTML=
+ area.innerHTML =
 
   '<div class="qrbox">'+
 
@@ -1087,15 +1251,18 @@ function mostrarQR(){
   "</div>";
 
 
- const codigo=
+ const codigo =
   document.getElementById(
    "codigoQR"
   );
 
 
- if(typeof QRCode==="undefined"){
+ if(
+  typeof QRCode ===
+  "undefined"
+ ){
 
-  codigo.innerHTML=
+  codigo.innerHTML =
    '<div style="color:#b00000;padding:10px">'+
    "No se pudo cargar el generador QR."+
    "</div>";
@@ -1111,18 +1278,25 @@ function mostrarQR(){
    text:
     enlaceActual(),
 
-   width:220,
+   width:
+    220,
 
-   height:220,
+   height:
+    220,
 
    correctLevel:
     QRCode.CorrectLevel.M
+
   }
  );
 
 }
 
 
+
+/*
+ * SUBIR DOCUMENTO
+ */
 
 async function subirDocumento(
  tipo,
@@ -1131,14 +1305,14 @@ async function subirDocumento(
 
  try{
 
-  const input=
+  const input =
    document.getElementById(
     "file_"+tipo
    );
 
 
   if(
-   !input||
+   !input ||
    !input.files.length
   ){
 
@@ -1151,12 +1325,12 @@ async function subirDocumento(
   }
 
 
-  const file=
+  const file =
    input.files[0];
 
 
   if(
-   file.size>
+   file.size >
    6*1024*1024
   ){
 
@@ -1169,7 +1343,7 @@ async function subirDocumento(
   }
 
 
-  const ext=
+  const ext =
    file.name.includes(".")
     ?
     file.name
@@ -1180,7 +1354,7 @@ async function subirDocumento(
     "bin";
 
 
-  const ruta=
+  const ruta =
    vehiculoActual.patente+
    "/"+
    tipo+
@@ -1212,14 +1386,15 @@ async function subirDocumento(
 
     headers:{
      "Content-Type":
-      file.type||
+      file.type ||
       "application/octet-stream",
 
      "x-upsert":
       "false"
     },
 
-    body:file
+    body:
+     file
    }
 
   );
@@ -1241,24 +1416,25 @@ async function subirDocumento(
       "return=minimal"
     },
 
-    body:JSON.stringify({
+    body:
+     JSON.stringify({
 
-     vehiculo_id:
-      vehiculoActual.id,
+      vehiculo_id:
+       vehiculoActual.id,
 
-     tipo:
-      tipo,
+      tipo:
+       tipo,
 
-     nombre:
-      file.name,
+      nombre:
+       file.name,
 
-     archivo:
-      ruta,
+      archivo:
+       ruta,
 
-     protegido:
-      false
+      protegido:
+       false
 
-    })
+     })
 
    }
 
@@ -1277,6 +1453,9 @@ async function subirDocumento(
 
  }catch(e){
 
+  console.error(e);
+
+
   mensajeDoc(
    "Error al subir: "+
    e.message
@@ -1288,19 +1467,23 @@ async function subirDocumento(
 
 
 
+/*
+ * VER DOCUMENTO
+ */
+
 async function verDocumento(
  codificado
 ){
 
  try{
 
-  const ruta=
+  const ruta =
    decodeURIComponent(
     codificado
    );
 
 
-  const r=
+  const r =
    await api(
 
     STORAGE+
@@ -1324,20 +1507,24 @@ async function verDocumento(
       JSON.stringify({
        expiresIn:300
       })
+
     }
 
    );
 
 
-  const signed=
-   r?.signedURL||
+  const signed =
+   r?.signedURL ||
    r?.signedUrl;
 
 
-  if(!signed)
+  if(!signed){
+
    throw Error(
     "No se pudo generar el enlace."
    );
+
+  }
 
 
   window.open(
@@ -1366,6 +1553,10 @@ async function verDocumento(
 
 
 
+/*
+ * ELIMINAR DOCUMENTO
+ */
+
 async function eliminarDocumento(
  idCod,
  rutaCod
@@ -1381,12 +1572,13 @@ async function eliminarDocumento(
 
  try{
 
-  const id=
+  const id =
    decodeURIComponent(
     idCod
    );
 
-  const ruta=
+
+  const ruta =
    decodeURIComponent(
     rutaCod
    );
@@ -1421,12 +1613,22 @@ async function eliminarDocumento(
      },
 
      body:
-      JSON.stringify([ruta])
+      JSON.stringify([
+       ruta
+      ])
+
     }
 
    );
 
-  }catch(e){}
+  }catch(e){
+
+   console.warn(
+    "No se pudo borrar archivo:",
+    e
+   );
+
+  }
 
 
   mensajeDoc(
@@ -1451,11 +1653,15 @@ async function eliminarDocumento(
 
 
 
+/*
+ * CREAR VEHÍCULO
+ */
+
 async function crearVehiculo(){
 
  try{
 
-  const v={
+  const v = {
 
    patente:
     document
@@ -1499,10 +1705,10 @@ async function crearVehiculo(){
 
 
   if(
-   !v.patente||
-   !v.marca||
-   !v.modelo||
-   !v.anio||
+   !v.patente ||
+   !v.marca ||
+   !v.modelo ||
+   !v.anio ||
    !v.color
   ){
 
@@ -1513,7 +1719,7 @@ async function crearVehiculo(){
   }
 
 
-  const r=
+  const r =
    await api(
 
     REST+
@@ -1532,129 +1738,12 @@ async function crearVehiculo(){
 
      body:
       JSON.stringify(v)
+
     }
 
    );
 
 
-  const veh=
+  const veh =
    Array.isArray(r)
-    ?
-    r[0]
-    :
-    r;
-
-
-  /*
-   * Generar PIN inicial.
-   */
-
-  const pin=
-   String(
-    Math.floor(
-     1000+
-     Math.random()*9000
-    )
-   );
-
-
-  const hash=
-   await sha(pin);
-
-
-  await api(
-
-   REST+
-   "/vehiculo_acceso",
-
-   {
-    method:"POST",
-
-    headers:{
-     "Content-Type":
-      "application/json",
-
-     "Prefer":
-      "return=minimal"
-    },
-
-    body:
-     JSON.stringify({
-
-      vehiculo_id:
-       veh.id,
-
-      pin_hash:
-       hash,
-
-      intentos:0,
-
-      bloqueado_hasta:null
-
-     })
-
-   }
-
-  );
-
-
-  mensaje(
-
-   "✓ VEHÍCULO CREADO"+
-
-   '<div class="pinbox">'+
-
-    "PIN DE ACCESO"+
-
-    '<span class="pin">'+
-     pin+
-    "</span>"+
-
-    "Guarda este PIN para el propietario."+
-
-   "</div>",
-
-   "success"
-
-  );
-
-
-  [
-   "patente",
-   "marca",
-   "modelo",
-   "anio",
-   "color",
-   "contacto"
-  ]
-  .forEach(
-   id=>
-    document
-     .getElementById(id)
-     .value=""
-  );
-
-
-  cancelarNuevo();
-
-  await cargarVehiculos();
-
-
- }catch(e){
-
-  mensaje(
-   esc(e.message)
-  );
-
- }
-
-}
-
-
-
-async function sha(text){
-
- const b=
-  await crypto.subtle.digest(
-
-   "SHA  
+   
