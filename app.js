@@ -1,126 +1,68 @@
 // ==========================================
-// NEXUMID + SUPABASE
-// ACCESO MEDIANTE PIN
+// NEXUMID - PERFIL PÚBLICO
+// Identidad Digital Vehicular
 // ==========================================
 
 const SUPABASE_URL = "https://tkrugleneazdeqhxxkvr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
 
-const SUPABASE_KEY =
-    "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const db = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-
-// ==========================================
-// PATENTE DESDE LA URL
-// Ejemplo:
-// https://nexumid.github.io/NexumID/?patente=AB-CD-12
-// ==========================================
-
-const parametros =
-    new URLSearchParams(window.location.search);
-
-const PATENTE = (
-    parametros.get("patente") || "AB-CD-12"
-)
-    .trim()
-    .toUpperCase();
-
-
-// ==========================================
-// VARIABLES
-// ==========================================
+const parametros = new URLSearchParams(window.location.search);
+const PATENTE = (parametros.get("patente") || "AB-CD-12").trim().toUpperCase();
 
 let vehiculoActual = null;
-
 let documentosActuales = [];
-
 let accesoAutorizado = false;
 
+const TIPOS_DOCUMENTOS = [
+    { tipo: "soap", nombre: "SOAP", icono: "🛡️", protegido: false },
+    { tipo: "revision_tecnica", nombre: "Revisión Técnica", icono: "🔧", protegido: false },
+    { tipo: "permiso_circulacion", nombre: "Permiso de Circulación", icono: "📄", protegido: false },
+    { tipo: "certificado_gases", nombre: "Certificado de Gases", icono: "📋", protegido: false },
+    { tipo: "padron", nombre: "Padrón", icono: "🔐", protegido: true }
+];
 
-// ==========================================
-// INICIAR
-// ==========================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    iniciarNexumID
-);
-
+document.addEventListener("DOMContentLoaded", iniciarNexumID);
 
 function iniciarNexumID() {
-
     mostrarPantallaPIN();
-
 }
 
+function escapeHtml(text) {
+    return String(text ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 // ==========================================
 // PANTALLA PIN
 // ==========================================
-
 function mostrarPantallaPIN() {
-
-    const app =
-        document.querySelector(".app");
-
-    if (!app) {
-        return;
-    }
+    const app = document.querySelector(".app");
+    if (!app) return;
 
     app.innerHTML = `
-
         <div class="pin-screen">
-
             <div class="pin-brand">
-
-                <div class="pin-logo">
-                    N
-                </div>
-
+                <div class="pin-logo">N</div>
                 <div>
-
-                    <strong>
-                        NexumID
-                    </strong>
-
-                    <span>
-                        Identidad Digital Vehicular
-                    </span>
-
+                    <strong>Nexum<span>ID</span></strong>
+                    <span>IDENTIDAD DIGITAL VEHICULAR</span>
                 </div>
-
             </div>
 
-
             <div class="pin-card">
+                <div class="security-badge">🔐</div>
+                <div class="pin-eyebrow">ACCESO PRIVADO</div>
+                <h1>Información protegida</h1>
+                <p>Ingresa el PIN de 4 dígitos para acceder a la documentación digital del vehículo.</p>
 
-                <div class="pin-icon">
-                    🔐
-                </div>
-
-
-                <h1>
-                    Acceso protegido
-                </h1>
-
-
-                <p>
-                    Ingresa el PIN de 4 dígitos
-                    para acceder a la información
-                    de tu vehículo.
-                </p>
-
-
-                <div class="pin-patente">
-
-                    ${escapeHtml(PATENTE)}
-
-                </div>
-
+                <div class="plate-label">PATENTE</div>
+                <div class="pin-patente">${escapeHtml(PATENTE)}</div>
 
                 <input
                     id="pin-input"
@@ -130,998 +72,376 @@ function mostrarPantallaPIN() {
                     maxlength="4"
                     autocomplete="off"
                     placeholder="••••"
+                    aria-label="PIN de acceso"
                 />
 
-
-                <button
-                    id="pin-button"
-                    class="modal-action"
-                    type="button"
-                    onclick="validarPIN()">
-
+                <button id="pin-button" class="modal-action" type="button">
                     ACCEDER
-
                 </button>
 
-
-                <div
-                    id="pin-error"
-                    class="pin-error">
-                </div>
-
+                <div id="pin-error" class="pin-error"></div>
             </div>
 
-
-            <div class="pin-footer">
-
+            <div class="pin-help">
+                El acceso está protegido por PIN.<br>
                 NexumID · by Smart Box Connect
-
             </div>
-
         </div>
-
     `;
 
+    const input = document.getElementById("pin-input");
+    const button = document.getElementById("pin-button");
 
-    const input =
-        document.getElementById("pin-input");
+    input?.focus();
 
+    input?.addEventListener("input", function () {
+        this.value = this.value.replace(/\D/g, "").slice(0, 4);
+    });
 
-    if (!input) {
-        return;
-    }
-
-
-    input.focus();
-
-
-    input.addEventListener(
-        "input",
-        function () {
-
-            this.value =
-                this.value
-                    .replace(/\D/g, "")
-                    .slice(0, 4);
-
+    input?.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && this.value.length === 4) {
+            validarPIN();
         }
-    );
+    });
 
-
-    input.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Enter" &&
-                this.value.length === 4
-            ) {
-
-                validarPIN();
-
-            }
-
-        }
-    );
-
+    button?.addEventListener("click", validarPIN);
 }
-
 
 // ==========================================
 // VALIDAR PIN
 // ==========================================
-
 async function validarPIN() {
+    const input = document.getElementById("pin-input");
+    const button = document.getElementById("pin-button");
 
-    const input =
-        document.getElementById("pin-input");
+    if (!input) return;
 
-    const button =
-        document.getElementById("pin-button");
-
-    const errorBox =
-        document.getElementById("pin-error");
-
-
-    if (!input) {
-        return;
-    }
-
-
-    const pin =
-        input.value.trim();
-
+    const pin = input.value.trim();
 
     if (!/^\d{4}$/.test(pin)) {
-
-        mostrarErrorPIN(
-            "Ingresa un PIN válido de 4 dígitos."
-        );
-
+        mostrarErrorPIN("Ingresa un PIN válido de 4 dígitos.");
         return;
-
     }
-
 
     if (button) {
-
         button.disabled = true;
-
-        button.textContent =
-            "VERIFICANDO...";
-
+        button.textContent = "VERIFICANDO...";
     }
 
-
-    if (errorBox) {
-
-        errorBox.textContent = "";
-
-    }
-
+    mostrarErrorPIN("");
 
     try {
-
-        const { data, error } =
-            await db.functions.invoke(
-                "nexumid-pin",
-                {
-                    body: {
-                        patente: PATENTE,
-                        pin: pin
-                    }
-                }
-            );
-
+        const { data, error } = await db.functions.invoke("nexumid-pin", {
+            body: {
+                patente: PATENTE,
+                pin: pin
+            }
+        });
 
         if (error) {
-
-            console.error(
-                "Error Edge Function:",
-                error
-            );
-
-            mostrarErrorPIN(
-                "No fue posible verificar el PIN."
-            );
-
+            console.error("Error Edge Function:", error);
+            mostrarErrorPIN("No fue posible verificar el PIN.");
             return;
-
         }
 
-
-        if (
-            !data ||
-            data.success !== true
-        ) {
-
-            mostrarErrorPIN(
-                data?.error ||
-                "PIN incorrecto."
-            );
-
+        if (!data || data.success !== true) {
+            mostrarErrorPIN(data?.error || "PIN incorrecto.");
             return;
-
         }
-
-
-        // ======================================
-        // ACCESO AUTORIZADO
-        // ======================================
 
         accesoAutorizado = true;
-
-
-        vehiculoActual =
-            data.vehiculo || null;
-
-
-        documentosActuales =
-            data.documentos || [];
-
-
-        console.log(
-            "Acceso autorizado:",
-            data
-        );
-
+        vehiculoActual = data.vehiculo || null;
+        documentosActuales = data.documentos || [];
 
         mostrarPerfil();
 
-
     } catch (error) {
-
-        console.error(
-            "Error:",
-            error
-        );
-
-
-        mostrarErrorPIN(
-            "Ocurrió un error. Intenta nuevamente."
-        );
-
-
+        console.error("Error:", error);
+        mostrarErrorPIN("Ocurrió un error. Intenta nuevamente.");
     } finally {
-
         if (button) {
-
             button.disabled = false;
-
-            button.textContent =
-                "ACCEDER";
-
+            button.textContent = "ACCEDER";
         }
-
     }
-
 }
-
-
-// ==========================================
-// ERROR PIN
-// ==========================================
 
 function mostrarErrorPIN(mensaje) {
-
-    const errorBox =
-        document.getElementById(
-            "pin-error"
-        );
-
-
-    if (errorBox) {
-
-        errorBox.textContent =
-            mensaje;
-
-    }
-
+    const box = document.getElementById("pin-error");
+    if (box) box.textContent = mensaje || "";
 }
 
-
 // ==========================================
-// MOSTRAR PERFIL
+// PERFIL
 // ==========================================
-
 function mostrarPerfil() {
+    const app = document.querySelector(".app");
+    if (!app || !vehiculoActual) return;
 
-    const app =
-        document.querySelector(".app");
-
-
-    if (
-        !app ||
-        !vehiculoActual
-    ) {
-
-        return;
-
-    }
-
+    const nombreVehiculo =
+        `${vehiculoActual.marca || ""} ${vehiculoActual.modelo || ""}`.trim();
 
     app.innerHTML = `
-
-        <div class="topbar">
-
+        <header class="topbar">
             <div class="brand">
-
-                <strong>
-                    NexumID
-                </strong>
-
-                <span>
-                    IDENTIDAD DIGITAL VEHICULAR
-                </span>
-
-            </div>
-
-
-            <div class="status">
-
-                <span></span>
-
-                PROTEGIDO
-
-            </div>
-
-        </div>
-
-
-        <section class="vehicle-hero">
-
-            <div class="vehicle-photo">
-                🚗
-            </div>
-
-
-            <div class="vehicle-info">
-
-                <div class="eyebrow">
-                    MI VEHÍCULO
-                </div>
-
-
-                <h1>
-
-                    ${escapeHtml(
-                        vehiculoActual.patente
-                    )}
-
-                </h1>
-
-
-                <p>
-
-                    ${escapeHtml(
-                        vehiculoActual.marca || ""
-                    )}
-
-                    ${escapeHtml(
-                        vehiculoActual.modelo || ""
-                    )}
-
-                    ·
-
-                    ${escapeHtml(
-                        vehiculoActual.anio || ""
-                    )}
-
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <section class="documents-section">
-
-            <div class="section-title">
-
-                <span>
-                    DOCUMENTOS
-                </span>
-
-                <small>
-                    ACCESO AUTORIZADO
-                </small>
-
-            </div>
-
-
-            <div
-                id="documents-list"
-                class="documents-list">
-
-            </div>
-
-        </section>
-
-
-        <section class="extras-section">
-
-
-            <div
-                class="extra-card"
-                onclick="mostrarContacto()">
-
-                <span>
-                    🚨
-                </span>
-
-
+                <div class="brand-mark">N</div>
                 <div>
-
-                    <strong>
-                        Contacto de emergencia
-                    </strong>
-
-                    <small>
-                        Información del vehículo
-                    </small>
-
+                    <strong>Nexum<span>ID</span></strong>
+                    <small>IDENTIDAD DIGITAL VEHICULAR</small>
                 </div>
-
             </div>
 
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                ACCESO AUTORIZADO
+            </div>
+        </header>
 
-            <div
-                class="extra-card"
-                onclick="mostrarInfo()">
+        <main>
+            <section class="vehicle-hero">
+                <div class="hero-glow"></div>
+                <div class="vehicle-symbol">🚗</div>
 
-                <span>
-                    🚗
-                </span>
-
-
-                <div>
-
-                    <strong>
-                        Información del vehículo
-                    </strong>
-
-                    <small>
-                        Datos registrados
-                    </small>
-
+                <div class="vehicle-copy">
+                    <span class="eyebrow">VEHÍCULO IDENTIFICADO</span>
+                    <h1>${escapeHtml(vehiculoActual.patente)}</h1>
+                    <p>${escapeHtml(nombreVehiculo || "Vehículo registrado")}</p>
                 </div>
 
-            </div>
+                <div class="vehicle-tags">
+                    <span>✓ IDENTIDAD VERIFICADA</span>
+                    <span>${escapeHtml(vehiculoActual.anio || "")}</span>
+                    ${vehiculoActual.color ? `<span>${escapeHtml(vehiculoActual.color)}</span>` : ""}
+                </div>
+            </section>
 
+            <section class="documents-section">
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">DOCUMENTACIÓN</span>
+                        <h2>Documentos del vehículo</h2>
+                    </div>
+                    <div class="secure-mini">🔒 PROTEGIDO</div>
+                </div>
 
-        </section>
+                <div id="documents-list" class="documents-list"></div>
+            </section>
 
+            <section class="quick-section">
+                <div class="quick-card" id="btnContacto">
+                    <div class="quick-icon">☎</div>
+                    <div>
+                        <strong>Contacto de emergencia</strong>
+                        <small>Acceso rápido</small>
+                    </div>
+                    <span>›</span>
+                </div>
+
+                <div class="quick-card" id="btnInfo">
+                    <div class="quick-icon">🚘</div>
+                    <div>
+                        <strong>Datos del vehículo</strong>
+                        <small>Información registrada</small>
+                    </div>
+                    <span>›</span>
+                </div>
+            </section>
+        </main>
 
         <footer>
-
-            NexumID · by Smart Box Connect
-
+            <div class="footer-logo">Nexum<span>ID</span></div>
+            <div>IDENTIDAD DIGITAL VEHICULAR</div>
+            <small>Una solución de Smart Box Connect</small>
         </footer>
 
-
-        <div
-            id="modal"
-            class="modal hidden">
-
+        <div id="modal" class="modal hidden">
             <div class="modal-box">
-
-                <button
-                    class="close"
-                    type="button"
-                    onclick="cerrarModal()">
-
-                    ×
-
-                </button>
-
-
-                <div
-                    id="modal-content">
-                </div>
-
+                <button id="btnCerrarModal" class="close" type="button">×</button>
+                <div id="modal-content"></div>
             </div>
-
         </div>
-
     `;
 
+    document.getElementById("btnContacto")?.addEventListener("click", mostrarContacto);
+    document.getElementById("btnInfo")?.addEventListener("click", mostrarInfo);
+    document.getElementById("btnCerrarModal")?.addEventListener("click", cerrarModal);
 
     mostrarDocumentos();
-
 }
 
-
 // ==========================================
-// MOSTRAR DOCUMENTOS
+// DOCUMENTOS
 // ==========================================
-
 function mostrarDocumentos() {
+    const lista = document.getElementById("documents-list");
+    if (!lista) return;
 
-    const lista =
-        document.getElementById(
-            "documents-list"
-        );
+    lista.innerHTML = TIPOS_DOCUMENTOS.map(doc => {
+        const encontrado = buscarDocumento(doc.tipo);
 
-
-    if (!lista) {
-        return;
-    }
-
-
-    const tipos = [
-
-        {
-            tipo: "soap",
-            nombre: "SOAP",
-            icono: "🛡️"
-        },
-
-        {
-            tipo: "revision",
-            nombre: "Revisión Técnica",
-            icono: "🔧"
-        },
-
-        {
-            tipo: "permiso",
-            nombre: "Permiso de Circulación",
-            icono: "📄"
-        },
-
-        {
-            tipo: "gases",
-            nombre: "Certificado de Gases",
-            icono: "📋"
-        },
-
-        {
-            tipo: "padron",
-            nombre: "Padrón",
-            icono: "🔐"
-        }
-
-    ];
-
-
-    lista.innerHTML =
-        tipos.map(documento => {
-
-            const encontrado =
-                buscarDocumento(
-                    documento.tipo
-                );
-
-
-            if (encontrado) {
-
-                return `
-
-                    <div class="document-card">
-
-                        <div class="document-icon">
-
-                            ${documento.icono}
-
-                        </div>
-
-
-                        <div class="document-info">
-
-                            <strong>
-
-                                ${documento.nombre}
-
-                            </strong>
-
-
-                            <small>
-
-                                ● Disponible
-
-                            </small>
-
-                        </div>
-
-
-                        <button
-                            type="button"
-                            onclick="verDocumento('${documento.tipo}')">
-
-                            VER
-
-                        </button>
-
-                    </div>
-
-                `;
-
-            }
-
-
+        if (encontrado) {
             return `
-
-                <div class="document-card">
-
-                    <div class="document-icon">
-
-                        ${documento.icono}
-
-                    </div>
-
+                <article class="document-card available">
+                    <div class="document-icon">${doc.icono}</div>
 
                     <div class="document-info">
-
-                        <strong>
-
-                            ${documento.nombre}
-
-                        </strong>
-
-
-                        <small>
-
-                            No disponible
-
-                        </small>
-
+                        <strong>${doc.nombre}</strong>
+                        <small>● Disponible${doc.protegido ? " · Acceso protegido" : ""}</small>
                     </div>
 
-
-                    <button
-                        type="button"
-                        disabled>
-
-                        —
-
+                    <button class="document-button" type="button"
+                        data-documento="${escapeHtml(doc.tipo)}">
+                        VER
                     </button>
+                </article>
+            `;
+        }
 
+        return `
+            <article class="document-card unavailable">
+                <div class="document-icon">${doc.icono}</div>
+
+                <div class="document-info">
+                    <strong>${doc.nombre}</strong>
+                    <small class="not-available">No disponible</small>
                 </div>
 
-            `;
+                <button class="document-button disabled" type="button" disabled>—</button>
+            </article>
+        `;
+    }).join("");
 
-        }).join("");
-
+    lista.querySelectorAll("[data-documento]").forEach(button => {
+        button.addEventListener("click", () => {
+            verDocumento(button.dataset.documento);
+        });
+    });
 }
-
-
-// ==========================================
-// BUSCAR DOCUMENTO
-// ==========================================
 
 function buscarDocumento(tipo) {
-
-    return documentosActuales.find(
-        documento =>
-            String(documento.tipo)
-                .toLowerCase() ===
-            String(tipo)
-                .toLowerCase()
+    return documentosActuales.find(documento =>
+        String(documento.tipo || "").toLowerCase() === String(tipo).toLowerCase()
     );
-
 }
-
 
 // ==========================================
 // VER DOCUMENTO
 // ==========================================
-
 function verDocumento(tipo) {
-
     if (!accesoAutorizado) {
-
         mostrarModal(
             "Acceso protegido",
-            `
-                <p>
-                    Debes ingresar el PIN
-                    para acceder a los documentos.
-                </p>
-            `
+            "<p>Debes ingresar el PIN para acceder a los documentos.</p>"
         );
-
         return;
-
     }
 
+    const documento = buscarDocumento(tipo);
 
-    const documento =
-        buscarDocumento(tipo);
-
-
-    if (!documento) {
-
+    if (!documento || !documento.url) {
         mostrarModal(
             "Documento no disponible",
-            `
-                <p>
-                    Este documento todavía
-                    no está cargado para este vehículo.
-                </p>
-            `
+            "<p>Este documento todavía no está disponible para este vehículo.</p>"
         );
-
         return;
-
     }
 
-
-    if (!documento.url) {
-
-        mostrarModal(
-            "Documento no disponible",
-            `
-                <p>
-                    No fue posible generar
-                    el acceso temporal al documento.
-                </p>
-            `
-        );
-
-        return;
-
-    }
-
+    const tipoInfo = TIPOS_DOCUMENTOS.find(x => x.tipo === tipo);
 
     mostrarModal(
-        documento.nombre || "Documento",
+        tipoInfo?.nombre || documento.nombre || "Documento",
         `
-            <p>
-                Documento disponible.
-            </p>
-
-
-            <button
-                class="modal-action"
-                type="button"
-                onclick="abrirDocumentoSeguro('${escapeHtml(documento.url)}')">
-
-                VER DOCUMENTO
-
-            </button>
+            <div class="modal-document">
+                <div class="modal-document-icon">${tipoInfo?.icono || "📄"}</div>
+                <p>Documento disponible de forma temporal y protegida.</p>
+                <button id="btnAbrirDocumento" class="modal-action" type="button">
+                    ABRIR DOCUMENTO
+                </button>
+            </div>
         `
     );
 
+    document.getElementById("btnAbrirDocumento")?.addEventListener("click", () => {
+        abrirDocumentoSeguro(documento.url);
+    });
 }
-
-
-// ==========================================
-// ABRIR DOCUMENTO SEGURO
-// ==========================================
 
 function abrirDocumentoSeguro(url) {
-
-    if (!accesoAutorizado) {
-        return;
-    }
-
-
-    window.open(
-        url,
-        "_blank"
-    );
-
+    if (!accesoAutorizado || !url) return;
+    window.open(url, "_blank", "noopener,noreferrer");
 }
 
-
 // ==========================================
-// CONTACTO DE EMERGENCIA
+// CONTACTO
 // ==========================================
-
 function mostrarContacto() {
+    const contacto = vehiculoActual?.contacto_emergencia || "";
 
-    if (!vehiculoActual) {
-
+    if (!contacto) {
         mostrarModal(
             "Contacto de emergencia",
             `
-                <p>
-                    Cargando información...
-                </p>
+                <div class="modal-big-icon">☎</div>
+                <p>No hay un contacto de emergencia registrado para este vehículo.</p>
             `
         );
-
         return;
-
     }
-
-
-    const contacto =
-        vehiculoActual.contacto_emergencia ||
-        "No registrado";
-
 
     mostrarModal(
         "Contacto de emergencia",
         `
-            <p>
-
-                <strong>
-                    Contacto:
-                </strong>
-
-                ${escapeHtml(contacto)}
-
-            </p>
-
-
-            ${
-                contacto !== "No registrado"
-                ?
-                `
-                    <button
-                        class="modal-action"
-                        type="button"
-                        onclick="window.location.href='tel:${escapeHtml(contacto)}'">
-
-                        LLAMAR
-
-                    </button>
-                `
-                :
-                ""
-            }
+            <div class="modal-big-icon">☎</div>
+            <p>Contacto registrado:</p>
+            <div class="contact-number">${escapeHtml(contacto)}</div>
+            <button id="btnLlamar" class="modal-action" type="button">
+                LLAMAR CONTACTO
+            </button>
         `
     );
 
+    document.getElementById("btnLlamar")?.addEventListener("click", () => {
+        window.location.href = `tel:${encodeURIComponent(contacto)}`;
+    });
 }
 
-
 // ==========================================
-// INFORMACIÓN DEL VEHÍCULO
+// INFORMACIÓN
 // ==========================================
-
 function mostrarInfo() {
-
-    if (!vehiculoActual) {
-
-        mostrarModal(
-            "Información del vehículo",
-            `
-                <p>
-                    Cargando información...
-                </p>
-            `
-        );
-
-        return;
-
-    }
-
+    if (!vehiculoActual) return;
 
     mostrarModal(
-        "Información del vehículo",
+        "Datos del vehículo",
         `
-
-            <p>
-
-                <strong>
-                    Patente:
-                </strong>
-
-                ${escapeHtml(
-                    vehiculoActual.patente
-                )}
-
-            </p>
-
-
-            <p>
-
-                <strong>
-                    Marca:
-                </strong>
-
-                ${escapeHtml(
-                    vehiculoActual.marca
-                )}
-
-            </p>
-
-
-            <p>
-
-                <strong>
-                    Modelo:
-                </strong>
-
-                ${escapeHtml(
-                    vehiculoActual.modelo
-                )}
-
-            </p>
-
-
-            <p>
-
-                <strong>
-                    Año:
-                </strong>
-
-                ${escapeHtml(
-                    vehiculoActual.anio
-                )}
-
-            </p>
-
-
-            <p>
-
-                <strong>
-                    Color:
-                </strong>
-
-                ${escapeHtml(
-                    vehiculoActual.color
-                )}
-
-            </p>
-
+            <div class="vehicle-detail">
+                <div><span>Patente</span><strong>${escapeHtml(vehiculoActual.patente)}</strong></div>
+                <div><span>Marca</span><strong>${escapeHtml(vehiculoActual.marca || "—")}</strong></div>
+                <div><span>Modelo</span><strong>${escapeHtml(vehiculoActual.modelo || "—")}</strong></div>
+                <div><span>Año</span><strong>${escapeHtml(vehiculoActual.anio || "—")}</strong></div>
+                <div><span>Color</span><strong>${escapeHtml(vehiculoActual.color || "—")}</strong></div>
+            </div>
         `
     );
-
 }
-
 
 // ==========================================
 // MODAL
 // ==========================================
+function mostrarModal(titulo, contenido) {
+    const modal = document.getElementById("modal");
+    const modalContent = document.getElementById("modal-content");
 
-function mostrarModal(
-    titulo,
-    contenido
-) {
-
-    const modal =
-        document.getElementById(
-            "modal"
-        );
-
-
-    const modalContent =
-        document.getElementById(
-            "modal-content"
-        );
-
-
-    if (
-        !modal ||
-        !modalContent
-    ) {
-
-        return;
-
-    }
-
+    if (!modal || !modalContent) return;
 
     modalContent.innerHTML = `
-
-        <h2>
-            ${escapeHtml(titulo)}
-        </h2>
-
+        <h2>${escapeHtml(titulo)}</h2>
         ${contenido}
-
     `;
 
-
-    modal.classList.remove(
-        "hidden"
-    );
-
+    modal.classList.remove("hidden");
 }
-
-
-// ==========================================
-// CERRAR MODAL
-// ==========================================
 
 function cerrarModal() {
-
-    const modal =
-        document.getElementById(
-            "modal"
-        );
-
-
-    if (modal) {
-
-        modal.classList.add(
-            "hidden"
-        );
-
-    }
-
+    document.getElementById("modal")?.classList.add("hidden");
 }
-
-
-// ==========================================
-// SEGURIDAD HTML
-// ==========================================
-
-function escapeHtml(text) {
-
-    return String(
-        text ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}        
