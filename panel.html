@@ -408,6 +408,10 @@ correctLevel:QRCode.CorrectLevel.M
 
 }
 
+/* =========================================================
+   REGENERAR PIN - VERSIÓN CORREGIDA
+   Verifica que Supabase realmente haya actualizado la fila.
+   ========================================================= */
 async function regenerarPIN(){
 
 if(!vehiculoActual)return;
@@ -417,38 +421,79 @@ if(!confirm(
 "?\n\nEl PIN anterior dejará de funcionar inmediatamente."
 ))return;
 
+const boton=$("btnRegenerarPIN");
+
 try{
+
+if(!await comprobarSesion()){
+alert("La sesión expiró.");
+location.href="admin.html";
+return;
+}
+
+boton.disabled=true;
+boton.textContent="GENERANDO NUEVO PIN...";
 
 const pin=String(Math.floor(1000+Math.random()*9000));
 const pin_hash=await hash(pin);
 
-const r=await db.from("vehiculo_acceso")
+const resultado=await db
+.from("vehiculo_acceso")
 .update({
-pin_hash,
+pin_hash:pin_hash,
 intentos:0,
 bloqueado_hasta:null,
 updated_at:new Date().toISOString()
 })
-.eq("vehiculo_id",vehiculoActual.id);
+.eq("vehiculo_id",vehiculoActual.id)
+.select("vehiculo_id,pin_hash,updated_at")
+.single();
 
-if(r.error)throw r.error;
+if(resultado.error){
+throw resultado.error;
+}
 
-$("infoVehiculo").insertAdjacentHTML(
-"afterend",
-'<div class="success"><strong>✓ PIN REGENERADO</strong>'+
+if(!resultado.data){
+throw new Error("Supabase no devolvió la fila actualizada.");
+}
+
+if(resultado.data.vehiculo_id!==vehiculoActual.id){
+throw new Error("El PIN no corresponde al vehículo seleccionado.");
+}
+
+if(resultado.data.pin_hash!==pin_hash){
+throw new Error("Supabase no confirmó el nuevo PIN.");
+}
+
+$("mensajeDocumentos").innerHTML=
+'<div class="success">'+
+'<strong>✓ PIN REGENERADO CORRECTAMENTE</strong>'+
 '<div class="pin-box">'+
 '<span class="pin-label">NUEVO PIN DE ACCESO</span>'+
 '<span class="pin-number">'+esc(pin)+'</span>'+
-'</div><br>El PIN anterior ya no funciona.</div>'
-);
+'</div>'+
+'<br><strong>El PIN anterior ya dejó de funcionar.</strong>'+
+'</div>';
+
+boton.textContent="🔄 REGENERAR PIN";
 
 }catch(e){
 
-$("infoVehiculo").insertAdjacentHTML(
-"afterend",
-'<div class="error"><strong>No se pudo regenerar el PIN</strong><br><br>'+
-esc(e.message)+'</div>'
-);
+console.error("ERROR REGENERANDO PIN:",e);
+
+$("mensajeDocumentos").innerHTML=
+'<div class="error">'+
+'<strong>NO SE PUDO REGENERAR EL PIN</strong><br><br>'+
+esc(e.message||e)+
+'<br><br>'+
+'El PIN anterior se mantiene sin cambios.'+
+'</div>';
+
+boton.textContent="🔄 REGENERAR PIN";
+
+}finally{
+
+boton.disabled=false;
 
 }
 
