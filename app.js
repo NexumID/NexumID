@@ -158,6 +158,7 @@ async function validarPIN() {
     } catch (error) {
         console.error("Error:", error);
         mostrarErrorPIN("Ocurrió un error. Intenta nuevamente.");
+
     } finally {
         if (button) {
             button.disabled = false;
@@ -176,10 +177,14 @@ function mostrarErrorPIN(mensaje) {
 // ==========================================
 function mostrarPerfil() {
     const app = document.querySelector(".app");
+
     if (!app || !vehiculoActual) return;
 
     const nombreVehiculo =
         `${vehiculoActual.marca || ""} ${vehiculoActual.modelo || ""}`.trim();
+
+    // La Edge Function devuelve foto_url cuando existe una foto.
+    const fotoUrl = vehiculoActual.foto_url || "";
 
     app.innerHTML = `
         <header class="topbar">
@@ -198,20 +203,121 @@ function mostrarPerfil() {
         </header>
 
         <main>
-            <section class="vehicle-hero">
-                <div class="hero-glow"></div>
-                <div class="vehicle-symbol">🚗</div>
+            <section
+                class="vehicle-hero"
+                style="
+                    position:relative;
+                    min-height:270px;
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:flex-end;
+                    overflow:hidden;
+                "
+            >
+                ${
+                    fotoUrl
+                    ? `
+                        <div
+                            style="
+                                position:absolute;
+                                inset:0;
+                                background-image:url('${escapeHtml(fotoUrl)}');
+                                background-size:cover;
+                                background-position:center;
+                                opacity:.25;
+                                filter:saturate(.9);
+                                transform:scale(1.02);
+                            "
+                        ></div>
 
-                <div class="vehicle-copy">
+                        <div
+                            style="
+                                position:absolute;
+                                inset:0;
+                                background:
+                                    linear-gradient(
+                                        to bottom,
+                                        rgba(5,8,13,.10) 0%,
+                                        rgba(5,8,13,.32) 38%,
+                                        rgba(13,20,32,.96) 100%
+                                    );
+                            "
+                        ></div>
+                    `
+                    : `
+                        <div
+                            style="
+                                position:absolute;
+                                right:28px;
+                                top:55px;
+                                font-size:70px;
+                                opacity:.20;
+                            "
+                        >🚗</div>
+                    `
+                }
+
+                <div
+                    class="hero-glow"
+                    style="
+                        position:absolute;
+                        inset:0;
+                        pointer-events:none;
+                    "
+                ></div>
+
+                <div
+                    class="vehicle-copy"
+                    style="
+                        position:relative;
+                        z-index:2;
+                        padding:28px 36px 8px;
+                    "
+                >
                     <span class="eyebrow">VEHÍCULO IDENTIFICADO</span>
-                    <h1>${escapeHtml(vehiculoActual.patente)}</h1>
-                    <p>${escapeHtml(nombreVehiculo || "Vehículo registrado")}</p>
+
+                    <h1
+                        style="
+                            margin-top:8px;
+                            font-size:32px;
+                            letter-spacing:4px;
+                            color:#fff;
+                            text-shadow:0 2px 12px rgba(0,0,0,.65);
+                        "
+                    >
+                        ${escapeHtml(vehiculoActual.patente)}
+                    </h1>
+
+                    <p
+                        style="
+                            margin-top:6px;
+                            color:#d1d9e4;
+                            font-size:17px;
+                            text-shadow:0 1px 8px rgba(0,0,0,.7);
+                        "
+                    >
+                        ${escapeHtml(nombreVehiculo || "Vehículo registrado")}
+                    </p>
                 </div>
 
-                <div class="vehicle-tags">
+                <div
+                    class="vehicle-tags"
+                    style="
+                        position:relative;
+                        z-index:2;
+                        display:flex;
+                        gap:8px;
+                        flex-wrap:wrap;
+                        padding:10px 36px 26px;
+                    "
+                >
                     <span>✓ IDENTIDAD VERIFICADA</span>
                     <span>${escapeHtml(vehiculoActual.anio || "")}</span>
-                    ${vehiculoActual.color ? `<span>${escapeHtml(vehiculoActual.color)}</span>` : ""}
+                    ${
+                        vehiculoActual.color
+                        ? `<span>${escapeHtml(vehiculoActual.color)}</span>`
+                        : ""
+                    }
                 </div>
             </section>
 
@@ -221,6 +327,7 @@ function mostrarPerfil() {
                         <span class="eyebrow">DOCUMENTACIÓN</span>
                         <h2>Documentos del vehículo</h2>
                     </div>
+
                     <div class="secure-mini">🔒 PROTEGIDO</div>
                 </div>
 
@@ -262,9 +369,17 @@ function mostrarPerfil() {
         </div>
     `;
 
-    document.getElementById("btnContacto")?.addEventListener("click", mostrarContacto);
-    document.getElementById("btnInfo")?.addEventListener("click", mostrarInfo);
-    document.getElementById("btnCerrarModal")?.addEventListener("click", cerrarModal);
+    document
+        .getElementById("btnContacto")
+        ?.addEventListener("click", mostrarContacto);
+
+    document
+        .getElementById("btnInfo")
+        ?.addEventListener("click", mostrarInfo);
+
+    document
+        .getElementById("btnCerrarModal")
+        ?.addEventListener("click", cerrarModal);
 
     mostrarDocumentos();
 }
@@ -274,6 +389,7 @@ function mostrarPerfil() {
 // ==========================================
 function mostrarDocumentos() {
     const lista = document.getElementById("documents-list");
+
     if (!lista) return;
 
     lista.innerHTML = TIPOS_DOCUMENTOS.map(doc => {
@@ -286,11 +402,16 @@ function mostrarDocumentos() {
 
                     <div class="document-info">
                         <strong>${doc.nombre}</strong>
-                        <small>● Disponible${doc.protegido ? " · Acceso protegido" : ""}</small>
+                        <small>
+                            ● Disponible${doc.protegido ? " · Acceso protegido" : ""}
+                        </small>
                     </div>
 
-                    <button class="document-button" type="button"
-                        data-documento="${escapeHtml(doc.tipo)}">
+                    <button
+                        class="document-button"
+                        type="button"
+                        data-documento="${escapeHtml(doc.tipo)}"
+                    >
                         VER
                     </button>
                 </article>
@@ -306,21 +427,28 @@ function mostrarDocumentos() {
                     <small class="not-available">No disponible</small>
                 </div>
 
-                <button class="document-button disabled" type="button" disabled>—</button>
+                <button
+                    class="document-button disabled"
+                    type="button"
+                    disabled
+                >—</button>
             </article>
         `;
     }).join("");
 
-    lista.querySelectorAll("[data-documento]").forEach(button => {
-        button.addEventListener("click", () => {
-            verDocumento(button.dataset.documento);
+    lista
+        .querySelectorAll("[data-documento]")
+        .forEach(button => {
+            button.addEventListener("click", () => {
+                verDocumento(button.dataset.documento);
+            });
         });
-    });
 }
 
 function buscarDocumento(tipo) {
     return documentosActuales.find(documento =>
-        String(documento.tipo || "").toLowerCase() === String(tipo).toLowerCase()
+        String(documento.tipo || "").toLowerCase() ===
+        String(tipo).toLowerCase()
     );
 }
 
@@ -352,22 +480,35 @@ function verDocumento(tipo) {
         tipoInfo?.nombre || documento.nombre || "Documento",
         `
             <div class="modal-document">
-                <div class="modal-document-icon">${tipoInfo?.icono || "📄"}</div>
-                <p>Documento disponible de forma temporal y protegida.</p>
-                <button id="btnAbrirDocumento" class="modal-action" type="button">
+                <div class="modal-document-icon">
+                    ${tipoInfo?.icono || "📄"}
+                </div>
+
+                <p>
+                    Documento disponible de forma temporal y protegida.
+                </p>
+
+                <button
+                    id="btnAbrirDocumento"
+                    class="modal-action"
+                    type="button"
+                >
                     ABRIR DOCUMENTO
                 </button>
             </div>
         `
     );
 
-    document.getElementById("btnAbrirDocumento")?.addEventListener("click", () => {
-        abrirDocumentoSeguro(documento.url);
-    });
+    document
+        .getElementById("btnAbrirDocumento")
+        ?.addEventListener("click", () => {
+            abrirDocumentoSeguro(documento.url);
+        });
 }
 
 function abrirDocumentoSeguro(url) {
     if (!accesoAutorizado || !url) return;
+
     window.open(url, "_blank", "noopener,noreferrer");
 }
 
@@ -382,7 +523,9 @@ function mostrarContacto() {
             "Contacto de emergencia",
             `
                 <div class="modal-big-icon">☎</div>
-                <p>No hay un contacto de emergencia registrado para este vehículo.</p>
+                <p>
+                    No hay un contacto de emergencia registrado para este vehículo.
+                </p>
             `
         );
         return;
@@ -393,16 +536,27 @@ function mostrarContacto() {
         `
             <div class="modal-big-icon">☎</div>
             <p>Contacto registrado:</p>
-            <div class="contact-number">${escapeHtml(contacto)}</div>
-            <button id="btnLlamar" class="modal-action" type="button">
+
+            <div class="contact-number">
+                ${escapeHtml(contacto)}
+            </div>
+
+            <button
+                id="btnLlamar"
+                class="modal-action"
+                type="button"
+            >
                 LLAMAR CONTACTO
             </button>
         `
     );
 
-    document.getElementById("btnLlamar")?.addEventListener("click", () => {
-        window.location.href = `tel:${encodeURIComponent(contacto)}`;
-    });
+    document
+        .getElementById("btnLlamar")
+        ?.addEventListener("click", () => {
+            window.location.href =
+                `tel:${encodeURIComponent(contacto)}`;
+        });
 }
 
 // ==========================================
@@ -415,11 +569,30 @@ function mostrarInfo() {
         "Datos del vehículo",
         `
             <div class="vehicle-detail">
-                <div><span>Patente</span><strong>${escapeHtml(vehiculoActual.patente)}</strong></div>
-                <div><span>Marca</span><strong>${escapeHtml(vehiculoActual.marca || "—")}</strong></div>
-                <div><span>Modelo</span><strong>${escapeHtml(vehiculoActual.modelo || "—")}</strong></div>
-                <div><span>Año</span><strong>${escapeHtml(vehiculoActual.anio || "—")}</strong></div>
-                <div><span>Color</span><strong>${escapeHtml(vehiculoActual.color || "—")}</strong></div>
+                <div>
+                    <span>Patente</span>
+                    <strong>${escapeHtml(vehiculoActual.patente)}</strong>
+                </div>
+
+                <div>
+                    <span>Marca</span>
+                    <strong>${escapeHtml(vehiculoActual.marca || "—")}</strong>
+                </div>
+
+                <div>
+                    <span>Modelo</span>
+                    <strong>${escapeHtml(vehiculoActual.modelo || "—")}</strong>
+                </div>
+
+                <div>
+                    <span>Año</span>
+                    <strong>${escapeHtml(vehiculoActual.anio || "—")}</strong>
+                </div>
+
+                <div>
+                    <span>Color</span>
+                    <strong>${escapeHtml(vehiculoActual.color || "—")}</strong>
+                </div>
             </div>
         `
     );
@@ -443,5 +616,7 @@ function mostrarModal(titulo, contenido) {
 }
 
 function cerrarModal() {
-    document.getElementById("modal")?.classList.add("hidden");
+    document
+        .getElementById("modal")
+        ?.classList.add("hidden");
 }
