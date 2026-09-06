@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
@@ -87,6 +86,7 @@ button{
     background:#111923;
     color:#ff7070;
     border:1px solid #263342;
+    width:100%;
 }
 
 h1{
@@ -248,13 +248,9 @@ label{
 
 </head>
 
-
 <body>
 
 <div class="container">
-
-
-<!-- HEADER -->
 
 <div class="header">
 
@@ -270,7 +266,6 @@ label{
 
     </div>
 
-
     <button
         class="btn-secondary"
         onclick="cerrarSesion()">
@@ -282,8 +277,9 @@ label{
 </div>
 
 
-
-<!-- PANEL PRINCIPAL -->
+<!-- ==================================================
+PANEL
+================================================== -->
 
 <div id="vistaPanel">
 
@@ -291,9 +287,7 @@ label{
         Panel de Administración
     </h1>
 
-
     <div id="mensaje"></div>
-
 
     <button
         class="btn-primary"
@@ -304,24 +298,15 @@ label{
     </button>
 
 
-
-    <!-- FORMULARIO VEHICULO -->
-
     <div
         id="formularioVehiculo"
         class="form-card hidden">
 
-
         <h2 style="margin-top:0;">
-
             Nuevo vehículo
-
         </h2>
 
-
-        <label>
-            Patente
-        </label>
+        <label>Patente</label>
 
         <input
             id="patente"
@@ -329,10 +314,7 @@ label{
             placeholder="AB-CD-12">
 
 
-
-        <label>
-            Marca
-        </label>
+        <label>Marca</label>
 
         <input
             id="marca"
@@ -340,10 +322,7 @@ label{
             placeholder="Chevrolet">
 
 
-
-        <label>
-            Modelo
-        </label>
+        <label>Modelo</label>
 
         <input
             id="modelo"
@@ -351,10 +330,7 @@ label{
             placeholder="Sail">
 
 
-
-        <label>
-            Año
-        </label>
+        <label>Año</label>
 
         <input
             id="anio"
@@ -362,16 +338,12 @@ label{
             placeholder="2020">
 
 
-
-        <label>
-            Color
-        </label>
+        <label>Color</label>
 
         <input
             id="color"
             type="text"
             placeholder="Blanco">
-
 
 
         <label>
@@ -384,7 +356,6 @@ label{
             placeholder="+56912345678">
 
 
-
         <button
             class="btn-primary"
             onclick="crearVehiculo()">
@@ -393,10 +364,8 @@ label{
 
         </button>
 
-
         <br>
         <br>
-
 
         <button
             class="btn-secondary"
@@ -410,11 +379,9 @@ label{
     </div>
 
 
-
     <h2>
         Vehículos registrados
     </h2>
-
 
     <div id="listaVehiculos">
 
@@ -427,13 +394,13 @@ label{
 </div>
 
 
-
-<!-- VISTA DOCUMENTOS -->
+<!-- ==================================================
+DOCUMENTOS
+================================================== -->
 
 <div
     id="vistaDocumentos"
     class="hidden">
-
 
     <button
         class="btn-secondary back"
@@ -443,53 +410,88 @@ label{
 
     </button>
 
-
     <h1>
         Documentos
     </h1>
 
-
     <div id="infoVehiculo"></div>
 
-
     <div id="mensajeDocumentos"></div>
-
 
     <div id="listaDocumentos"></div>
 
 </div>
 
-
 </div>
 
 
+<!-- ==================================================
+PRUEBA JAVASCRIPT
+================================================== -->
 
 <script>
 
+alert("JAVASCRIPT NEXUMID FUNCIONA");
 
-// ==================================================
-// SUPABASE
-// ==================================================
+</script>
+
+
+<!-- ==================================================
+JAVASCRIPT PRINCIPAL
+================================================== -->
+
+<script>
 
 const SUPABASE_URL =
 "https://tkrugleneazdeqhxxkvr.supabase.co";
-
 
 const SUPABASE_KEY =
 "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
 
 
-const supabaseClient =
-supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+let supabaseClient;
 
 
+try{
 
-// ==================================================
-// TIPOS DE DOCUMENTOS
-// ==================================================
+    if(typeof supabase === "undefined"){
+
+        throw new Error(
+            "La librería de Supabase no se cargó."
+        );
+
+    }
+
+    supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+}catch(error){
+
+    console.error(error);
+
+    document.getElementById(
+        "listaVehiculos"
+    ).innerHTML = `
+
+        <div class="error">
+
+            Error cargando Supabase:
+
+            <br><br>
+
+            ${escapeHtml(
+                error.message
+            )}
+
+        </div>
+
+    `;
+
+}
+
 
 const tiposDocumentos = [
 
@@ -521,11 +523,6 @@ const tiposDocumentos = [
 ];
 
 
-
-// ==================================================
-// VEHICULO ACTUAL
-// ==================================================
-
 let vehiculoActual = null;
 
 
@@ -536,65 +533,72 @@ let vehiculoActual = null;
 
 function mostrarExito(texto){
 
-    document.getElementById("mensaje").innerHTML =
+    document.getElementById(
+        "mensaje"
+    ).innerHTML = `
 
-    `<div class="success">
-        ${texto}
-    </div>`;
+        <div class="success">
+
+            ${texto}
+
+        </div>
+
+    `;
 
 }
-
 
 
 function mostrarError(texto){
 
-    document.getElementById("mensaje").innerHTML =
+    document.getElementById(
+        "mensaje"
+    ).innerHTML = `
 
-    `<div class="error">
-        ${texto}
-    </div>`;
+        <div class="error">
+
+            ${texto}
+
+        </div>
+
+    `;
 
 }
 
 
-
-// ==================================================
-// FORMULARIO
-// ==================================================
 
 function mostrarFormulario(){
 
     document
-    .getElementById("formularioVehiculo")
-    .classList.remove("hidden");
+    .getElementById(
+        "formularioVehiculo"
+    )
+    .classList
+    .remove("hidden");
 
 }
-
 
 
 function ocultarFormulario(){
 
     document
-    .getElementById("formularioVehiculo")
-    .classList.add("hidden");
+    .getElementById(
+        "formularioVehiculo"
+    )
+    .classList
+    .add("hidden");
 
 }
 
 
 
 // ==================================================
-// GENERAR HASH SHA-256
+// HASH
 // ==================================================
 
 async function generarHashSHA256(texto){
 
-    const encoder =
-    new TextEncoder();
-
-
     const datos =
-    encoder.encode(texto);
-
+    new TextEncoder().encode(texto);
 
     const hashBuffer =
     await crypto.subtle.digest(
@@ -602,14 +606,10 @@ async function generarHashSHA256(texto){
         datos
     );
 
-
-    const hashArray =
-    Array.from(
+    return Array
+    .from(
         new Uint8Array(hashBuffer)
-    );
-
-
-    return hashArray
+    )
     .map(
         byte =>
         byte
@@ -628,342 +628,245 @@ async function generarHashSHA256(texto){
 
 async function crearVehiculo(){
 
-
-    const {
-        data: sessionData
-    } =
-    await supabaseClient.auth.getSession();
-
-
-    if(!sessionData.session){
-
-        alert("La sesión expiró.");
-
-        window.location.href =
-        "admin.html";
-
-        return;
-    }
-
-
-
-    // ----------------------------------------------
-    // DATOS
-    // ----------------------------------------------
-
-    const patente =
-    document
-    .getElementById("patente")
-    .value
-    .trim()
-    .toUpperCase();
-
-
-    const marca =
-    document
-    .getElementById("marca")
-    .value
-    .trim();
-
-
-    const modelo =
-    document
-    .getElementById("modelo")
-    .value
-    .trim();
-
-
-    const anio =
-    document
-    .getElementById("anio")
-    .value;
-
-
-    const color =
-    document
-    .getElementById("color")
-    .value
-    .trim();
-
-
-    const contacto =
-    document
-    .getElementById("contacto")
-    .value
-    .trim();
-
-
-
-    // ----------------------------------------------
-    // VALIDAR
-    // ----------------------------------------------
-
-    if(
-        !patente ||
-        !marca ||
-        !modelo ||
-        !anio ||
-        !color
-    ){
-
-        mostrarError(
-            "Completa todos los campos obligatorios."
-        );
-
-        return;
-    }
-
-
-
-    // ----------------------------------------------
-    // CREAR VEHICULO
-    // ----------------------------------------------
-
-    const {
-        data: vehiculo,
-        error: vehiculoError
-    } =
-    await supabaseClient
-    .from("vehiculos")
-    .insert({
-
-        patente:patente,
-
-        marca:marca,
-
-        modelo:modelo,
-
-        anio:parseInt(anio),
-
-        color:color,
-
-        contacto_emergencia:contacto
-
-    })
-    .select()
-    .single();
-
-
-
-    if(vehiculoError){
-
-        console.error(
-            "Error creando vehículo:",
-            vehiculoError
-        );
-
-
-        mostrarError(
-            "No se pudo crear el vehículo: "
-            +
-            vehiculoError.message
-        );
-
-        return;
-    }
-
-
-
-    // ----------------------------------------------
-    // GENERAR PIN
-    // ----------------------------------------------
-
-    const pin =
-
-    Math.floor(
-        1000 +
-        Math.random() * 9000
-    ).toString();
-
-
-
-    // ----------------------------------------------
-    // HASH
-    // ----------------------------------------------
-
-    let pinHash;
-
-
     try{
 
-        pinHash =
-        await generarHashSHA256(pin);
-
-    }catch(error){
-
-        console.error(
-            "Error generando hash:",
-            error
-        );
+        const {
+            data:sessionData,
+            error:sessionError
+        } =
+        await supabaseClient
+        .auth
+        .getSession();
 
 
+        if(sessionError)
+            throw sessionError;
+
+
+        if(
+            !sessionData ||
+            !sessionData.session
+        ){
+
+            alert(
+                "La sesión expiró."
+            );
+
+            window.location.href =
+            "admin.html";
+
+            return;
+        }
+
+
+        const patente =
+        document
+        .getElementById("patente")
+        .value
+        .trim()
+        .toUpperCase();
+
+
+        const marca =
+        document
+        .getElementById("marca")
+        .value
+        .trim();
+
+
+        const modelo =
+        document
+        .getElementById("modelo")
+        .value
+        .trim();
+
+
+        const anio =
+        document
+        .getElementById("anio")
+        .value;
+
+
+        const color =
+        document
+        .getElementById("color")
+        .value
+        .trim();
+
+
+        const contacto =
+        document
+        .getElementById("contacto")
+        .value
+        .trim();
+
+
+        if(
+            !patente ||
+            !marca ||
+            !modelo ||
+            !anio ||
+            !color
+        ){
+
+            mostrarError(
+                "Completa todos los campos obligatorios."
+            );
+
+            return;
+        }
+
+
+        const {
+            data:vehiculo,
+            error:vehiculoError
+        } =
         await supabaseClient
         .from("vehiculos")
-        .delete()
-        .eq(
-            "id",
-            vehiculo.id
-        );
+        .insert({
+
+            patente:patente,
+            marca:marca,
+            modelo:modelo,
+            anio:parseInt(anio),
+            color:color,
+            contacto_emergencia:contacto
+
+        })
+        .select()
+        .single();
 
 
-        mostrarError(
-            "No se pudo generar el PIN."
-        );
-
-        return;
-    }
+        if(vehiculoError)
+            throw vehiculoError;
 
 
-
-    // ----------------------------------------------
-    // GUARDAR ACCESO
-    // ----------------------------------------------
-
-    const {
-        error: accesoError
-    } =
-    await supabaseClient
-    .from("vehiculo_acceso")
-    .insert({
-
-        vehiculo_id:
-        vehiculo.id,
-
-        pin_hash:
-        pinHash,
-
-        intentos:0,
-
-        bloqueado_hasta:null
-
-    });
+        const pin =
+        Math.floor(
+            1000 +
+            Math.random() * 9000
+        ).toString();
 
 
-
-    // ----------------------------------------------
-    // SI FALLA EL ACCESO
-    // ----------------------------------------------
-
-    if(accesoError){
-
-        console.error(
-            "Error creando acceso:",
-            accesoError
+        const pinHash =
+        await generarHashSHA256(
+            pin
         );
 
 
         const {
-            error: rollbackError
+            error:accesoError
         } =
         await supabaseClient
-        .from("vehiculos")
-        .delete()
-        .eq(
-            "id",
-            vehiculo.id
-        );
+        .from("vehiculo_acceso")
+        .insert({
+
+            vehiculo_id:
+            vehiculo.id,
+
+            pin_hash:
+            pinHash,
+
+            intentos:0,
+
+            bloqueado_hasta:null
+
+        });
 
 
-        if(rollbackError){
+        if(accesoError){
 
-            console.error(
-                "Error eliminando vehículo:",
-                rollbackError
+            await supabaseClient
+            .from("vehiculos")
+            .delete()
+            .eq(
+                "id",
+                vehiculo.id
             );
 
+            throw accesoError;
         }
 
 
-        mostrarError(
-            "No se pudo crear el acceso PIN: "
-            +
-            accesoError.message
-        );
+        document.getElementById(
+            "mensaje"
+        ).innerHTML = `
 
-        return;
-    }
+            <div class="success">
 
+                <strong>
+                    ✓ VEHÍCULO CREADO
+                </strong>
 
+                <div class="pin-box">
 
-    // ----------------------------------------------
-    // MOSTRAR PIN
-    // ----------------------------------------------
+                    <span class="pin-label">
+                        PIN DE ACCESO
+                    </span>
 
-    document
-    .getElementById("mensaje")
-    .innerHTML = `
+                    <span class="pin-number">
+                        ${pin}
+                    </span>
 
-        <div class="success">
+                </div>
 
-            <strong>
-                Vehículo creado correctamente.
-            </strong>
+                <br>
 
-
-            <div class="pin-box">
-
-                <span class="pin-label">
-                    PIN DE ACCESO
-                </span>
-
-
-                <span class="pin-number">
-                    ${pin}
-                </span>
+                Guarda este PIN para entregárselo
+                al propietario.
 
             </div>
 
-
-            <br>
-
-
-            Guarda este PIN para entregárselo
-            al propietario del vehículo.
-
-        </div>
-
-    `;
+        `;
 
 
+        document
+        .getElementById("patente")
+        .value = "";
 
-    // ----------------------------------------------
-    // LIMPIAR
-    // ----------------------------------------------
+        document
+        .getElementById("marca")
+        .value = "";
 
-    document
-    .getElementById("patente")
-    .value = "";
+        document
+        .getElementById("modelo")
+        .value = "";
 
+        document
+        .getElementById("anio")
+        .value = "";
 
-    document
-    .getElementById("marca")
-    .value = "";
+        document
+        .getElementById("color")
+        .value = "";
 
-
-    document
-    .getElementById("modelo")
-    .value = "";
-
-
-    document
-    .getElementById("anio")
-    .value = "";
-
-
-    document
-    .getElementById("color")
-    .value = "";
+        document
+        .getElementById("contacto")
+        .value = "";
 
 
-    document
-    .getElementById("contacto")
-    .value = "";
+        ocultarFormulario();
+
+        await cargarVehiculos();
 
 
-    ocultarFormulario();
+    }catch(error){
 
+        console.error(
+            "ERROR CREANDO VEHICULO:",
+            error
+        );
 
-    await cargarVehiculos();
+        mostrarError(
+            "No se pudo crear el vehículo:<br><br>"
+            +
+            escapeHtml(
+                error.message ||
+                "Error desconocido"
+            )
+        );
+
+    }
 
 }
 
@@ -985,15 +888,7 @@ async function cargarVehiculos(){
         return;
 
 
-    contenedor.innerHTML =
-
-    `<div class="loading">
-        Cargando vehículos...
-    </div>`;
-
-
     try{
-
 
         const {
             data,
@@ -1010,30 +905,26 @@ async function cargarVehiculos(){
         );
 
 
-
         if(error){
 
-            console.error(
-                "Error cargando vehículos:",
-                error
-            );
+            contenedor.innerHTML = `
 
+                <div class="error">
 
-            contenedor.innerHTML =
+                    Error al cargar vehículos:
 
-            `<div class="error">
+                    <br><br>
 
-                Error al cargar vehículos:<br>
+                    ${escapeHtml(
+                        error.message
+                    )}
 
-                ${escapeHtml(
-                    error.message
-                )}
+                </div>
 
-            </div>`;
+            `;
 
             return;
         }
-
 
 
         if(
@@ -1041,21 +932,21 @@ async function cargarVehiculos(){
             data.length === 0
         ){
 
-            contenedor.innerHTML =
+            contenedor.innerHTML = `
 
-            `<div class="loading">
+                <div class="loading">
 
-                Todavía no hay vehículos registrados.
+                    Todavía no hay vehículos registrados.
 
-            </div>`;
+                </div>
+
+            `;
 
             return;
         }
 
 
-
         contenedor.innerHTML = "";
-
 
 
         data.forEach(
@@ -1065,7 +956,6 @@ async function cargarVehiculos(){
                 document.createElement(
                     "div"
                 );
-
 
                 div.className =
                 "vehicle";
@@ -1081,7 +971,6 @@ async function cargarVehiculos(){
 
                     </div>
 
-
                     <div class="vehicle-name">
 
                         ${escapeHtml(
@@ -1093,7 +982,6 @@ async function cargarVehiculos(){
                         )}
 
                     </div>
-
 
                     <div class="vehicle-info">
 
@@ -1109,27 +997,23 @@ async function cargarVehiculos(){
 
                     </div>
 
-
                     <div class="vehicle-buttons">
-
 
                         <button
                             class="btn-blue"
-                            onclick='abrirDocumentos(${JSON.stringify(vehiculo)})'>
+                            onclick="abrirDocumentosPorId('${vehiculo.id}')">
 
                             DOCUMENTOS
 
                         </button>
 
-
                         <button
                             class="btn-secondary"
-                            onclick='verPerfil(${JSON.stringify(vehiculo)})'>
+                            onclick="verPerfil('${encodeURIComponent(vehiculo.patente)}')">
 
                             VER PERFIL
 
                         </button>
-
 
                     </div>
 
@@ -1146,19 +1030,24 @@ async function cargarVehiculos(){
 
     }catch(error){
 
-        console.error(
-            "Error inesperado:",
-            error
-        );
+        console.error(error);
 
+        contenedor.innerHTML = `
 
-        contenedor.innerHTML =
+            <div class="error">
 
-        `<div class="error">
+                Error inesperado:
 
-            Error inesperado al cargar vehículos.
+                <br><br>
 
-        </div>`;
+                ${escapeHtml(
+                    error.message ||
+                    "Error desconocido"
+                )}
+
+            </div>
+
+        `;
 
     }
 
@@ -1175,39 +1064,16 @@ function escapeHtml(text){
     if(
         text === null ||
         text === undefined
-    ){
-
+    )
         return "";
-
-    }
 
 
     return String(text)
-
-    .replaceAll(
-        "&",
-        "&amp;"
-    )
-
-    .replaceAll(
-        "<",
-        "&lt;"
-    )
-
-    .replaceAll(
-        ">",
-        "&gt;"
-    )
-
-    .replaceAll(
-        '"',
-        "&quot;"
-    )
-
-    .replaceAll(
-        "'",
-        "&#039;"
-    );
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
 }
 
@@ -1216,6 +1082,41 @@ function escapeHtml(text){
 // ==================================================
 // ABRIR DOCUMENTOS
 // ==================================================
+
+async function abrirDocumentosPorId(
+    id
+){
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+    .from("vehiculos")
+    .select("*")
+    .eq(
+        "id",
+        id
+    )
+    .single();
+
+
+    if(error){
+
+        mostrarError(
+            error.message
+        );
+
+        return;
+    }
+
+
+    abrirDocumentos(
+        data
+    );
+
+}
+
 
 async function abrirDocumentos(
     vehiculo
@@ -1229,18 +1130,16 @@ async function abrirDocumentos(
     .getElementById(
         "vistaPanel"
     )
-    .classList.add(
-        "hidden"
-    );
+    .classList
+    .add("hidden");
 
 
     document
     .getElementById(
         "vistaDocumentos"
     )
-    .classList.remove(
-        "hidden"
-    );
+    .classList
+    .remove("hidden");
 
 
     document
@@ -1259,7 +1158,6 @@ async function abrirDocumentos(
 
             </div>
 
-
             <div class="vehicle-name">
 
                 ${escapeHtml(
@@ -1271,7 +1169,6 @@ async function abrirDocumentos(
                 )}
 
             </div>
-
 
             <div class="vehicle-info">
 
@@ -1310,32 +1207,15 @@ async function cargarDocumentos(){
     );
 
 
-    if(!contenedor)
-        return;
+    contenedor.innerHTML = `
 
+        <div class="loading">
 
-    contenedor.innerHTML =
+            Cargando documentos...
 
-    `<div class="loading">
+        </div>
 
-        Cargando documentos...
-
-    </div>`;
-
-
-    if(!vehiculoActual){
-
-        contenedor.innerHTML =
-
-        `<div class="error">
-
-            No hay vehículo seleccionado.
-
-        </div>`;
-
-        return;
-    }
-
+    `;
 
 
     const {
@@ -1351,20 +1231,66 @@ async function cargarDocumentos(){
     );
 
 
-
     if(error){
 
-        console.error(
-            "Error documentos:",
-            error
-        );
+        contenedor.innerHTML = `
+
+            <div class="error">
+
+                Error al cargar documentos:
+
+                <br><br>
+
+                ${escapeHtml(
+                    error.message
+                )}
+
+            </div>
+
+        `;
+
+        return;
+    }
 
 
-        contenedor.innerHTML =
+    contenedor.innerHTML = "";
 
-        `<div class="error">
 
-            Error al cargar documentos:<br>
+    tiposDocumentos.forEach(
+        tipo => {
 
-            ${escapeHtml(
-         
+            const documento =
+            (data || []).find(
+                d =>
+                d.tipo === tipo.tipo
+            );
+
+
+            const div =
+            document.createElement(
+                "div"
+            );
+
+
+            div.className =
+            "doc-card";
+
+
+            if(documento){
+
+                div.innerHTML = `
+
+                    <div class="doc-title">
+
+                        ${tipo.nombre}
+
+                    </div>
+
+                    <div class="doc-status">
+
+                        ✓
+                        ${escapeHtml(
+                            documento.nombre
+                        )}
+
+                   
