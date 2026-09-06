@@ -815,3 +815,225 @@ eliminarDocumento(doc.id,doc.archivo);
 actions.appendChild(ver);
 actions.appendChild(del);
 card.appendChild
+  }else{
+
+status.textContent="Sin documento";
+
+var input=document.createElement("input");
+input.type="file";
+input.id="archivo_"+t[0];
+
+var subir=document.createElement("button");
+subir.className="btn-primary";
+subir.type="button";
+subir.textContent="SUBIR DOCUMENTO";
+subir.addEventListener("click",function(){
+subirDocumento(t[0],t[1]);
+});
+
+card.appendChild(input);
+card.appendChild(subir);
+
+}
+
+box.appendChild(card);
+
+});
+
+}catch(e){
+
+box.innerHTML='<div class="error">'+esc(e.message || e)+'</div>';
+
+}
+
+}
+
+async function subirDocumento(tipo,nombre){
+
+try{
+
+var input=$("archivo_"+tipo);
+
+if(!input || !input.files || !input.files.length){
+mostrarDocMensaje("Selecciona un archivo.");
+return;
+}
+
+var file=input.files[0];
+
+if(file.size>6*1024*1024){
+mostrarDocMensaje("El archivo supera los 6 MB.");
+return;
+}
+
+var ext=file.name.indexOf(".")>=0?
+file.name.split(".").pop().toLowerCase():"bin";
+
+var ruta=vehiculoActual.patente+"/"+tipo+"_"+Date.now()+"."+ext;
+
+var upload=await db.storage
+.from("documentos")
+.upload(ruta,file,{
+contentType:file.type || "application/octet-stream",
+upsert:false
+});
+
+if(upload.error)throw upload.error;
+
+var insert=await db.from("documentos").insert({
+vehiculo_id:vehiculoActual.id,
+tipo:tipo,
+nombre:file.name,
+archivo:ruta,
+protegido:true
+});
+
+if(insert.error){
+await db.storage.from("documentos").remove([ruta]);
+throw insert.error;
+}
+
+mostrarDocMensaje(nombre+" subido correctamente.","success");
+await cargarDocumentos();
+
+}catch(e){
+
+mostrarDocMensaje("Error al subir: "+(e.message || e));
+
+}
+
+}
+
+async function verDocumento(ruta){
+
+try{
+
+var r=await db.storage
+.from("documentos")
+.createSignedUrl(ruta,300);
+
+if(r.error)throw r.error;
+
+window.open(r.data.signedUrl,"_blank");
+
+}catch(e){
+
+mostrarDocMensaje("No se pudo abrir el documento: "+(e.message || e));
+
+}
+
+}
+
+async function eliminarDocumento(id,ruta){
+
+if(!confirm("¿Eliminar este documento?"))return;
+
+try{
+
+var r=await db.from("documentos")
+.delete()
+.eq("id",id);
+
+if(r.error)throw r.error;
+
+var s=await db.storage.from("documentos").remove([ruta]);
+
+if(s.error)throw s.error;
+
+mostrarDocMensaje("✓ Documento eliminado.","success");
+await cargarDocumentos();
+
+}catch(e){
+
+mostrarDocMensaje("No se pudo eliminar: "+(e.message || e));
+
+}
+
+}
+
+function volverPanel(){
+
+vehiculoActual=null;
+
+$("vistaDocumentos").classList.add("hidden");
+$("vistaPanel").classList.remove("hidden");
+$("mensajeDocumentos").innerHTML="";
+
+cargarVehiculos();
+window.scrollTo(0,0);
+
+}
+
+async function cerrarSesion(){
+
+try{
+if(db) await db.auth.signOut();
+}catch(e){}
+
+location.href="admin.html";
+
+}
+
+function prepararBotones(){
+
+$("btnNuevo").addEventListener("click",mostrarFormulario);
+$("btnCancelar").addEventListener("click",ocultarFormulario);
+$("btnCrear").addEventListener("click",crearVehiculo);
+$("btnSalir").addEventListener("click",cerrarSesion);
+$("btnVolver").addEventListener("click",volverPanel);
+
+}
+
+async function iniciar(){
+
+var box=$("listaVehiculos");
+
+try{
+
+box.innerHTML='<div class="loading">Conectando con NexumID...</div>';
+
+if(typeof window.supabase==="undefined"){
+throw new Error("No se cargó la librería de Supabase. Revisa la conexión a Internet.");
+}
+
+db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+var sesion=await comprobarSesion();
+
+if(!sesion){
+
+box.innerHTML='<div class="error"><strong>Sesión no encontrada.</strong><br><br>Redirigiendo al acceso...</div>';
+
+setTimeout(function(){
+location.href="admin.html";
+},1200);
+
+return;
+}
+
+await cargarVehiculos();
+
+}catch(e){
+
+console.error("NEXUMID PANEL ERROR:",e);
+
+box.innerHTML=
+'<div class="error">'+
+'<strong>Error iniciando el panel</strong><br><br>'+
+esc(e && e.message ? e.message : e)+
+'<br><br>'+
+'<span class="small-note">Si acabas de actualizar GitHub, espera unos minutos y recarga la página.</span>'+
+'</div>';
+
+}
+
+}
+
+prepararBotones();
+iniciar();
+
+})();
+</script>
+
+</body>
+</html>
