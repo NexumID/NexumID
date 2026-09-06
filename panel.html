@@ -629,10 +629,6 @@ async function generarHashSHA256(texto){
 async function crearVehiculo(){
 
 
-    // ----------------------------------------------
-    // COMPROBAR SESION
-    // ----------------------------------------------
-
     const {
         data: sessionData
     } =
@@ -652,7 +648,7 @@ async function crearVehiculo(){
 
 
     // ----------------------------------------------
-    // OBTENER DATOS
+    // DATOS
     // ----------------------------------------------
 
     const patente =
@@ -759,7 +755,8 @@ async function crearVehiculo(){
 
         mostrarError(
             "No se pudo crear el vehículo: "
-            + vehiculoError.message
+            +
+            vehiculoError.message
         );
 
         return;
@@ -781,10 +778,11 @@ async function crearVehiculo(){
 
 
     // ----------------------------------------------
-    // GENERAR HASH
+    // HASH
     // ----------------------------------------------
 
     let pinHash;
+
 
     try{
 
@@ -802,7 +800,10 @@ async function crearVehiculo(){
         await supabaseClient
         .from("vehiculos")
         .delete()
-        .eq("id",vehiculo.id);
+        .eq(
+            "id",
+            vehiculo.id
+        );
 
 
         mostrarError(
@@ -840,7 +841,7 @@ async function crearVehiculo(){
 
 
     // ----------------------------------------------
-    // SI FALLA EL PIN
+    // SI FALLA EL ACCESO
     // ----------------------------------------------
 
     if(accesoError){
@@ -851,16 +852,16 @@ async function crearVehiculo(){
         );
 
 
-        // Intentamos eliminar el vehículo
-        // para no dejar un vehículo sin PIN.
-
         const {
-            error:rollbackError
+            error: rollbackError
         } =
         await supabaseClient
         .from("vehiculos")
         .delete()
-        .eq("id",vehiculo.id);
+        .eq(
+            "id",
+            vehiculo.id
+        );
 
 
         if(rollbackError){
@@ -875,7 +876,8 @@ async function crearVehiculo(){
 
         mostrarError(
             "No se pudo crear el acceso PIN: "
-            + accesoError.message
+            +
+            accesoError.message
         );
 
         return;
@@ -925,7 +927,7 @@ async function crearVehiculo(){
 
 
     // ----------------------------------------------
-    // LIMPIAR FORMULARIO
+    // LIMPIAR
     // ----------------------------------------------
 
     document
@@ -958,11 +960,10 @@ async function crearVehiculo(){
     .value = "";
 
 
-
     ocultarFormulario();
 
 
-    cargarVehiculos();
+    await cargarVehiculos();
 
 }
 
@@ -974,11 +975,21 @@ async function crearVehiculo(){
 
 async function cargarVehiculos(){
 
-
     const contenedor =
     document.getElementById(
         "listaVehiculos"
     );
+
+
+    if(!contenedor)
+        return;
+
+
+    contenedor.innerHTML =
+
+    `<div class="loading">
+        Cargando vehículos...
+    </div>`;
 
 
     try{
@@ -1002,7 +1013,10 @@ async function cargarVehiculos(){
 
         if(error){
 
-            console.error(error);
+            console.error(
+                "Error cargando vehículos:",
+                error
+            );
 
 
             contenedor.innerHTML =
@@ -1011,7 +1025,9 @@ async function cargarVehiculos(){
 
                 Error al cargar vehículos:<br>
 
-                ${escapeHtml(error.message)}
+                ${escapeHtml(
+                    error.message
+                )}
 
             </div>`;
 
@@ -1020,7 +1036,10 @@ async function cargarVehiculos(){
 
 
 
-        if(!data || data.length===0){
+        if(
+            !data ||
+            data.length === 0
+        ){
 
             contenedor.innerHTML =
 
@@ -1043,7 +1062,9 @@ async function cargarVehiculos(){
             vehiculo => {
 
                 const div =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
                 div.className =
@@ -1115,14 +1136,20 @@ async function cargarVehiculos(){
                 `;
 
 
-                contenedor.appendChild(div);
+                contenedor.appendChild(
+                    div
+                );
 
             }
         );
 
+
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Error inesperado:",
+            error
+        );
 
 
         contenedor.innerHTML =
@@ -1202,14 +1229,18 @@ async function abrirDocumentos(
     .getElementById(
         "vistaPanel"
     )
-    .classList.add("hidden");
+    .classList.add(
+        "hidden"
+    );
 
 
     document
     .getElementById(
         "vistaDocumentos"
     )
-    .classList.remove("hidden");
+    .classList.remove(
+        "hidden"
+    );
 
 
     document
@@ -1261,7 +1292,7 @@ async function abrirDocumentos(
     `;
 
 
-    cargarDocumentos();
+    await cargarDocumentos();
 
 }
 
@@ -1279,6 +1310,10 @@ async function cargarDocumentos(){
     );
 
 
+    if(!contenedor)
+        return;
+
+
     contenedor.innerHTML =
 
     `<div class="loading">
@@ -1286,6 +1321,20 @@ async function cargarDocumentos(){
         Cargando documentos...
 
     </div>`;
+
+
+    if(!vehiculoActual){
+
+        contenedor.innerHTML =
+
+        `<div class="error">
+
+            No hay vehículo seleccionado.
+
+        </div>`;
+
+        return;
+    }
 
 
 
@@ -1305,7 +1354,10 @@ async function cargarDocumentos(){
 
     if(error){
 
-        console.error(error);
+        console.error(
+            "Error documentos:",
+            error
+        );
 
 
         contenedor.innerHTML =
@@ -1315,47 +1367,4 @@ async function cargarDocumentos(){
             Error al cargar documentos:<br>
 
             ${escapeHtml(
-                error.message
-            )}
-
-        </div>`;
-
-        return;
-    }
-
-
-
-    contenedor.innerHTML = "";
-
-
-
-    tiposDocumentos.forEach(
-        tipo => {
-
-
-            const documentos =
-            data.filter(
-                d =>
-                d.tipo === tipo.tipo
-            );
-
-
-            const documento =
-            documentos.length
-            ? documentos[0]
-            : null;
-
-
-            const div =
-            document.createElement("div");
-
-
-            div.className =
-            "doc-card";
-
-
-            let contenido = "";
-
-
-
-          
+         
