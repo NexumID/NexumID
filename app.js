@@ -224,7 +224,7 @@ function mostrarPerfil() {
                                 background-image:url('${escapeHtml(fotoUrl)}');
                                 background-size:cover;
                                 background-position:center;
-                                opacity:.25;
+                                opacity:.2875;
                                 filter:saturate(.9);
                                 transform:scale(1.02);
                             "
