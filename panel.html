@@ -4,16 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NexumID - Panel</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#05080d;color:#fff;font-family:Arial,sans-serif}
 .container{max-width:900px;margin:auto;padding:24px}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px;gap:15px}
 .logo{font-size:28px;font-weight:bold}.logo span{color:#1595ff}
 .subtitle{color:#9aa4b5;margin-top:6px}
 button{border:0;border-radius:14px;padding:16px 20px;font-size:16px;cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
 .btn-primary{width:100%;background:#1595ff;color:#fff;font-weight:bold;font-size:20px}
 .btn-secondary{background:#111923;color:#fff;border:1px solid #263342}
 .btn-blue{background:#111923;color:#1595ff;border:1px solid #263342;width:100%}
@@ -40,8 +43,19 @@ label{color:#aeb8c7;font-size:14px}
 .pin-number{display:block;font-size:38px;font-weight:bold;letter-spacing:8px;margin-top:8px}
 .linkbox{word-break:break-all;background:#080d13;border:1px solid #263342;border-radius:12px;padding:14px;color:#9da8b8;margin-top:12px}
 .qrbox{background:#fff;border-radius:14px;padding:18px;width:max-content;max-width:100%;margin:18px auto;text-align:center}
+.photo-preview{display:block;width:100%;max-height:300px;object-fit:cover;border-radius:14px;border:1px solid #263342}
+.small-note{color:#718093;font-size:13px;line-height:1.5}
+@media(max-width:600px){
+.container{padding:16px}
+.header{align-items:flex-start}
+.logo{font-size:24px}
+h1{font-size:30px}
+h2{font-size:24px}
+.vehicle{padding:20px}
+}
 </style>
 </head>
+
 <body>
 <div class="container">
 
@@ -61,19 +75,34 @@ label{color:#aeb8c7;font-size:14px}
 
 <div id="formularioVehiculo" class="form-card hidden">
 <h2 style="margin-top:0">Nuevo vehículo</h2>
-<label>Patente</label><input id="patente" placeholder="AB-CD-12">
-<label>Marca</label><input id="marca" placeholder="Chevrolet">
-<label>Modelo</label><input id="modelo" placeholder="Sail">
-<label>Año</label><input id="anio" type="number" placeholder="2020">
-<label>Color</label><input id="color" placeholder="Blanco">
-<label>Contacto de emergencia</label><input id="contacto" placeholder="+56912345678">
+
+<label>Patente</label>
+<input id="patente" placeholder="AB-CD-12" autocomplete="off">
+
+<label>Marca</label>
+<input id="marca" placeholder="Chevrolet">
+
+<label>Modelo</label>
+<input id="modelo" placeholder="Sail">
+
+<label>Año</label>
+<input id="anio" type="number" placeholder="2020">
+
+<label>Color</label>
+<input id="color" placeholder="Blanco">
+
+<label>Contacto de emergencia</label>
+<input id="contacto" placeholder="+56912345678">
+
 <button id="btnCrear" class="btn-primary" type="button">CREAR VEHÍCULO</button>
 <br><br>
 <button id="btnCancelar" class="btn-secondary" style="width:100%" type="button">CANCELAR</button>
 </div>
 
 <h2>Vehículos registrados</h2>
-<div id="listaVehiculos"><div class="loading">Iniciando panel...</div></div>
+<div id="listaVehiculos">
+<div class="loading">Iniciando panel...</div>
+</div>
 </div>
 
 <div id="vistaDocumentos" class="hidden">
@@ -91,13 +120,13 @@ label{color:#aeb8c7;font-size:14px}
 
 "use strict";
 
-const URL="https://tkrugleneazdeqhxxkvr.supabase.co";
-const KEY="sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
+var SUPABASE_URL = "https://tkrugleneazdeqhxxkvr.supabase.co";
+var SUPABASE_KEY = "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
 
-let db=null;
-let vehiculoActual=null;
+var db = null;
+var vehiculoActual = null;
 
-const tipos=[
+var tipos = [
 ["soap","SOAP"],
 ["revision_tecnica","REVISIÓN TÉCNICA"],
 ["permiso_circulacion","PERMISO DE CIRCULACIÓN"],
@@ -105,22 +134,27 @@ const tipos=[
 ["padron","PADRÓN"]
 ];
 
-const $=id=>document.getElementById(id);
-
-function esc(x){
-return String(x??"")
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
+function $(id){
+return document.getElementById(id);
 }
 
-function mostrarMensaje(t,tipo="error"){
+function esc(x){
+var s = String(x == null ? "" : x);
+return s
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function mostrarMensaje(t,tipo){
+if(!tipo) tipo="error";
 $("mensaje").innerHTML='<div class="'+tipo+'">'+esc(t)+'</div>';
 }
 
-function mostrarDocMensaje(t,tipo="error"){
+function mostrarDocMensaje(t,tipo){
+if(!tipo) tipo="error";
 $("mensajeDocumentos").innerHTML='<div class="'+tipo+'">'+esc(t)+'</div>';
 }
 
@@ -134,19 +168,20 @@ $("formularioVehiculo").classList.add("hidden");
 }
 
 async function hash(texto){
-const b=await crypto.subtle.digest(
+var b = await crypto.subtle.digest(
 "SHA-256",
 new TextEncoder().encode(texto)
 );
+
 return Array.from(new Uint8Array(b))
-.map(x=>x.toString(16).padStart(2,"0"))
+.map(function(x){return x.toString(16).padStart(2,"0");})
 .join("");
 }
 
 async function comprobarSesion(){
-const r=await db.auth.getSession();
-if(r.error)throw r.error;
-return !!r.data.session;
+var r = await db.auth.getSession();
+if(r.error) throw r.error;
+return !!(r.data && r.data.session);
 }
 
 async function crearVehiculo(){
@@ -159,39 +194,39 @@ location.href="admin.html";
 return;
 }
 
-const patente=$("patente").value.trim().toUpperCase();
-const marca=$("marca").value.trim();
-const modelo=$("modelo").value.trim();
-const anio=$("anio").value.trim();
-const color=$("color").value.trim();
-const contacto=$("contacto").value.trim();
+var patente=$("patente").value.trim().toUpperCase();
+var marca=$("marca").value.trim();
+var modelo=$("modelo").value.trim();
+var anio=$("anio").value.trim();
+var color=$("color").value.trim();
+var contacto=$("contacto").value.trim();
 
-if(!patente||!marca||!modelo||!anio||!color){
+if(!patente || !marca || !modelo || !anio || !color){
 mostrarMensaje("Completa todos los campos obligatorios.");
 return;
 }
 
-const r=await db.from("vehiculos")
+var r=await db.from("vehiculos")
 .insert({
-patente,
-marca,
-modelo,
+patente:patente,
+marca:marca,
+modelo:modelo,
 anio:parseInt(anio,10),
-color,
+color:color,
 contacto_emergencia:contacto
 })
 .select()
 .single();
 
-if(r.error)throw r.error;
+if(r.error) throw r.error;
 
-const pin=String(Math.floor(1000+Math.random()*9000));
-const pin_hash=await hash(pin);
+var pin=String(Math.floor(1000+Math.random()*9000));
+var pin_hash=await hash(pin);
 
-const a=await db.from("vehiculo_acceso")
+var a=await db.from("vehiculo_acceso")
 .insert({
 vehiculo_id:r.data.id,
-pin_hash,
+pin_hash:pin_hash,
 intentos:0,
 bloqueado_hasta:null
 });
@@ -201,8 +236,9 @@ await db.from("vehiculos").delete().eq("id",r.data.id);
 throw a.error;
 }
 
-["patente","marca","modelo","anio","color","contacto"]
-.forEach(id=>$(id).value="");
+["patente","marca","modelo","anio","color","contacto"].forEach(function(id){
+$(id).value="";
+});
 
 ocultarFormulario();
 
@@ -217,34 +253,34 @@ await cargarVehiculos();
 
 }catch(e){
 console.error(e);
-mostrarMensaje("No se pudo crear el vehículo: "+(e.message||e));
+mostrarMensaje("No se pudo crear el vehículo: "+(e.message || e));
 }
 
 }
 
 async function cargarVehiculos(){
 
-const box=$("listaVehiculos");
+var box=$("listaVehiculos");
 box.innerHTML='<div class="loading">Cargando vehículos...</div>';
 
 try{
 
-const r=await db.from("vehiculos")
+var r=await db.from("vehiculos")
 .select("*")
 .order("created_at",{ascending:false});
 
-if(r.error)throw r.error;
+if(r.error) throw r.error;
 
-if(!r.data||!r.data.length){
+if(!r.data || !r.data.length){
 box.innerHTML='<div class="loading">Todavía no hay vehículos registrados.</div>';
 return;
 }
 
 box.innerHTML="";
 
-r.data.forEach(v=>{
+r.data.forEach(function(v){
 
-const card=document.createElement("div");
+var card=document.createElement("div");
 card.className="vehicle";
 
 card.innerHTML=
@@ -253,24 +289,27 @@ card.innerHTML=
 '<div class="vehicle-info">Año: '+esc(v.anio)+
 "<br>Color: "+esc(v.color)+'</div>';
 
-const botones=document.createElement("div");
+var botones=document.createElement("div");
 botones.className="vehicle-buttons";
 
-const docs=document.createElement("button");
+var docs=document.createElement("button");
 docs.className="btn-blue";
 docs.type="button";
 docs.textContent="GESTIONAR VEHÍCULO";
-docs.addEventListener("click",()=>abrirDocumentosPorId(v.id));
+docs.addEventListener("click",function(){
+abrirDocumentosPorId(v.id);
+});
 
-const perfil=document.createElement("button");
+var perfil=document.createElement("button");
 perfil.className="btn-secondary";
 perfil.type="button";
 perfil.textContent="VER PERFIL";
-perfil.addEventListener("click",()=>{
+perfil.addEventListener("click",function(){
 location.href="index.html?patente="+encodeURIComponent(v.patente);
 });
 
-botones.append(docs,perfil);
+botones.appendChild(docs);
+botones.appendChild(perfil);
 card.appendChild(botones);
 box.appendChild(card);
 
@@ -282,7 +321,7 @@ console.error(e);
 
 box.innerHTML=
 '<div class="error"><strong>Error al cargar vehículos</strong><br><br>'+
-esc(e.message)+'</div>';
+esc(e.message || e)+'</div>';
 
 }
 
@@ -292,17 +331,17 @@ async function abrirDocumentosPorId(id){
 
 try{
 
-const r=await db.from("vehiculos")
+var r=await db.from("vehiculos")
 .select("*")
 .eq("id",id)
 .single();
 
-if(r.error)throw r.error;
+if(r.error) throw r.error;
 
 await abrirDocumentos(r.data);
 
 }catch(e){
-mostrarMensaje(e.message||"No se pudo abrir el vehículo.");
+mostrarMensaje(e.message || "No se pudo abrir el vehículo.");
 }
 
 }
@@ -320,23 +359,27 @@ $("infoVehiculo").innerHTML=
 '<div class="vehicle-name">'+esc(v.marca)+" "+esc(v.modelo)+'</div>'+
 '<div class="vehicle-info">Año: '+esc(v.anio)+
 "<br>Color: "+esc(v.color)+
-"<br>Contacto: "+esc(v.contacto_emergencia||"No registrado")+
+"<br>Contacto: "+esc(v.contacto_emergencia || "No registrado")+
 '</div></div>'+
+
 '<div class="vehicle-buttons">'+
 '<button id="btnRegenerarPIN" class="btn-primary" type="button">🔄 REGENERAR PIN</button>'+
 '<button id="btnEliminarVehiculo" class="btn-danger" type="button">ELIMINAR VEHÍCULO</button>'+
 '</div>'+
+
 '<div class="form-card">'+
 '<h2 style="margin-top:0">Foto del vehículo</h2>'+
-'<div style="color:#9da8b8">Esta foto aparecerá integrada en la tarjeta del vehículo del perfil público.</div>'+
+'<div class="small-note">Esta foto aparecerá integrada en la tarjeta del vehículo del perfil público.</div>'+
 '<div id="fotoActual" style="margin-top:15px"></div>'+
 '<input id="fotoVehiculo" type="file" accept="image/jpeg,image/png,image/webp">'+
 '<button id="btnSubirFoto" class="btn-primary" type="button">SUBIR / CAMBIAR FOTO</button>'+
+'<br><br>'+
 '<button id="btnEliminarFoto" class="btn-danger" type="button">ELIMINAR FOTO</button>'+
 '</div>'+
+
 '<div class="form-card">'+
 '<h2 style="margin-top:0">Acceso público</h2>'+
-'<div style="color:#9da8b8">Enlace que usarán el QR y la tarjeta NFC.</div>'+
+'<div class="small-note">Enlace que usarán el QR y la tarjeta NFC.</div>'+
 '<div class="linkbox" id="enlacePublico"></div>'+
 '<div class="vehicle-buttons">'+
 '<button id="btnCopiarEnlace" class="btn-primary" type="button">COPIAR ENLACE</button>'+
@@ -356,38 +399,32 @@ $("btnEliminarFoto").addEventListener("click",eliminarFotoVehiculo);
 
 await mostrarFotoActual();
 await cargarDocumentos();
+
 window.scrollTo(0,0);
 
 }
 
 function crearEnlacePublico(patente){
-
 return "https://nexumid.github.io/NexumID/?patente="+
-encodeURIComponent(String(patente||"").toUpperCase());
-
+encodeURIComponent(String(patente || "").toUpperCase());
 }
 
 async function copiarEnlace(){
 
-const enlace=crearEnlacePublico(vehiculoActual.patente);
+var enlace=crearEnlacePublico(vehiculoActual.patente);
 
 try{
-
 await navigator.clipboard.writeText(enlace);
 mostrarDocMensaje("✓ Enlace copiado.","success");
-
 }catch(e){
-
 prompt("Copia este enlace:",enlace);
-
 }
 
 }
 
 function mostrarQR(){
 
-const area=$("qrArea");
-
+var area=$("qrArea");
 area.classList.remove("hidden");
 
 area.innerHTML=
@@ -397,17 +434,12 @@ area.innerHTML=
 esc(vehiculoActual.patente)+
 '</div></div>';
 
-const codigo=$("codigoQR");
+var codigo=$("codigoQR");
 
 if(typeof QRCode==="undefined"){
-
 codigo.innerHTML=
-'<div style="color:#b00000;padding:10px">'+
-"No se pudo cargar el generador QR."+
-'</div>';
-
+'<div style="color:#b00000;padding:10px">No se pudo cargar el generador QR.</div>';
 return;
-
 }
 
 new QRCode(codigo,{
@@ -419,10 +451,6 @@ correctLevel:QRCode.CorrectLevel.M
 
 }
 
-/* =========================================================
-   REGENERAR PIN - VERSIÓN CORREGIDA
-   Verifica que Supabase realmente haya actualizado la fila.
-   ========================================================= */
 async function regenerarPIN(){
 
 if(!vehiculoActual)return;
@@ -432,7 +460,7 @@ if(!confirm(
 "?\n\nEl PIN anterior dejará de funcionar inmediatamente."
 ))return;
 
-const boton=$("btnRegenerarPIN");
+var boton=$("btnRegenerarPIN");
 
 try{
 
@@ -445,10 +473,10 @@ return;
 boton.disabled=true;
 boton.textContent="GENERANDO NUEVO PIN...";
 
-const pin=String(Math.floor(1000+Math.random()*9000));
-const pin_hash=await hash(pin);
+var pin=String(Math.floor(1000+Math.random()*9000));
+var pin_hash=await hash(pin);
 
-const resultado=await db
+var resultado=await db
 .from("vehiculo_acceso")
 .update({
 pin_hash:pin_hash,
@@ -460,21 +488,10 @@ updated_at:new Date().toISOString()
 .select("vehiculo_id,pin_hash,updated_at")
 .single();
 
-if(resultado.error){
-throw resultado.error;
-}
-
-if(!resultado.data){
-throw new Error("Supabase no devolvió la fila actualizada.");
-}
-
-if(resultado.data.vehiculo_id!==vehiculoActual.id){
-throw new Error("El PIN no corresponde al vehículo seleccionado.");
-}
-
-if(resultado.data.pin_hash!==pin_hash){
-throw new Error("Supabase no confirmó el nuevo PIN.");
-}
+if(resultado.error) throw resultado.error;
+if(!resultado.data) throw new Error("Supabase no devolvió la fila actualizada.");
+if(resultado.data.vehiculo_id!==vehiculoActual.id) throw new Error("El PIN no corresponde al vehículo seleccionado.");
+if(resultado.data.pin_hash!==pin_hash) throw new Error("Supabase no confirmó el nuevo PIN.");
 
 $("mensajeDocumentos").innerHTML=
 '<div class="success">'+
@@ -495,17 +512,13 @@ console.error("ERROR REGENERANDO PIN:",e);
 $("mensajeDocumentos").innerHTML=
 '<div class="error">'+
 '<strong>NO SE PUDO REGENERAR EL PIN</strong><br><br>'+
-esc(e.message||e)+
-'<br><br>'+
-'El PIN anterior se mantiene sin cambios.'+
-'</div>';
+esc(e.message || e)+
+'<br><br>El PIN anterior se mantiene sin cambios.</div>';
 
 boton.textContent="🔄 REGENERAR PIN";
 
 }finally{
-
 boton.disabled=false;
-
 }
 
 }
@@ -517,36 +530,45 @@ if(!vehiculoActual)return;
 if(!confirm(
 "¿ELIMINAR DEFINITIVAMENTE "+
 vehiculoActual.patente+
-"?\n\nSe eliminarán sus documentos y acceso."
+"?\n\nSe eliminarán sus documentos, foto y acceso."
 ))return;
 
 try{
 
-const docs=await db.from("documentos")
+var docs=await db.from("documentos")
 .select("*")
 .eq("vehiculo_id",vehiculoActual.id);
 
 if(docs.error)throw docs.error;
 
-for(const d of docs.data||[]){
-
+for(var i=0;i<(docs.data || []).length;i++){
 try{
-await db.storage.from("documentos").remove([d.archivo]);
+await db.storage.from("documentos").remove([docs.data[i].archivo]);
 }catch(e){}
-
 }
 
-const dr=await db.from("documentos")
+var dr=await db.from("documentos")
 .delete()
 .eq("vehiculo_id",vehiculoActual.id);
 
 if(dr.error)throw dr.error;
 
+var foto=await db.from("vehiculos")
+.select("foto_path")
+.eq("id",vehiculoActual.id)
+.single();
+
+if(!foto.error && foto.data && foto.data.foto_path){
+try{
+await db.storage.from("vehiculos").remove([foto.data.foto_path]);
+}catch(e){}
+}
+
 await db.from("vehiculo_acceso")
 .delete()
 .eq("vehiculo_id",vehiculoActual.id);
 
-const vr=await db.from("vehiculos")
+var vr=await db.from("vehiculos")
 .delete()
 .eq("id",vehiculoActual.id);
 
@@ -562,51 +584,46 @@ mostrarMensaje("✓ VEHÍCULO ELIMINADO","success");
 await cargarVehiculos();
 
 }catch(e){
-
-mostrarMensaje("No se pudo eliminar: "+e.message);
-
+mostrarDocMensaje("No se pudo eliminar: "+(e.message || e));
 }
 
 }
 
 async function mostrarFotoActual(){
 
-const box=$("fotoActual");
+var box=$("fotoActual");
 if(!box)return;
 
 box.innerHTML='<div class="loading">Cargando foto...</div>';
 
 try{
 
-const r=await db.from("vehiculos")
+var r=await db.from("vehiculos")
 .select("foto_path")
 .eq("id",vehiculoActual.id)
 .single();
 
 if(r.error)throw r.error;
 
-if(!r.data.foto_path){
-
-box.innerHTML='<div style="color:#718093;padding:12px 0">No hay foto cargada.</div>';
+if(!r.data || !r.data.foto_path){
+box.innerHTML='<div class="small-note" style="padding:12px 0">No hay foto cargada.</div>';
 return;
-
 }
 
-const signed=await db.storage
+var signed=await db.storage
 .from("vehiculos")
 .createSignedUrl(r.data.foto_path,300);
 
 if(signed.error)throw signed.error;
 
 box.innerHTML=
-'<img src="'+esc(signed.data.signedUrl)+'" '+
-'style="display:block;width:100%;max-height:260px;object-fit:cover;border-radius:14px;border:1px solid #263342">'+
+'<img class="photo-preview" src="'+esc(signed.data.signedUrl)+'" alt="Foto del vehículo">'+
 '<div style="color:#65e3b1;margin-top:10px;font-size:13px">✓ Foto cargada</div>';
 
 }catch(e){
 
 console.error(e);
-box.innerHTML='<div class="error">No se pudo cargar la foto.</div>';
+box.innerHTML='<div class="error">No se pudo cargar la foto.<br><br>'+esc(e.message || e)+'</div>';
 
 }
 
@@ -614,16 +631,16 @@ box.innerHTML='<div class="error">No se pudo cargar la foto.</div>';
 
 async function subirFotoVehiculo(){
 
-const input=$("fotoVehiculo");
+var input=$("fotoVehiculo");
 
-if(!input||!input.files.length){
+if(!input || !input.files || !input.files.length){
 mostrarDocMensaje("Selecciona una foto.");
 return;
 }
 
-const file=input.files[0];
+var file=input.files[0];
 
-if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+if(["image/jpeg","image/png","image/webp"].indexOf(file.type)===-1){
 mostrarDocMensaje("Solo JPG, PNG o WEBP.");
 return;
 }
@@ -633,19 +650,24 @@ mostrarDocMensaje("La foto supera los 5 MB.");
 return;
 }
 
+var boton=$("btnSubirFoto");
+
 try{
 
-const anterior=await db.from("vehiculos")
+boton.disabled=true;
+boton.textContent="SUBIENDO FOTO...";
+
+var anterior=await db.from("vehiculos")
 .select("foto_path")
 .eq("id",vehiculoActual.id)
 .single();
 
 if(anterior.error)throw anterior.error;
 
-const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
-const ruta=vehiculoActual.id+"/foto_"+Date.now()+"."+ext;
+var ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+var ruta=vehiculoActual.id+"/foto_"+Date.now()+"."+ext;
 
-const upload=await db.storage
+var upload=await db.storage
 .from("vehiculos")
 .upload(ruta,file,{
 contentType:file.type,
@@ -655,23 +677,21 @@ cacheControl:"3600"
 
 if(upload.error)throw upload.error;
 
-const update=await db.from("vehiculos")
+var update=await db.from("vehiculos")
 .update({foto_path:ruta})
 .eq("id",vehiculoActual.id)
 .select("id,foto_path")
 .single();
 
 if(update.error){
-
 await db.storage.from("vehiculos").remove([ruta]);
 throw update.error;
-
 }
 
-if(anterior.data?.foto_path){
-
+if(anterior.data && anterior.data.foto_path){
+try{
 await db.storage.from("vehiculos").remove([anterior.data.foto_path]);
-
+}catch(e){}
 }
 
 input.value="";
@@ -681,7 +701,12 @@ await mostrarFotoActual();
 }catch(e){
 
 console.error(e);
-mostrarDocMensaje("No se pudo subir la foto: "+(e.message||e));
+mostrarDocMensaje("No se pudo subir la foto: "+(e.message || e));
+
+}finally{
+
+boton.disabled=false;
+boton.textContent="SUBIR / CAMBIAR FOTO";
 
 }
 
@@ -695,16 +720,16 @@ if(!confirm("¿Eliminar la foto de "+vehiculoActual.patente+"?"))return;
 
 try{
 
-const r=await db.from("vehiculos")
+var r=await db.from("vehiculos")
 .select("foto_path")
 .eq("id",vehiculoActual.id)
 .single();
 
 if(r.error)throw r.error;
 
-if(r.data?.foto_path){
+if(r.data && r.data.foto_path){
 
-const s=await db.storage
+var s=await db.storage
 .from("vehiculos")
 .remove([r.data.foto_path]);
 
@@ -712,7 +737,7 @@ if(s.error)throw s.error;
 
 }
 
-const u=await db.from("vehiculos")
+var u=await db.from("vehiculos")
 .update({foto_path:null})
 .eq("id",vehiculoActual.id);
 
@@ -723,7 +748,7 @@ await mostrarFotoActual();
 
 }catch(e){
 
-mostrarDocMensaje("No se pudo eliminar la foto: "+(e.message||e));
+mostrarDocMensaje("No se pudo eliminar la foto: "+(e.message || e));
 
 }
 
@@ -731,14 +756,13 @@ mostrarDocMensaje("No se pudo eliminar la foto: "+(e.message||e));
 
 async function cargarDocumentos(){
 
-const box=$("listaDocumentos");
+var box=$("listaDocumentos");
 
-box.innerHTML=
-'<div class="loading">Cargando documentos...</div>';
+box.innerHTML='<div class="loading">Cargando documentos...</div>';
 
 try{
 
-const r=await db.from("documentos")
+var r=await db.from("documentos")
 .select("*")
 .eq("vehiculo_id",vehiculoActual.id);
 
@@ -746,18 +770,20 @@ if(r.error)throw r.error;
 
 box.innerHTML="";
 
-tipos.forEach(t=>{
+tipos.forEach(function(t){
 
-const doc=(r.data||[]).find(x=>x.tipo===t[0]);
+var doc=(r.data || []).find(function(x){
+return x.tipo===t[0];
+});
 
-const card=document.createElement("div");
+var card=document.createElement("div");
 card.className="doc-card";
 
-const title=document.createElement("div");
+var title=document.createElement("div");
 title.className="doc-title";
 title.textContent=t[1];
 
-const status=document.createElement("div");
+var status=document.createElement("div");
 status.className="doc-status";
 
 card.appendChild(title);
@@ -767,73 +793,25 @@ if(doc){
 
 status.textContent="✓ "+doc.nombre;
 
-const actions=document.createElement("div");
+var actions=document.createElement("div");
 actions.className="doc-actions";
 
-const ver=document.createElement("button");
+var ver=document.createElement("button");
 ver.className="btn-blue";
 ver.type="button";
 ver.textContent="VER DOCUMENTO";
-ver.addEventListener("click",()=>verDocumento(doc.archivo));
+ver.addEventListener("click",function(){
+verDocumento(doc.archivo);
+});
 
-const del=document.createElement("button");
+var del=document.createElement("button");
 del.className="btn-danger";
 del.type="button";
 del.textContent="ELIMINAR";
-del.addEventListener("click",()=>eliminarDocumento(doc.id,doc.archivo));
-
-actions.append(ver,del);
-card.appendChild(actions);
-
-}else{
-
-status.textContent="Sin documento";
-
-const input=document.createElement("input");
-input.type="file";
-input.id="archivo_"+t[0];
-
-const subir=document.createElement("button");
-subir.className="btn-primary";
-subir.type="button";
-subir.textContent="SUBIR DOCUMENTO";
-subir.addEventListener("click",()=>subirDocumento(t[0],t[1]));
-
-card.appendChild(input);
-card.appendChild(subir);
-
-}
-
-box.appendChild(card);
-
+del.addEventListener("click",function(){
+eliminarDocumento(doc.id,doc.archivo);
 });
 
-}catch(e){
-
-box.innerHTML=
-'<div class="error">'+esc(e.message)+'</div>';
-
-}
-
-}
-
-async function subirDocumento(tipo,nombre){
-
-try{
-
-const input=$("archivo_"+tipo);
-
-if(!input||!input.files.length){
-mostrarDocMensaje("Selecciona un archivo.");
-return;
-}
-
-const file=input.files[0];
-
-if(file.size>6*1024*1024){
-mostrarDocMensaje("El archivo supera los 6 MB.");
-return;
-}
-
-const ext=file.name.includes(".")?
-file.name.split(".").pop().toLowerCase():"bin"
+actions.appendChild(ver);
+actions.appendChild(del);
+card.appendChild
