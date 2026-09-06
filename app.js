@@ -3,7 +3,8 @@
 // ACCESO MEDIANTE PIN
 // ==========================================
 
-const SUPABASE_URL = "https://tkrugleneazdeqhxxkvr.supabase.co";
+const SUPABASE_URL =
+    "https://tkrugleneazdeqhxxkvr.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
@@ -16,8 +17,6 @@ const db = window.supabase.createClient(
 
 // ==========================================
 // PATENTE DESDE LA URL
-// Ejemplo:
-// https://nexumid.github.io/NexumID/?patente=AB-CD-12
 // ==========================================
 
 const parametros =
@@ -262,6 +261,14 @@ async function validarPIN() {
 
     try {
 
+        console.log(
+            "NEXUMID: enviando solicitud",
+            {
+                patente: PATENTE
+            }
+        );
+
+
         const { data, error } =
             await db.functions.invoke(
                 "nexumid-pin",
@@ -274,15 +281,108 @@ async function validarPIN() {
             );
 
 
+        // ======================================
+        // ERROR DE EDGE FUNCTION
+        // ======================================
+
         if (error) {
 
             console.error(
-                "Error Edge Function:",
+                "NEXUMID ERROR COMPLETO:",
                 error
             );
 
+
+            let detalle = "";
+
+
+            // Intentar leer respuesta HTTP
+            try {
+
+                if (error.context) {
+
+                    if (
+                        typeof error.context.text ===
+                        "function"
+                    ) {
+
+                        detalle =
+                            await error.context.text();
+
+                    }
+
+                }
+
+            } catch (lecturaError) {
+
+                console.error(
+                    "NEXUMID: no se pudo leer respuesta",
+                    lecturaError
+                );
+
+            }
+
+
+            console.error(
+                "NEXUMID RESPUESTA SERVIDOR:",
+                detalle
+            );
+
+
+            // Intentar obtener mensaje JSON
+            let mensajeServidor = "";
+
+
+            if (detalle) {
+
+                try {
+
+                    const json =
+                        JSON.parse(detalle);
+
+
+                    mensajeServidor =
+                        json.error ||
+                        json.message ||
+                        json.msg ||
+                        "";
+
+
+                } catch (jsonError) {
+
+                    mensajeServidor =
+                        detalle;
+
+                }
+
+            }
+
+
+            const mensajeFinal =
+                mensajeServidor ||
+                error.message ||
+                "Error desconocido de Supabase";
+
+
             mostrarErrorPIN(
-                "No fue posible verificar el PIN."
+                "ERROR REAL: " +
+                mensajeFinal
+            );
+
+
+            return;
+
+        }
+
+
+        // ======================================
+        // RESPUESTA SIN DATA
+        // ======================================
+
+        if (!data) {
+
+            mostrarErrorPIN(
+                "ERROR REAL: Supabase no devolvió datos."
             );
 
             return;
@@ -290,14 +390,27 @@ async function validarPIN() {
         }
 
 
+        console.log(
+            "NEXUMID RESPUESTA:",
+            data
+        );
+
+
+        // ======================================
+        // ERROR DEVUELTO POR LA FUNCIÓN
+        // ======================================
+
         if (
-            !data ||
             data.success !== true
         ) {
 
             mostrarErrorPIN(
-                data?.error ||
-                "PIN incorrecto."
+                "ERROR REAL: " +
+                (
+                    data.error ||
+                    data.message ||
+                    "PIN incorrecto."
+                )
             );
 
             return;
@@ -321,7 +434,7 @@ async function validarPIN() {
 
 
         console.log(
-            "Acceso autorizado:",
+            "NEXUMID: ACCESO AUTORIZADO",
             data
         );
 
@@ -332,13 +445,19 @@ async function validarPIN() {
     } catch (error) {
 
         console.error(
-            "Error:",
+            "NEXUMID EXCEPCIÓN:",
             error
         );
 
 
+        let detalle =
+            error?.message ||
+            String(error);
+
+
         mostrarErrorPIN(
-            "Ocurrió un error. Intenta nuevamente."
+            "ERROR REAL: " +
+            detalle
         );
 
 
@@ -1063,65 +1182,4 @@ function mostrarModal(
 
     `;
 
-
-    modal.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-// ==========================================
-// CERRAR MODAL
-// ==========================================
-
-function cerrarModal() {
-
-    const modal =
-        document.getElementById(
-            "modal"
-        );
-
-
-    if (modal) {
-
-        modal.classList.add(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// SEGURIDAD HTML
-// ==========================================
-
-function escapeHtml(text) {
-
-    return String(
-        text ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
+        
