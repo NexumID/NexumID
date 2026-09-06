@@ -240,6 +240,11 @@ async function gestionar(id){
     "</div>"+
    "</div>";
 
+  document.getElementById("detalleVehiculo").innerHTML +=
+   '<div class="actions">'+
+   '<button class="secondary" style="width:100%;color:#ff7070;border-color:#743030" onclick="eliminarVehiculo()">ELIMINAR VEHÍCULO</button>'+
+   '</div>';
+
   await cargarDocumentos();
 
   window.scrollTo({top:0,behavior:"smooth"});
@@ -499,6 +504,97 @@ async function sha(text){
  return [...new Uint8Array(b)]
   .map(x=>x.toString(16).padStart(2,"0"))
   .join("");
+}
+
+async function eliminarVehiculo(){
+ if(!vehiculoActual)return;
+
+ const patente=vehiculoActual.patente;
+
+ if(!confirm(
+  "¿Eliminar definitivamente el vehículo "+patente+"?\n\n"+
+  "También se eliminarán sus documentos asociados.\n\n"+
+  "Esta acción no se puede deshacer."
+ ))return;
+
+ try{
+  mensajeDoc("Eliminando vehículo...","success");
+
+  /*
+   * Primero obtenemos sus documentos para borrar también
+   * los archivos físicos del bucket privado.
+   */
+  const docs=await api(
+   REST+"/documentos?vehiculo_id=eq."+
+   encodeURIComponent(vehiculoActual.id)+
+   "&select=id,archivo"
+  );
+
+  const rutas=(docs||[])
+   .map(x=>x.archivo)
+   .filter(Boolean);
+
+  if(rutas.length){
+   try{
+    await api(
+     STORAGE+"/object/remove/documentos",
+     {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(rutas)
+     }
+    );
+   }catch(e){
+    console.warn("No se pudieron borrar algunos archivos:",e);
+   }
+  }
+
+  /*
+   * Eliminar registros de documentos.
+   */
+  await api(
+   REST+"/documentos?vehiculo_id=eq."+
+   encodeURIComponent(vehiculoActual.id),
+   {method:"DELETE"}
+  );
+
+  /*
+   * Eliminar acceso/PIN.
+   */
+  try{
+   await api(
+    REST+"/vehiculo_acceso?vehiculo_id=eq."+
+    encodeURIComponent(vehiculoActual.id),
+    {method:"DELETE"}
+   );
+  }catch(e){
+   console.warn("No se pudo borrar el acceso:",e);
+  }
+
+  /*
+   * Finalmente eliminar el vehículo.
+   */
+  await api(
+   REST+"/vehiculos?id=eq."+
+   encodeURIComponent(vehiculoActual.id),
+   {method:"DELETE"}
+  );
+
+  vehiculoActual=null;
+
+  document.getElementById("vistaVehiculo").classList.add("hidden");
+  document.getElementById("vistaLista").classList.remove("hidden");
+
+  mensaje("✓ VEHÍCULO ELIMINADO","success");
+
+  await cargarVehiculos();
+
+  window.scrollTo({top:0,behavior:"smooth"});
+
+ }catch(e){
+  console.error(e);
+  mensajeDoc("No se pudo eliminar el vehículo: "+e.message);
+ }
 }
 
 function volverLista(){
