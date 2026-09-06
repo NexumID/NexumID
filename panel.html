@@ -223,7 +223,9 @@ input{
     <div class="sub">IDENTIDAD DIGITAL VEHICULAR</div>
   </div>
 
-  <button class="secondary" onclick="salir()">SALIR</button>
+  <button class="secondary" onclick="salir()">
+    SALIR
+  </button>
 
 </div>
 
@@ -319,8 +321,7 @@ input{
 
 const URL="https://tkrugleneazdeqhxxkvr.supabase.co";
 
-const KEY=
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcnVnbGVuZWF6ZGVxaHh4a3ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NTA4NjEsImV4cCI6MjEwNDEyNjg2MX0.R6yXQ9Ld4YYYRK_Fct99q9udqF6gEVN3qw-iqgvoCoA";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcnVnbGVuZWF6ZGVxaHh4a3ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NTA4NjEsImV4cCI6MjEwNDEyNjg2MX0.R6yXQ9Ld4YYYRK_Fct99q9udqF6gEVN3qw-iqgvoCoA";
 
 const REST=URL+"/rest/v1";
 
@@ -415,7 +416,7 @@ async function api(url,opt={}){
  try{
   data=text?JSON.parse(text):null;
  }catch(e){
-  data=text
+  data=text;
  }
 
  if(!r.ok){
@@ -724,23 +725,21 @@ async function regenerarPIN(){
   vehiculoActual.patente;
 
 
- const confirmar=
-  confirm(
+ if(
+  !confirm(
    "¿Regenerar el PIN de "+
    patente+
    "?\n\n"+
    "El PIN anterior dejará de funcionar inmediatamente."
-  );
-
-
- if(!confirmar)
+  )
+ )
   return;
 
 
  try{
 
   /*
-   * Generamos un nuevo PIN de 4 dígitos.
+   * Generar PIN nuevo.
    */
 
   const pin=
@@ -753,7 +752,7 @@ async function regenerarPIN(){
 
 
   /*
-   * Convertimos el PIN en SHA-256.
+   * Convertir PIN a SHA-256.
    */
 
   const hash=
@@ -761,7 +760,7 @@ async function regenerarPIN(){
 
 
   /*
-   * Actualizamos el acceso existente.
+   * Actualizar acceso existente.
    */
 
   await api(
@@ -802,7 +801,7 @@ async function regenerarPIN(){
 
 
   /*
-   * Mostramos el nuevo PIN.
+   * Mostrar nuevo PIN.
    */
 
   const detalle=
@@ -1547,8 +1546,7 @@ async function crearVehiculo(){
 
 
   /*
-   * Generamos automáticamente
-   * el PIN inicial.
+   * Generar PIN inicial.
    */
 
   const pin=
@@ -1650,4 +1648,13 @@ async function crearVehiculo(){
 
  }
 
-  
+}
+
+
+
+async function sha(text){
+
+ const b=
+  await crypto.subtle.digest(
+
+   "SHA  
