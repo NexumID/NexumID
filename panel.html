@@ -161,7 +161,12 @@ async function iniciar(){
  try{
   box.innerHTML='<div class="loading">Conectando con NexumID...</div>';
   if(typeof supabase==="undefined")throw new Error("No se cargó la librería de Supabase.");
-  db=supabase.createClient(URL,KEY);
+  db=supabase.createClient(URL,KEY,{
+   auth:{
+    lock:async (_name,_acquireTimeout,fn)=>await fn()
+   }
+  });
+  box.innerHTML='<div class="loading">Verificando sesión...</div>';
   if(!await sesion()){box.innerHTML='<div class="error">Sesión no encontrada. Redirigiendo...</div>';setTimeout(()=>location.href="admin.html",1200);return}
   await cargarVehiculos()
  }catch(e){console.error(e);box.innerHTML='<div class="error"><strong>Error iniciando el panel</strong><br><br>'+esc(e.message)+'</div>'}
