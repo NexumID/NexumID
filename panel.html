@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NexumID - Panel</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#05080d;color:#fff;font-family:Arial,sans-serif}
@@ -32,6 +33,9 @@ input{width:100%;padding:15px;margin:7px 0 15px;background:#080d13;border:1px so
 .back{margin-bottom:25px}
 .pinbox{margin-top:18px;padding:18px;background:#080d13;border:1px solid #1595ff;border-radius:14px;text-align:center}
 .pin{display:block;font-size:38px;letter-spacing:8px;margin-top:7px}
+.linkbox{word-break:break-all;background:#080d13;border:1px solid #263342;border-radius:12px;padding:14px;color:#9da8b8;margin-top:12px}
+.qrbox{background:#fff;border-radius:14px;padding:18px;width:max-content;max-width:100%;margin:18px auto;text-align:center}
+.qrbox div{margin:auto}
 </style>
 </head>
 <body>
@@ -245,6 +249,20 @@ async function gestionar(id){
    '<button class="secondary" style="width:100%;color:#ff7070;border-color:#743030" onclick="eliminarVehiculo()">ELIMINAR VEHÍCULO</button>'+
    '</div>';
 
+  const enlace=crearEnlacePublico(vehiculoActual.patente);
+
+  document.getElementById("detalleVehiculo").innerHTML +=
+   '<div class="card">'+
+    '<h2 style="margin-top:0">Acceso público</h2>'+
+    '<div style="color:#9da8b8">Este es el enlace que usarán el QR y la tarjeta NFC.</div>'+
+    '<div class="linkbox" id="enlacePublico">'+esc(enlace)+'</div>'+
+    '<div class="actions">'+
+     '<button class="primary" onclick="copiarEnlace()">COPIAR ENLACE</button>'+
+     '<button class="secondary" onclick="mostrarQR()">GENERAR QR</button>'+
+    '</div>'+
+    '<div id="qrArea" class="hidden"></div>'+
+   '</div>';
+
   await cargarDocumentos();
 
   window.scrollTo({top:0,behavior:"smooth"});
@@ -292,6 +310,58 @@ async function cargarDocumentos(){
  }catch(e){
   box.innerHTML='<div class="error">'+esc(e.message)+"</div>";
  }
+}
+
+function crearEnlacePublico(patente){
+ return "https://nexumid.github.io/NexumID/?patente="+
+  encodeURIComponent(String(patente||"").toUpperCase());
+}
+
+function enlaceActual(){
+ return crearEnlacePublico(vehiculoActual?.patente||"");
+}
+
+async function copiarEnlace(){
+ const enlace=enlaceActual();
+
+ try{
+  await navigator.clipboard.writeText(enlace);
+  mensajeDoc("✓ Enlace copiado al portapapeles.","success");
+ }catch(e){
+  prompt("Copia este enlace:",enlace);
+ }
+}
+
+function mostrarQR(){
+ const area=document.getElementById("qrArea");
+ if(!area)return;
+
+ area.classList.remove("hidden");
+
+ area.innerHTML=
+  '<div class="qrbox">'+
+   '<div id="codigoQR"></div>'+
+   '<div style="color:#111;margin-top:12px;font-weight:bold">'+
+    esc(vehiculoActual.patente)+
+   '</div>'+
+  '</div>';
+
+ const codigo=document.getElementById("codigoQR");
+
+ if(typeof QRCode==="undefined"){
+  codigo.innerHTML=
+   '<div style="color:#b00000;padding:10px">'+
+   "No se pudo cargar el generador QR."+
+   "</div>";
+  return;
+ }
+
+ new QRCode(codigo,{
+  text:enlaceActual(),
+  width:220,
+  height:220,
+  correctLevel:QRCode.CorrectLevel.M
+ });
 }
 
 async function subirDocumento(tipo,nombre){
