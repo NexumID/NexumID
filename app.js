@@ -140,7 +140,16 @@ async function validarPIN() {
 
         if (error) {
             console.error("Error Edge Function:", error);
-            mostrarErrorPIN("No fue posible verificar el PIN.");
+            let mensaje = "No fue posible verificar el PIN.";
+            // Las respuestas HTTP 401/429 llegan como error, con el cuerpo en context.
+            const respuesta = error.context;
+            if (respuesta && [400, 401, 403, 404, 409, 429].includes(respuesta.status)) {
+                try {
+                    const detalle = await respuesta.clone().json();
+                    if (typeof detalle.error === "string") mensaje = detalle.error;
+                } catch (_) {}
+            }
+            mostrarErrorPIN(mensaje);
             return;
         }
 
