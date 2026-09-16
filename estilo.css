@@ -574,3 +574,45 @@ footer small{
         box-shadow:0 25px 80px rgba(0,0,0,.5);
     }
 }
+
+/* =========================================================
+   LOGO OFICIAL NEXUMID - CABECERA
+   Mantiene siempre la proporción original del PNG.
+   ========================================================= */
+.topbar .brand{
+    flex:1 1 auto;
+    min-width:0;
+    gap:0;
+}
+
+.topbar .brand-logo{
+    display:block;
+    width:210px;
+    max-width:min(58vw, 210px);
+    height:auto;
+    max-height:58px;
+    object-fit:contain;
+    object-position:left center;
+    flex-shrink:1;
+}
+
+@media(max-width:480px){
+    .topbar{
+        gap:10px;
+    }
+
+    .topbar .brand-logo{
+        width:190px;
+        max-width:62vw;
+        height:auto;
+    }
+}
+
+@media(max-width:360px){
+    .topbar .brand-logo{
+        width:165px;
+        max-width:60vw;
+        height:auto;
+    }
+}
+
