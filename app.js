@@ -480,7 +480,7 @@ function verDocumento(tipo) {
 
     const documento = buscarDocumento(tipo);
 
-    if (!documento || !documento.url) {
+    if (!documento || !documento.id || !documento.access_token) {
         mostrarModal(
             "Documento no disponible",
             "<p>Este documento todavía no está disponible para este vehículo.</p>"
@@ -497,11 +497,10 @@ function verDocumento(tipo) {
                 <div class="modal-document-icon">
                     ${tipoInfo?.icono || "📄"}
                 </div>
-
                 <p>
-                    Documento disponible de forma temporal y protegida.
+                    El acceso temporal se generará al abrir el documento
+                    y será válido durante 120 segundos.
                 </p>
-
                 <button
                     id="btnAbrirDocumento"
                     class="modal-action"
@@ -516,14 +515,78 @@ function verDocumento(tipo) {
     document
         .getElementById("btnAbrirDocumento")
         ?.addEventListener("click", () => {
-            abrirDocumentoSeguro(documento.url);
+            abrirDocumentoSeguro(documento);
         });
 }
 
-function abrirDocumentoSeguro(url) {
-    if (!accesoAutorizado || !url) return;
+async function abrirDocumentoSeguro(documento) {
+    if (!accesoAutorizado || !documento?.id || !documento?.access_token) {
+        return;
+    }
 
-    window.open(url, "_blank", "noopener,noreferrer");
+    const boton = document.getElementById("btnAbrirDocumento");
+
+    if (boton) {
+        boton.disabled = true;
+        boton.textContent = "GENERANDO ACCESO...";
+    }
+
+    const ventana = window.open("about:blank", "_blank");
+
+    if (ventana) {
+        try {
+            ventana.opener = null;
+            ventana.document.write(
+                "<p style='font-family:sans-serif;padding:24px'>Generando acceso seguro...</p>"
+            );
+        } catch (_) {}
+    }
+
+    try {
+        const { data, error } = await db.functions.invoke(
+            "nexumid-documento",
+            {
+                body: {
+                    documento_id: documento.id,
+                    access_token: documento.access_token
+                }
+            }
+        );
+
+        if (error || !data || data.success !== true || !data.url) {
+            if (ventana) ventana.close();
+
+            mostrarModal(
+                "Acceso no disponible",
+                `<p>${escapeHtml(
+                    data?.error ||
+                    "El acceso temporal venció. Ingresa nuevamente con tu PIN."
+                )}</p>`
+            );
+            return;
+        }
+
+        if (ventana) {
+            ventana.location.replace(data.url);
+        } else {
+            window.location.href = data.url;
+        }
+
+    } catch (error) {
+        console.error("Error al generar acceso temporal:", error);
+
+        if (ventana) ventana.close();
+
+        mostrarModal(
+            "Error de acceso",
+            "<p>No fue posible abrir el documento. Intenta nuevamente.</p>"
+        );
+    } finally {
+        if (boton && document.body.contains(boton)) {
+            boton.disabled = false;
+            boton.textContent = "ABRIR DOCUMENTO";
+        }
+    }
 }
 
 // ==========================================
