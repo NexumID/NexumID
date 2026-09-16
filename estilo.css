@@ -615,4 +615,26 @@ footer small{
         height:auto;
     }
 }
+/* ==========================================
+   FIX LOGO NEXUMID - PANTALLA PIN
+   ========================================== */
 
+.pin-brand {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0 28px 0;
+    padding: 0;
+}
+
+.pin-brand-logo {
+    display: block !important;
+    width: 190px !important;
+    max-width: 60vw !important;
+    height: 60px !important;
+    max-height: 60px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    margin: 0 auto !important;
+}
