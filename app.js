@@ -48,11 +48,11 @@ function mostrarPantallaPIN() {
     app.innerHTML = `
         <div class="pin-screen">
             <div class="pin-brand">
-                <div class="pin-logo">N</div>
-                <div>
-                    <strong>Nexum<span>ID</span></strong>
-                    <span>IDENTIDAD DIGITAL VEHICULAR</span>
-                </div>
+                <img
+                    src="logo-nexumid.png"
+                    alt="NexumID - Identidad Vehicular"
+                    class="pin-brand-logo"
+                >
             </div>
 
             <div class="pin-card">
@@ -141,14 +141,15 @@ async function validarPIN() {
         if (error) {
             console.error("Error Edge Function:", error);
             let mensaje = "No fue posible verificar el PIN.";
-            // Las respuestas HTTP 401/429 llegan como error, con el cuerpo en context.
             const respuesta = error.context;
+
             if (respuesta && [400, 401, 403, 404, 409, 429].includes(respuesta.status)) {
                 try {
                     const detalle = await respuesta.clone().json();
                     if (typeof detalle.error === "string") mensaje = detalle.error;
                 } catch (_) {}
             }
+
             mostrarErrorPIN(mensaje);
             return;
         }
@@ -192,17 +193,16 @@ function mostrarPerfil() {
     const nombreVehiculo =
         `${vehiculoActual.marca || ""} ${vehiculoActual.modelo || ""}`.trim();
 
-    // La Edge Function devuelve foto_url cuando existe una foto.
     const fotoUrl = vehiculoActual.foto_url || "";
 
     app.innerHTML = `
         <header class="topbar">
             <div class="brand">
-                <div class="brand-mark">N</div>
-                <div>
-                    <strong>Nexum<span>ID</span></strong>
-                    <small>IDENTIDAD DIGITAL VEHICULAR</small>
-                </div>
+                <img
+                    src="logo-nexumid.png"
+                    alt="NexumID - Identidad Vehicular"
+                    class="brand-logo"
+                >
             </div>
 
             <div class="status-pill">
@@ -406,6 +406,7 @@ function mostrarDocumentos() {
 
         if (encontrado) {
             const vencimiento = estadoVencimiento(encontrado.fecha_vencimiento);
+
             return `
                 <article class="document-card available">
                     <div class="document-icon">${doc.icono}</div>
@@ -636,16 +637,61 @@ function cerrarModal() {
 
 // Fechas civiles en Chile; UTC se usa solo para contar días sin efectos del horario de verano.
 function estadoVencimiento(fecha, ahora = new Date()) {
-    if (fecha === null || fecha === '') return { texto: 'SIN VENCIMIENTO', color: '#aeb8c7' };
-    if (fecha === undefined) return { texto: 'FECHA NO INFORMADA', color: '#aeb8c7' };
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return { texto: 'FECHA INVÁLIDA', color: '#ff8888' };
-    const fin = Date.parse(fecha + 'T00:00:00Z');
-    if (!Number.isFinite(fin) || new Date(fin).toISOString().slice(0,10) !== fecha)
+    if (fecha === null || fecha === '') {
+        return { texto: 'SIN VENCIMIENTO', color: '#aeb8c7' };
+    }
+
+    if (fecha === undefined) {
+        return { texto: 'FECHA NO INFORMADA', color: '#aeb8c7' };
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
         return { texto: 'FECHA INVÁLIDA', color: '#ff8888' };
-    const partes = new Intl.DateTimeFormat('en', {timeZone:'America/Santiago', year:'numeric', month:'2-digit', day:'2-digit'}).formatToParts(ahora);
+    }
+
+    const fin = Date.parse(fecha + 'T00:00:00Z');
+
+    if (!Number.isFinite(fin) || new Date(fin).toISOString().slice(0,10) !== fecha) {
+        return { texto: 'FECHA INVÁLIDA', color: '#ff8888' };
+    }
+
+    const partes = new Intl.DateTimeFormat('en', {
+        timeZone:'America/Santiago',
+        year:'numeric',
+        month:'2-digit',
+        day:'2-digit'
+    }).formatToParts(ahora);
+
     const valor = tipo => partes.find(p => p.type === tipo).value;
-    const hoy = Date.parse(valor('year') + '-' + valor('month') + '-' + valor('day') + 'T00:00:00Z');
+
+    const hoy = Date.parse(
+        valor('year') + '-' +
+        valor('month') + '-' +
+        valor('day') +
+        'T00:00:00Z'
+    );
+
     const dias = (fin - hoy) / 86400000;
-    const texto = dias < 0 ? 'VENCIDO' : dias <= 30 ? 'POR VENCER' : 'VIGENTE';
-    return { texto: texto + ' · ' + (dias < 0 ? 'venció ' : 'vence ') + fecha.split('-').reverse().join('/'), color: dias < 0 ? '#ff8888' : dias <= 30 ? '#ffcb70' : '#65e3b1' };
+
+    const texto =
+        dias < 0
+            ? 'VENCIDO'
+            : dias <= 30
+                ? 'POR VENCER'
+                : 'VIGENTE';
+
+    return {
+        texto:
+            texto +
+            ' · ' +
+            (dias < 0 ? 'venció ' : 'vence ') +
+            fecha.split('-').reverse().join('/'),
+
+        color:
+            dias < 0
+                ? '#ff8888'
+                : dias <= 30
+                    ? '#ffcb70'
+                    : '#65e3b1'
+    };
 }
