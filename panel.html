@@ -94,6 +94,11 @@ h2{font-size:24px}
 <label>Contacto de emergencia</label>
 <input id="contacto" placeholder="+56912345678">
 
+<label>Correo para notificaciones</label>
+<input id="emailNotificaciones" type="email" placeholder="cliente@correo.com" autocomplete="email">
+<div class="small-note">NexumID enviará aquí los avisos de vencimiento de documentos.</div>
+<br>
+
 <button id="btnCrear" class="btn-primary" type="button">CREAR VEHÍCULO</button>
 <br><br>
 <button id="btnCancelar" class="btn-secondary" style="width:100%" type="button">CANCELAR</button>
@@ -200,6 +205,12 @@ var modelo=$("modelo").value.trim();
 var anio=$("anio").value.trim();
 var color=$("color").value.trim();
 var contacto=$("contacto").value.trim();
+var emailNotificaciones=$("emailNotificaciones").value.trim().toLowerCase();
+
+if(emailNotificaciones && !$("emailNotificaciones").checkValidity()){
+mostrarMensaje("Introduce un correo válido para las notificaciones.");
+return;
+}
 
 if(!patente || !marca || !modelo || !anio || !color){
 mostrarMensaje("Completa todos los campos obligatorios.");
@@ -213,7 +224,8 @@ marca:marca,
 modelo:modelo,
 anio:parseInt(anio,10),
 color:color,
-contacto_emergencia:contacto
+contacto_emergencia:contacto,
+email_notificaciones:emailNotificaciones || null
 })
 .select()
 .single();
@@ -236,7 +248,7 @@ await db.from("vehiculos").delete().eq("id",r.data.id);
 throw a.error;
 }
 
-["patente","marca","modelo","anio","color","contacto"].forEach(function(id){
+["patente","marca","modelo","anio","color","contacto","emailNotificaciones"].forEach(function(id){
 $(id).value="";
 });
 
@@ -362,6 +374,14 @@ $("infoVehiculo").innerHTML=
 "<br>Contacto: "+esc(v.contacto_emergencia || "No registrado")+
 '</div></div>'+
 
+'<div class="form-card">'+
+'<h2 style="margin-top:0">Notificaciones</h2>'+
+'<div class="small-note">Correo donde NexumID enviará los avisos de vencimiento de documentos.</div>'+
+'<label for="emailNotificacionesGestion">Correo para notificaciones</label>'+
+'<input id="emailNotificacionesGestion" type="email" placeholder="cliente@correo.com" autocomplete="email" value="'+esc(v.email_notificaciones || "")+'">'+
+'<button id="btnGuardarEmail" class="btn-primary" type="button">GUARDAR CORREO</button>'+
+'</div>'+
+
 '<div class="vehicle-buttons">'+
 '<button id="btnRegenerarPIN" class="btn-primary" type="button">🔄 REGENERAR PIN</button>'+
 '<button id="btnEliminarVehiculo" class="btn-danger" type="button">ELIMINAR VEHÍCULO</button>'+
@@ -390,6 +410,7 @@ $("infoVehiculo").innerHTML=
 
 $("enlacePublico").textContent=crearEnlacePublico(v.patente);
 
+$("btnGuardarEmail").addEventListener("click",guardarEmailNotificaciones);
 $("btnRegenerarPIN").addEventListener("click",regenerarPIN);
 $("btnEliminarVehiculo").addEventListener("click",eliminarVehiculo);
 $("btnCopiarEnlace").addEventListener("click",copiarEnlace);
@@ -402,6 +423,55 @@ await cargarDocumentos();
 
 window.scrollTo(0,0);
 
+}
+
+async function guardarEmailNotificaciones(){
+if(!vehiculoActual)return;
+
+var input=$("emailNotificacionesGestion");
+var boton=$("btnGuardarEmail");
+if(!input || !boton)return;
+
+var email=input.value.trim().toLowerCase();
+
+if(email && !input.checkValidity()){
+mostrarDocMensaje("Introduce un correo válido.");
+return;
+}
+
+try{
+if(!await comprobarSesion()){
+alert("La sesión expiró.");
+location.href="admin.html";
+return;
+}
+
+boton.disabled=true;
+boton.textContent="GUARDANDO...";
+
+var r=await db.from("vehiculos")
+.update({email_notificaciones:email || null})
+.eq("id",vehiculoActual.id)
+.select("id,email_notificaciones")
+.single();
+
+if(r.error)throw r.error;
+
+vehiculoActual.email_notificaciones=r.data.email_notificaciones;
+input.value=r.data.email_notificaciones || "";
+
+mostrarDocMensaje(
+email ? "✓ Correo de notificaciones guardado." : "✓ Correo de notificaciones eliminado.",
+"success"
+);
+
+}catch(e){
+console.error(e);
+mostrarDocMensaje("No se pudo guardar el correo: "+(e.message || e));
+}finally{
+boton.disabled=false;
+boton.textContent="GUARDAR CORREO";
+}
 }
 
 function crearEnlacePublico(patente){
