@@ -451,14 +451,12 @@ boton.textContent="GUARDANDO...";
 
 var r=await db.from("vehiculos")
 .update({email_notificaciones:email || null})
-.eq("id",vehiculoActual.id)
-.select("id,email_notificaciones")
-.single();
+.eq("id",vehiculoActual.id);
 
 if(r.error)throw r.error;
 
-vehiculoActual.email_notificaciones=r.data.email_notificaciones;
-input.value=r.data.email_notificaciones || "";
+vehiculoActual.email_notificaciones=email || null;
+input.value=email;
 
 mostrarDocMensaje(
 email ? "✓ Correo de notificaciones guardado." : "✓ Correo de notificaciones eliminado.",
