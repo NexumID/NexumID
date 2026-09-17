@@ -638,3 +638,38 @@ footer small{
     object-position: center !important;
     margin: 0 auto !important;
 }
+
+
+/* NEXUMID - LANDING COMERCIAL */
+.app:has(.landing){max-width:none;min-height:100vh;background:#03070b}
+body:has(.landing){padding:0}
+.landing{min-height:100vh;overflow:hidden;background:radial-gradient(circle at 82% 4%,rgba(21,149,255,.15),transparent 23%),radial-gradient(circle at 15% 30%,rgba(44,111,164,.08),transparent 26%),#03070b;color:#fff}
+.landing-header{width:min(1120px,calc(100% - 36px));margin:0 auto;min-height:88px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.landing-logo{width:210px;max-width:58vw;height:auto;display:block}
+.landing-badge,.landing-kicker{color:#8fa0b3;font-size:9px;font-weight:800;letter-spacing:2.2px}
+.landing-badge{padding:8px 11px;border:1px solid #203448;border-radius:999px;background:rgba(7,16,25,.7)}
+.landing-hero{width:min(1120px,calc(100% - 36px));min-height:680px;margin:0 auto;padding:105px 0 90px;position:relative}
+.landing-kicker{color:#3fa9ff}
+.landing-hero h1{max-width:700px;margin-top:18px;font-size:clamp(42px,7vw,78px);line-height:.98;letter-spacing:-3px}
+.landing-lead{max-width:610px;margin-top:25px;color:#9eacbb;font-size:17px;line-height:1.7}
+.landing-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:32px}
+.landing-actions a{min-height:48px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;text-decoration:none;font-size:10px;font-weight:900;letter-spacing:.8px}
+.landing-primary{background:#1595ff;color:#fff}.landing-secondary{border:1px solid #26394c;background:#08111a;color:#c5d0db}
+.landing-card{width:340px;min-height:210px;position:absolute;right:2%;bottom:85px;padding:24px;border:1px solid #294158;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.055),transparent 35%),linear-gradient(145deg,#111b25,#060b10);box-shadow:0 35px 90px rgba(0,0,0,.55),0 0 45px rgba(21,149,255,.09);transform:rotate(-4deg)}
+.landing-card:after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 20%,rgba(255,255,255,.08) 42%,transparent 55%);pointer-events:none}
+.landing-card-top{display:flex;justify-content:space-between;color:#75889b;font-size:8px;font-weight:900;letter-spacing:1.5px}.landing-live{color:#68dcb0}.landing-live i{display:inline-block;width:5px;height:5px;border-radius:50%;background:#28df96}
+.landing-nfc{width:48px;height:48px;margin:30px 0 15px;display:flex;align-items:center;justify-content:center;border:1px solid #315b79;border-radius:13px;color:#65bfff;font-size:10px;font-weight:900;letter-spacing:1px}
+.landing-card strong{display:block;font-size:18px}.landing-card small{display:block;margin-top:7px;color:#7f8fa0}.landing-tech{position:absolute;right:22px;bottom:20px;color:#516274;font-size:7px;letter-spacing:1.5px}
+.landing-section{width:min(1120px,calc(100% - 36px));margin:0 auto;padding:105px 0}
+.landing-section h2,.landing-cta h2{max-width:700px;margin-top:12px;font-size:clamp(30px,5vw,50px);line-height:1.08;letter-spacing:-1.6px}
+.landing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:45px}
+.landing-grid article{min-height:210px;padding:25px;border:1px solid #172a3b;border-radius:19px;background:linear-gradient(145deg,#0c151f,#070d13)}
+.landing-grid b{color:#1595ff;font-size:12px;letter-spacing:1px}.landing-grid h3{margin-top:35px;font-size:18px}.landing-grid p,.landing-section-copy{margin-top:10px;color:#8595a6;font-size:14px;line-height:1.65}
+.landing-dark{border-top:1px solid #101d29;border-bottom:1px solid #101d29}.landing-docs{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px}
+.landing-docs span,.landing-security-row span{padding:10px 12px;border:1px solid #203448;border-radius:9px;background:#071019;color:#aebdcb;font-size:9px;font-weight:800;letter-spacing:.5px}
+.landing-security-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:28px}
+.landing-cta{width:min(1120px,calc(100% - 36px));margin:20px auto 0;padding:85px 45px;border:1px solid #20384d;border-radius:28px;background:radial-gradient(circle at 85% 20%,rgba(21,149,255,.18),transparent 30%),linear-gradient(145deg,#0d1823,#060b10)}
+.landing-cta p{margin-top:16px;color:#8e9dad;line-height:1.6}.landing-slogan{margin-top:34px;color:#fff;font-size:18px;font-weight:800}
+.landing-footer{width:min(1120px,calc(100% - 36px));margin:0 auto;padding:65px 0 45px;text-align:left}.landing-footer-logo{width:170px;height:auto;margin-bottom:14px}.landing-footer div{color:#718194;font-size:8px;letter-spacing:1.7px}.landing-footer small{margin-top:8px}
+@media(max-width:820px){.landing-hero{min-height:auto;padding:75px 0 55px}.landing-hero h1{letter-spacing:-2px}.landing-card{width:100%;max-width:390px;min-height:205px;position:relative;right:auto;bottom:auto;margin:55px auto 5px;transform:rotate(-2deg)}.landing-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.landing-header{min-height:75px}.landing-logo{width:175px}.landing-badge{font-size:7px;letter-spacing:1.2px}.landing-hero{padding-top:62px}.landing-hero h1{font-size:45px;letter-spacing:-2px}.landing-lead{font-size:15px}.landing-section{padding:78px 0}.landing-grid{margin-top:30px}.landing-grid article{min-height:170px}.landing-grid h3{margin-top:24px}.landing-cta{padding:55px 24px;border-radius:22px}}
