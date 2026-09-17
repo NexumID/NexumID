@@ -405,6 +405,7 @@ function mostrarPerfil() {
                     <div class="secure-mini">🔒 PROTEGIDO</div>
                 </div>
 
+                <div id="document-summary" class="doc-summary"></div>
                 <div id="documents-list" class="documents-list"></div>
             </section>
 
@@ -459,12 +460,66 @@ function mostrarPerfil() {
 }
 
 // ==========================================
+// RESUMEN DE DOCUMENTACIÓN
+// ==========================================
+function resumenDocumentacion() {
+    const estados = documentosActuales
+        .filter(doc => doc && doc.fecha_vencimiento)
+        .map(doc => estadoVencimiento(doc.fecha_vencimiento));
+
+    const vencidos = estados.filter(e => e.texto.startsWith("VENCIDO")).length;
+    const porVencer = estados.filter(e => e.texto.startsWith("POR VENCER")).length;
+
+    if (vencidos > 0) {
+        return {
+            clase: "doc-summary danger",
+            icono: "⚠",
+            titulo: vencidos === 1 ? "Tienes 1 documento vencido" : `Tienes ${vencidos} documentos vencidos`,
+            texto: "Revisa la documentación del vehículo."
+        };
+    }
+
+    if (porVencer > 0) {
+        return {
+            clase: "doc-summary warning",
+            icono: "⚠",
+            titulo: porVencer === 1 ? "Tienes 1 documento próximo a vencer" : `Tienes ${porVencer} documentos próximos a vencer`,
+            texto: "NexumID te avisará por correo según se acerque la fecha."
+        };
+    }
+
+    return {
+        clase: "doc-summary ok",
+        icono: "✓",
+        titulo: "Documentación al día",
+        texto: "No hay documentos registrados vencidos ni próximos a vencer."
+    };
+}
+
+function mostrarResumenDocumentacion() {
+    const contenedor = document.getElementById("document-summary");
+    if (!contenedor) return;
+
+    const r = resumenDocumentacion();
+    contenedor.className = r.clase;
+    contenedor.innerHTML = `
+        <div class="doc-summary-icon">${r.icono}</div>
+        <div>
+            <strong>${escapeHtml(r.titulo)}</strong>
+            <small>${escapeHtml(r.texto)}</small>
+        </div>
+    `;
+}
+
+// ==========================================
 // DOCUMENTOS
 // ==========================================
 function mostrarDocumentos() {
     const lista = document.getElementById("documents-list");
 
     if (!lista) return;
+
+    mostrarResumenDocumentacion();
 
     lista.innerHTML = TIPOS_DOCUMENTOS.map(doc => {
         const encontrado = buscarDocumento(doc.tipo);
