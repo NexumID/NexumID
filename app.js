@@ -9,7 +9,7 @@ const SUPABASE_KEY = "sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const parametros = new URLSearchParams(window.location.search);
-const PATENTE = (parametros.get("patente") || "AB-CD-12").trim().toUpperCase();
+const PATENTE = (parametros.get("patente") || "").trim().toUpperCase();
 
 let vehiculoActual = null;
 let documentosActuales = [];
@@ -26,7 +26,72 @@ const TIPOS_DOCUMENTOS = [
 document.addEventListener("DOMContentLoaded", iniciarNexumID);
 
 function iniciarNexumID() {
-    mostrarPantallaPIN();
+    if (PATENTE) {
+        mostrarPantallaPIN();
+        return;
+    }
+    mostrarLandingComercial();
+}
+
+function mostrarLandingComercial() {
+    const app = document.querySelector(".app");
+    if (!app) return;
+    document.title = "NexumID | Tecnología que conecta";
+    app.innerHTML = `
+    <div class="landing">
+      <header class="landing-header">
+        <img src="logo-nexumid.png" alt="NexumID" class="landing-logo">
+        <span class="landing-badge">IDENTIDAD VEHICULAR</span>
+      </header>
+      <section class="landing-hero">
+        <span class="landing-kicker">NFC + QR · ACCESO PROTEGIDO</span>
+        <h1>La documentación de tu vehículo, conectada.</h1>
+        <p class="landing-lead">NexumID reúne la identidad y documentación de tu vehículo en un perfil digital accesible desde una tarjeta NFC o código QR.</p>
+        <div class="landing-actions">
+          <a class="landing-primary" href="#como-funciona">CONOCER NEXUMID</a>
+          <a class="landing-secondary" href="#documentos">VER FUNCIONES</a>
+        </div>
+        <div class="landing-card">
+          <div class="landing-card-top"><span>NEXUMID</span><span class="landing-live"><i></i> CONECTADO</span></div>
+          <div class="landing-nfc">NFC</div>
+          <strong>Identidad Digital Vehicular</strong>
+          <small>Acerca tu dispositivo o escanea el QR.</small>
+          <div class="landing-tech">TECNOLOGÍA QUE CONECTA</div>
+        </div>
+      </section>
+      <section id="como-funciona" class="landing-section">
+        <span class="landing-kicker">CÓMO FUNCIONA</span>
+        <h2>Simple para usar. Diseñado para proteger.</h2>
+        <div class="landing-grid">
+          <article><b>01</b><h3>Acerca o escanea</h3><p>Usa NFC o QR para abrir el perfil digital asociado al vehículo.</p></article>
+          <article><b>02</b><h3>Acceso con PIN</h3><p>La documentación se mantiene detrás de un acceso privado de 4 dígitos.</p></article>
+          <article><b>03</b><h3>Documentos disponibles</h3><p>Consulta la información registrada del vehículo desde el teléfono.</p></article>
+        </div>
+      </section>
+      <section id="documentos" class="landing-section landing-dark">
+        <span class="landing-kicker">DOCUMENTACIÓN</span>
+        <h2>Lo importante, en un solo lugar.</h2>
+        <p class="landing-section-copy">NexumID permite asociar SOAP, Permiso de Circulación, Revisión Técnica, Certificado de Gases y Padrón al perfil del vehículo.</p>
+        <div class="landing-docs"><span>SOAP</span><span>PERMISO DE CIRCULACIÓN</span><span>REVISIÓN TÉCNICA</span><span>CERTIFICADO DE GASES</span><span>PADRÓN</span></div>
+      </section>
+      <section class="landing-section landing-security">
+        <span class="landing-kicker">SEGURIDAD</span>
+        <h2>Tu información no queda expuesta.</h2>
+        <p class="landing-section-copy">El acceso al perfil documental requiere PIN y los documentos se abren mediante accesos temporales generados al momento de consultarlos.</p>
+        <div class="landing-security-row"><span>🔐 Acceso con PIN</span><span>⏱ Enlaces temporales</span><span>✓ Perfil identificado</span></div>
+      </section>
+      <section class="landing-cta">
+        <span class="landing-kicker">NEXUMID</span>
+        <h2>Tu vehículo también puede tener identidad digital.</h2>
+        <p>Una forma moderna de conectar tu vehículo con su información esencial.</p>
+        <div class="landing-slogan">Tecnología que conecta.</div>
+      </section>
+      <footer class="landing-footer">
+        <img src="logo-nexumid.png" alt="NexumID" class="landing-footer-logo">
+        <div>IDENTIDAD DIGITAL VEHICULAR</div>
+        <small>Una solución de Smart Box Connect</small>
+      </footer>
+    </div>`;
 }
 
 function escapeHtml(text) {
