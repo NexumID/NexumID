@@ -628,6 +628,14 @@ function verDocumento(tipo) {
                 >
                     ABRIR DOCUMENTO
                 </button>
+                <button
+                    id="btnDescargarDocumento"
+                    class="modal-action"
+                    type="button"
+                    style="margin-top:10px"
+                >
+                    ⬇ DESCARGAR DOCUMENTO
+                </button>
             </div>
         `
     );
@@ -636,6 +644,12 @@ function verDocumento(tipo) {
         .getElementById("btnAbrirDocumento")
         ?.addEventListener("click", () => {
             abrirDocumentoSeguro(documento);
+        });
+
+    document
+        .getElementById("btnDescargarDocumento")
+        ?.addEventListener("click", () => {
+            descargarDocumentoSeguro(documento, tipoInfo);
         });
 }
 
@@ -705,6 +719,79 @@ async function abrirDocumentoSeguro(documento) {
         if (boton && document.body.contains(boton)) {
             boton.disabled = false;
             boton.textContent = "ABRIR DOCUMENTO";
+        }
+    }
+}
+
+
+// ==========================================
+// DESCARGAR DOCUMENTO
+// ==========================================
+async function descargarDocumentoSeguro(documento, tipoInfo) {
+    if (!accesoAutorizado || !documento?.id || !documento?.access_token) return;
+
+    const boton = document.getElementById("btnDescargarDocumento");
+    if (boton) {
+        boton.disabled = true;
+        boton.textContent = "PREPARANDO DESCARGA...";
+    }
+
+    try {
+        const { data, error } = await db.functions.invoke("nexumid-documento", {
+            body: {
+                documento_id: documento.id,
+                access_token: documento.access_token
+            }
+        });
+
+        if (error || !data || data.success !== true || !data.url) {
+            mostrarModal(
+                "Descarga no disponible",
+                `<p>${escapeHtml(data?.error || "El acceso temporal venció. Ingresa nuevamente con tu PIN.")}</p>`
+            );
+            return;
+        }
+
+        const respuesta = await fetch(data.url);
+        if (!respuesta.ok) throw new Error(`Descarga HTTP ${respuesta.status}`);
+
+        const blob = await respuesta.blob();
+        const tipoNombre = tipoInfo?.nombre || documento.nombre || documento.tipo || "Documento";
+        const nombreLimpio = String(tipoNombre)
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9]+/g, "_")
+            .replace(/^_+|_+$/g, "");
+
+        const contentType = respuesta.headers.get("content-type") || blob.type || "";
+        let extension = "pdf";
+        if (contentType.includes("image/jpeg")) extension = "jpg";
+        else if (contentType.includes("image/png")) extension = "png";
+        else if (contentType.includes("image/webp")) extension = "webp";
+
+        const patenteLimpia = String(PATENTE || "Vehiculo").replace(/[^a-zA-Z0-9-]+/g, "_");
+        const nombreArchivo = `NexumID_${nombreLimpio || "Documento"}_${patenteLimpia}.${extension}`;
+
+        const urlLocal = URL.createObjectURL(blob);
+        const enlace = document.createElement("a");
+        enlace.href = urlLocal;
+        enlace.download = nombreArchivo;
+        enlace.style.display = "none";
+        document.body.appendChild(enlace);
+        enlace.click();
+        enlace.remove();
+        setTimeout(() => URL.revokeObjectURL(urlLocal), 1000);
+
+    } catch (error) {
+        console.error("Error al descargar documento:", error);
+        mostrarModal(
+            "Error de descarga",
+            "<p>No fue posible descargar el documento. Intenta nuevamente.</p>"
+        );
+    } finally {
+        if (boton && document.body.contains(boton)) {
+            boton.disabled = false;
+            boton.textContent = "⬇ DESCARGAR DOCUMENTO";
         }
     }
 }
