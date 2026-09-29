@@ -1,0 +1,71 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-KaONvoKYTx+3FdmUKYu50mDcrk8hHyru7PmMOyk68pY=' https://esm.sh; style-src 'self' 'unsafe-inline'; connect-src 'self' https://tkrugleneazdeqhxxkvr.supabase.co; img-src 'self' data:; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self';">
+<title>NexumID Salud · Administración</title>
+<style>
+:root{color-scheme:dark;--b:#2b9cff;--p:#0c1a27;--l:#183d59;--m:#9cafc1}*{box-sizing:border-box}body{margin:0;background:#06101a;color:#edf6ff;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:980px;margin:auto;padding:22px 14px 60px}.top{display:flex;justify-content:space-between;gap:12px;align-items:center}.brand{font-size:29px;font-weight:900}.brand b{color:var(--b)}.tag{font-size:11px;letter-spacing:2px;color:#79add8}.card{background:var(--p);border:1px solid var(--l);border-radius:18px;padding:18px;margin:12px 0}.muted{color:var(--m);line-height:1.5}.small{font-size:12px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}label{display:block;font-size:13px;color:#c0d0df;margin:8px 0 5px}input{width:100%;border:1px solid #28516f;background:#07131f;color:#fff;border-radius:11px;padding:11px}button{border:0;border-radius:11px;padding:10px 13px;background:var(--b);color:#fff;font-weight:800;cursor:pointer}button.secondary{background:#153049;border:1px solid #28526e}button.danger{background:#5b1f2a}.hidden{display:none!important}.auth{max-width:520px;margin:48px auto}.notice{padding:12px 14px;border-radius:12px;border:1px solid #2d5875;background:#10283a;margin:10px 0}.notice.ok{border-color:#2d694f;color:#b1f2d2}.notice.warn{border-color:#6f5c21;color:#ffe39a}.notice.bad{border-color:#73313d;color:#ffc0c8}.tabs{display:flex;gap:8px;overflow:auto}.tab{white-space:nowrap;background:#10283d}.tab.active{background:var(--b)}.user{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 0;border-top:1px solid #17364d}.user:first-child{border-top:0}.badge{font-size:11px;padding:5px 8px;border-radius:999px;background:#173d5a;color:#9ed3ff}.okText{color:#8be2ba}.badText{color:#ff9baa}.qr{width:min(240px,100%);background:#fff;padding:9px;border-radius:12px}@media(max-width:700px){.grid{grid-template-columns:1fr}.top,.user{align-items:flex-start;flex-direction:column}}
+</style></head><body><main>
+<div class="top"><div><div class="brand">Nexum<b>ID</b> Salud</div><div class="tag">PANEL DE ADMINISTRACIÓN</div></div><button id="logout" class="secondary hidden">Cerrar sesión</button></div><div id="message"></div>
+<section id="loginView" class="card auth"><h2>Administración</h2><p class="muted">Acceso restringido. Las operaciones de alta, suspensión, cambio de clave y eliminación requieren segundo factor.</p><label>Correo administrador</label><input id="email" type="email"><label>Contraseña</label><input id="password" type="password"><button id="login" style="width:100%;margin-top:14px">Ingresar</button></section>
+<section id="panel" class="hidden"><div class="tabs"><button class="tab active" data-tab="users">Usuarios</button><button class="tab" data-tab="security">Seguridad</button></div>
+<div id="p-users" class="pane"><div class="card"><h2>Crear usuario</h2><p class="muted">El usuario queda confirmado y habilitado inmediatamente. No existe registro público desde el portal de pacientes.</p><div class="grid"><div><label>Nombre</label><input id="displayName" maxlength="120"></div><div><label>Correo</label><input id="newEmail" type="email"></div></div><label>Contraseña temporal · mínimo 12 caracteres</label><div class="row"><input id="tempPassword" style="flex:1;min-width:230px"><button id="generate" class="secondary">Generar</button></div><button id="createUser" style="margin-top:12px">Crear usuario</button><div id="createdBox"></div></div><div class="card"><div class="row" style="justify-content:space-between"><h2>Usuarios de Salud</h2><button class="secondary" id="reload">Actualizar</button></div><div id="users"></div></div></div>
+<div id="p-security" class="pane hidden"><div class="card"><h2>Seguridad administrativa</h2><div id="mfaStatus"></div><div id="mfaSetup"></div></div></div></section>
+<script type="module">import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0?bundle";
+const U="https://tkrugleneazdeqhxxkvr.supabase.co",K="sb_publishable_1oVup3kgJeyOfHFoZeAfTw_-3TkiPib";
+const sb=createClient(U,K,{auth:{persistSession:true,storage:sessionStorage,autoRefreshToken:true}});
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+function note(t,k=""){message.innerHTML=`<div class="notice ${k}">${esc(t)}</div>`;setTimeout(()=>message.innerHTML="",6500)}
+async function invoke(body){const{data,error}=await sb.functions.invoke("nexumid-health-admin",{body});if(error&&!data)throw new Error(error.message||"FUNCTION_ERROR");if(!data?.ok)throw Object.assign(new Error(data?.error||"ERROR"),{payload:data});return data}
+async function boot(){const{data}=await sb.auth.getSession();const u=data.session?.user;if(!u){loginView.classList.remove("hidden");panel.classList.add("hidden");logout.classList.add("hidden");return}try{await invoke({action:"whoami"});loginView.classList.add("hidden");panel.classList.remove("hidden");logout.classList.remove("hidden");await Promise.all([loadUsers(),mfa()])}catch(e){await sb.auth.signOut();note("Esta cuenta no tiene permisos de administración.","bad");loginView.classList.remove("hidden");panel.classList.add("hidden")}}
+login.onclick=async()=>{const{error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});if(error)return note("Correo o contraseña incorrectos.","bad");boot()}
+logout.onclick=async()=>{await sb.auth.signOut();location.reload()}
+function strongPassword(){const a="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*?",r=new Uint32Array(18);crypto.getRandomValues(r);return [...r].map(n=>a[n%a.length]).join("")}
+generate.onclick=()=>tempPassword.value=strongPassword();reload.onclick=loadUsers;
+createUser.onclick=async()=>{const payload={action:"create_user",display_name:displayName.value.trim(),email:newEmail.value.trim(),password:tempPassword.value};try{const d=await invoke(payload);createdBox.innerHTML=`<div class="notice ok"><b>Usuario creado</b><div class="small">Correo: ${esc(d.user.email)}</div><div class="small">Contraseña temporal: <span id="tempOut">${esc(tempPassword.value)}</span></div><button id="copyCreds" class="secondary" style="margin-top:8px">Copiar credenciales</button></div>`;copyCreds.onclick=()=>navigator.clipboard.writeText(`NexumID Salud\nUsuario: ${d.user.email}\nContraseña temporal: ${tempPassword.value}\nPortal: https://nexumid.cl/salud.html`);displayName.value="";newEmail.value="";tempPassword.value="";await loadUsers()}catch(e){if(e.message==="MFA_REQUIRED"){tab("security");return note("Confirma MFA antes de crear usuarios.","warn")}note(e.payload?.message||e.message,"bad")}}
+async function loadUsers(){let d;try{d=await invoke({action:"list_users"})}catch(e){return note(e.message,"bad")}users.innerHTML="";for(const u of d.users||[]){const r=document.createElement("div");r.className="user";r.innerHTML=`<div><b>${esc(u.display_name||"Administrador")}</b><div class="muted small">${esc(u.email||"")}</div><div class="small ${u.active?"okText":"badText"}">${u.active?"Activo":"Suspendido"}${u.last_sign_in_at?" · último ingreso "+esc(new Date(u.last_sign_in_at).toLocaleString("es-CL")):""}</div></div><div class="row">${u.is_admin?'<span class="badge">ADMIN</span>':`<button class="secondary pwd" data-id="${esc(u.id)}">Clave</button><button class="${u.active?"danger":"secondary"} active" data-id="${esc(u.id)}" data-active="${u.active?"0":"1"}">${u.active?"Suspender":"Activar"}</button><button class="danger del" data-id="${esc(u.id)}">Eliminar</button>`}</div>`;users.appendChild(r)}
+ $$(".pwd").forEach(b=>b.onclick=()=>changePassword(b.dataset.id));$$(".active").forEach(b=>b.onclick=()=>setActive(b.dataset.id,b.dataset.active==="1"));$$(".del").forEach(b=>b.onclick=()=>deleteUser(b.dataset.id))}
+async function changePassword(id){const p=prompt("Nueva contraseña (mínimo 12 caracteres):",strongPassword());if(!p)return;if(p.length<12)return note("La contraseña debe tener al menos 12 caracteres.","bad");try{await invoke({action:"set_password",user_id:id,password:p});await navigator.clipboard.writeText(p);note("Contraseña actualizada y copiada al portapapeles.","ok")}catch(e){if(e.message==="MFA_REQUIRED"){tab("security");return note("Confirma MFA primero.","warn")}note(e.payload?.message||e.message,"bad")}}
+async function setActive(id,active){if(!confirm(active?"¿Activar este usuario?":"¿Suspender este usuario? Se revocarán sus enlaces compartidos y su tarjeta quedará deshabilitada."))return;try{await invoke({action:"set_active",user_id:id,active});note(active?"Usuario activado.":"Usuario suspendido.","ok");loadUsers()}catch(e){if(e.message==="MFA_REQUIRED"){tab("security");return note("Confirma MFA primero.","warn")}note(e.payload?.message||e.message,"bad")}}
+async function deleteUser(id){if(!confirm("¿Eliminar definitivamente este usuario y sus documentos de NexumID Salud? Esta acción no se puede deshacer."))return;const sure=prompt('Escribe ELIMINAR para confirmar:');if(sure!=="ELIMINAR")return;try{await invoke({action:"delete_user",user_id:id});note("Usuario eliminado.","ok");loadUsers()}catch(e){if(e.message==="MFA_REQUIRED"){tab("security");return note("Confirma MFA primero.","warn")}note(e.payload?.message||e.message,"bad")}}
+function tab(n){$$(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===n));$$(".pane").forEach(p=>p.classList.add("hidden"));$("#p-"+n).classList.remove("hidden");if(n==="security")mfa()}
+$$(".tab").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+async function mfa(){
+ const a=await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+ const l=await sb.auth.mfa.listFactors();
+ const v=(l.data?.totp||[]).find(x=>x.status==="verified");
+ const cur=a.data?.currentLevel||"aal1";
+ const status=$("#mfaStatus"),setup=$("#mfaSetup");
+ status.innerHTML=`<div class="notice ${cur==="aal2"?"ok":"warn"}">Sesión administrativa: <b>${esc(cur)}</b>. ${cur==="aal2"?"MFA confirmado.":"Debes confirmar MFA para modificar usuarios."}</div>`;
+ setup.innerHTML="";
+ if(cur==="aal2")return;
+ if(v){
+   setup.innerHTML='<label>Código de app autenticadora</label><input id="mfaCode" inputmode="numeric" maxlength="8"><button id="verifyMfa" style="margin-top:8px">Confirmar MFA</button>';
+   $("#verifyMfa").onclick=()=>verifyFactor(v.id,$("#mfaCode").value);
+   return;
+ }
+ setup.innerHTML='<button id="enrollMfa">Configurar MFA</button><div id="enrollArea"></div>';
+ $("#enrollMfa").onclick=enroll;
+}
+async function enroll(){
+ const cleanup=await sb.rpc("health_reset_own_unverified_mfa");
+ if(cleanup.error)return note("No se pudo reiniciar la configuración MFA: "+cleanup.error.message,"bad");
+ const {data,error}=await sb.auth.mfa.enroll({factorType:"totp",friendlyName:"NexumID Salud Admin"});
+ if(error)return note(error.message,"bad");
+ const area=$("#enrollArea");
+ if(!area)return note("No se pudo mostrar el configurador MFA.","bad");
+ area.innerHTML=`<div class="notice"><p><b>1.</b> Escanea este QR con Google Authenticator, Microsoft Authenticator, 2FAS u otra app TOTP.</p><img class="qr" src="${esc(data.totp.qr_code)}" alt="QR MFA"><p class="small">Clave manual: ${esc(data.totp.secret)}</p><p><b>2.</b> Escribe el código de 6 dígitos que genere la app.</p><input id="newCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8"><button id="finish" style="margin-top:8px">Activar MFA</button></div>`;
+ $("#finish").onclick=()=>verifyFactor(data.id,$("#newCode").value);
+}
+async function verifyFactor(id,code){
+ code=String(code||"").trim();
+ if(code.length<6)return note("Ingresa el código de 6 dígitos de la app autenticadora.","bad");
+ const c=await sb.auth.mfa.challenge({factorId:id});
+ if(c.error)return note(c.error.message,"bad");
+ const v=await sb.auth.mfa.verify({factorId:id,challengeId:c.data.id,code});
+ if(v.error)return note(v.error.message,"bad");
+ await sb.auth.refreshSession();
+ note("MFA activado correctamente.","ok");
+ await mfa();
+}
+sb.auth.onAuthStateChange(()=>setTimeout(boot,0));boot();</script></main></body></html>
