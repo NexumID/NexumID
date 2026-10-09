@@ -896,3 +896,29 @@ body:has(.landing){background:#fff;padding:0}
 .nx-corporate .nx-footer-bottom>span,.nx-corporate .nx-footer-bottom>a{color:#a8bfd4}
 .nx-corporate :is(a,input,button,summary):focus-visible{outline-color:#467cac}
 @media(max-width:600px){.nx-corporate .landing-footer{width:100%;padding:40px 20px 24px}.nx-corporate .nx-mobile-menu summary,.nx-corporate .nx-mobile-menu nav a{color:#274866}}
+
+/* Contacto comercial: principal, apoyo y correo. */
+.nx-corporate .nx-contact-band{display:block}
+.nx-contact-heading{max-width:720px}
+.nx-contact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:36px}
+.nx-contact-card{padding:28px;background:#ffffff08;border:1px solid #7695b255;display:flex;flex-direction:column;min-width:0}
+.nx-corporate .nx-contact-card .nx-contact-label{font-size:9px;letter-spacing:1.5px;color:#b4cbe1;font-weight:600}
+.nx-corporate .nx-contact-card h3{font-size:22px;font-weight:500;line-height:1.3;color:#fff;margin-top:17px}
+.nx-corporate .nx-contact-card p{font-size:13px;line-height:1.8;margin-top:15px;color:#d1dfec}
+.nx-corporate .nx-contact-card .nx-contact-number{display:block;font-size:21px;font-weight:500;color:#fff;letter-spacing:.2px;margin-top:24px;white-space:nowrap}
+.nx-corporate .nx-contact-email{display:block;font-size:16px;font-weight:500;color:#fff;margin-top:24px;overflow-wrap:anywhere}
+.nx-contact-actions{display:flex;align-items:center;flex-wrap:wrap;gap:15px;margin-top:auto;padding-top:25px}
+.nx-corporate .nx-contact-actions a{font-size:12px;font-weight:500;color:#e6eff8;display:inline-flex;align-items:center;gap:13px;padding:11px 0}
+.nx-corporate .nx-contact-actions .nx-contact-whatsapp{border:1px solid #9eb7ce;background:#ffffff0a;padding:11px 15px}
+.nx-corporate .nx-contact-actions a:hover{text-decoration:underline}
+.nx-corporate .nx-contact-primary{background:#f6f9fc;border-color:#f6f9fc}
+.nx-corporate .nx-contact-primary .nx-contact-label{color:#507394}
+.nx-corporate .nx-contact-primary h3,.nx-corporate .nx-contact-primary .nx-contact-number{color:#193b5c}
+.nx-corporate .nx-contact-primary p{color:#536d85}
+.nx-corporate .nx-contact-primary .nx-contact-actions a{color:#245f91}
+.nx-corporate .nx-contact-primary .nx-contact-whatsapp{background:#245f91;color:#fff;border-color:#245f91}
+.nx-corporate .nx-footer-top{grid-template-columns:1.5fr 1fr .85fr 1.3fr;gap:30px}
+.nx-corporate .nx-footer-contact a{overflow-wrap:anywhere}
+@media(min-width:901px){.nx-corporate .nx-nav{gap:27px}}
+@media(max-width:1000px){.nx-contact-grid{grid-template-columns:1fr 1fr}.nx-contact-grid>article:last-child{grid-column:1/-1}.nx-corporate .nx-footer-top{grid-template-columns:1.5fr 1fr 1fr}.nx-footer-contact{grid-column:1/-1}}
+@media(max-width:600px){.nx-contact-grid{grid-template-columns:1fr;gap:16px;margin-top:28px}.nx-contact-grid>article:last-child{grid-column:auto}.nx-contact-card{padding:25px}.nx-corporate .nx-contact-card h3{font-size:21px}.nx-corporate .nx-footer-top{grid-template-columns:1fr 1fr;gap:32px 20px}.nx-footer-contact{grid-column:1/-1}.nx-corporate .nx-footer-contact a{font-size:13px}}
