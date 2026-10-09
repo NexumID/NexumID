@@ -922,3 +922,16 @@ body:has(.landing){background:#fff;padding:0}
 @media(min-width:901px){.nx-corporate .nx-nav{gap:27px}}
 @media(max-width:1000px){.nx-contact-grid{grid-template-columns:1fr 1fr}.nx-contact-grid>article:last-child{grid-column:1/-1}.nx-corporate .nx-footer-top{grid-template-columns:1.5fr 1fr 1fr}.nx-footer-contact{grid-column:1/-1}}
 @media(max-width:600px){.nx-contact-grid{grid-template-columns:1fr;gap:16px;margin-top:28px}.nx-contact-grid>article:last-child{grid-column:auto}.nx-contact-card{padding:25px}.nx-corporate .nx-contact-card h3{font-size:21px}.nx-corporate .nx-footer-top{grid-template-columns:1fr 1fr;gap:32px 20px}.nx-footer-contact{grid-column:1/-1}.nx-corporate .nx-footer-contact a{font-size:13px}}
+
+/* WhatsApp: acción visible con icono y contraste uniforme. */
+.nx-corporate .nx-contact-actions{gap:12px;padding-top:24px}
+.nx-corporate .nx-contact-card .nx-contact-actions a.nx-contact-whatsapp{display:flex;align-items:center;gap:11px;flex:1 1 100%;min-height:54px;padding:14px 17px;border:1px solid #8eaeca;border-radius:8px;background:#315a7b;color:#fff;font-size:13px;font-weight:600;line-height:1.4;text-decoration:none;box-shadow:0 3px 8px #102c4814;transition:background .18s ease,border-color .18s ease}
+.nx-corporate .nx-contact-primary .nx-contact-actions a.nx-contact-whatsapp{background:#245f91;border-color:#245f91;color:#fff}
+.nx-corporate .nx-contact-card .nx-contact-actions a.nx-contact-whatsapp:hover{background:#194b73;border-color:#638eb1;color:#fff;text-decoration:none}
+.nx-corporate .nx-contact-card .nx-contact-actions a.nx-contact-whatsapp:active{background:#123e62}
+.nx-wa-icon{width:25px;height:25px;flex:0 0 25px;color:inherit}
+.nx-wa-label{color:inherit;font:inherit}
+.nx-wa-arrow{margin-left:auto;font-size:20px;font-weight:400;color:inherit;flex-shrink:0}
+.nx-corporate .nx-contact-actions>a:not(.nx-contact-whatsapp){padding:8px 0;font-size:12px}
+@media(max-width:360px){.nx-corporate .nx-contact-card .nx-contact-actions a.nx-contact-whatsapp{font-size:12px;gap:9px;padding:13px}}
+@media(prefers-reduced-motion:reduce){.nx-corporate .nx-contact-card .nx-contact-actions a.nx-contact-whatsapp{transition:none}}
