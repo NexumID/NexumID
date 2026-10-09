@@ -835,3 +835,64 @@ body:has(.landing){background:#fff;padding:0}
 .nx-real-card>img{display:block;width:100%;height:100%;object-fit:contain}
 @media(max-width:900px){.nx-corporate .landing-header{gap:20px}.nx-corporate .landing-header .nx-official-logo{width:220px}.nx-corporate .nx-nav{gap:19px}}
 @media(max-width:600px){.nx-corporate .landing-header{min-height:96px}.nx-corporate .landing-header .nx-official-logo{width:215px;max-width:64vw}.nx-corporate .nx-footer-top .nx-official-logo{width:270px}}
+
+/* Paleta NexumID: azul profundo, azul acero y plata, sin resplandores. */
+.nx-corporate{--nx-navy:#102c48;--nx-blue:#245f91;--nx-steel:#587896;--nx-silver:#e9eef4;--nx-ink:#193653;--nx-muted:#566b7e;background:#fff;color:var(--nx-ink)}
+.nx-corporate .nx-utility{background:var(--nx-navy);color:#d2deeb}
+.nx-corporate .landing-header{border-bottom:1px solid #dce5ef;box-shadow:none}
+.nx-corporate .nx-nav a{color:#274866}
+.nx-corporate .nx-nav a:hover{border-color:var(--nx-blue)}
+.nx-corporate .nx-nav .nx-client-link{border-color:#bdcddd}
+.nx-corporate .nx-nav .nx-client-link:hover{background:#edf3f9}
+.nx-corporate .landing-kicker{color:#3d6487}
+.nx-corporate .nx-banner h1{color:var(--nx-navy)}
+.nx-corporate .nx-banner-content>p{color:#4d637a}
+.nx-corporate .nx-button,.nx-corporate .nx-plate-form button{background:var(--nx-blue);border-color:var(--nx-blue);color:#fff}
+.nx-corporate .nx-button:hover,.nx-corporate .nx-plate-form button:hover{background:#194b75;border-color:#194b75}
+.nx-corporate .nx-sectors a{color:#26496a}
+.nx-corporate .nx-sectors a:hover{color:var(--nx-blue);background:#f4f7fb}
+.nx-corporate .nx-sectors span{color:#6f88a2}
+.nx-corporate .nx-sectors b,.nx-corporate .nx-text-link{color:var(--nx-blue)}
+.nx-corporate .nx-section-heading:after{background:var(--nx-blue)}
+.nx-corporate .nx-section-heading>p{color:var(--nx-muted)}
+.nx-corporate .nx-feature{background:#f2f5f9}
+.nx-corporate .nx-feature-copy h3,.nx-corporate .nx-access h3,.nx-corporate .nx-steps h3,.nx-corporate .nx-company-band h2{color:var(--nx-ink)}
+.nx-corporate .nx-feature-copy p,.nx-corporate .nx-access p,.nx-corporate .nx-steps p,.nx-corporate .nx-company-band p,.nx-corporate .nx-faq details>p{color:var(--nx-muted)}
+.nx-corporate .nx-eyebrow{color:#5a7590}
+.nx-corporate .nx-eyebrow>b{background:#e0e8f1;color:#526d87}
+.nx-corporate .nx-feature-health .nx-product-art{background:linear-gradient(135deg,#e6edf5,#d5e1ee)}
+.nx-corporate .nx-health-sheet{box-shadow:0 14px 28px #102c4814}
+.nx-corporate .nx-health-cross{background:#e7eef6;color:#426d93}
+.nx-corporate .nx-health-sheet strong{color:#274f72}
+.nx-corporate .nx-health-sheet i{background:#e9eff6}
+.nx-corporate .nx-health-sheet small{color:#617c97}
+.nx-corporate .nx-feature-parking .nx-product-art{background:linear-gradient(135deg,#dbe5ef,#ecf1f7)}
+.nx-corporate .nx-parking-sign{background:#2d608b}
+.nx-corporate .nx-feature-hotel .nx-product-art{background:linear-gradient(135deg,#e5ebf2,#cfdce9)}
+.nx-corporate .nx-room-screen{background:linear-gradient(125deg,#102c48,#365d7e);border-color:#18364f;box-shadow:0 12px 25px #102c481a}
+.nx-corporate .nx-room-screen i{background:#7b9bb533;border-color:#9fb7ce55}
+.nx-corporate .nx-story-band{background:var(--nx-navy)}
+.nx-corporate .nx-story-content .landing-kicker{color:#afc7df}
+.nx-corporate .nx-story-content p{color:#d1deeb}
+.nx-corporate .nx-story-content .nx-story-note{color:#afc4d8}
+.nx-corporate .nx-story-number small{color:#b4c9df}
+.nx-corporate .nx-button-light{background:transparent;border-color:#849fb9;color:#fff}
+.nx-corporate .nx-button-light:hover{background:#254966;border-color:#bccfdf}
+.nx-corporate .nx-company-band{background:#edf2f7}
+.nx-corporate .nx-access{background:#f1f5fa}
+.nx-corporate .nx-admin,.nx-corporate .nx-faq summary{color:#345574}
+.nx-corporate .nx-admin a{color:var(--nx-blue)}
+.nx-corporate .nx-contact-band{background:#193b5c}
+.nx-corporate .nx-contact-band h2{color:#fff}
+.nx-corporate .nx-contact-band .landing-kicker{color:#b4cbe1}
+.nx-corporate .nx-contact-band p{color:#d5e1ed}
+.nx-corporate .nx-contact-note{color:#b8cce0}
+.nx-corporate .nx-contact-band>.nx-text-link{color:#e3edf6}
+.nx-corporate .landing-footer{width:100%;padding:60px max(32px,calc((100vw - 1176px)/2)) 25px;background:var(--nx-navy)}
+.nx-corporate .nx-footer-top strong{color:#e9f0f7}
+.nx-corporate .nx-footer-top p,.nx-corporate .nx-footer-top nav a{color:#c3d3e3}
+.nx-corporate .landing-footer small{color:#9fb7ce}
+.nx-corporate .nx-footer-bottom{border-color:#35516c}
+.nx-corporate .nx-footer-bottom>span,.nx-corporate .nx-footer-bottom>a{color:#a8bfd4}
+.nx-corporate :is(a,input,button,summary):focus-visible{outline-color:#467cac}
+@media(max-width:600px){.nx-corporate .landing-footer{width:100%;padding:40px 20px 24px}.nx-corporate .nx-mobile-menu summary,.nx-corporate .nx-mobile-menu nav a{color:#274866}}
