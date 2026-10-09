@@ -45,10 +45,29 @@ function mostrarLandingComercial() {
         <nav class="nx-nav" aria-label="Navegación principal"><a href="#soluciones">Soluciones</a><a href="#proyectos">Proyectos</a><a href="#nosotros">Nosotros</a><a href="#contacto">Contacto</a><a href="#accesos" class="nx-client-link">Acceso clientes <span aria-hidden="true">↗</span></a></nav>
         <details class="nx-mobile-menu"><summary>Menú <span aria-hidden="true">☰</span></summary><nav aria-label="Navegación móvil"><a href="#soluciones">Soluciones</a><a href="#proyectos">Proyectos</a><a href="#nosotros">Nosotros</a><a href="#contacto">Contacto</a><a href="#accesos">Acceso clientes ↗</a></nav></details>
       </header>
-      <section class="nx-banner" aria-labelledby="nx-main-title">
-        <img class="nx-banner-image" src="assets/nexumid-hero.webp" alt="" fetchpriority="high" width="1672" height="941">
-        <div class="nx-banner-content"><span class="landing-kicker">TECNOLOGÍA QUE CONECTA</span><h1 id="nx-main-title">Conecta lo importante.<br>Simplifica tu día.</h1><p>Documentos a mano. Accesos bajo control.<br>Una mejor atención para tus clientes.</p><a class="nx-button" href="#soluciones">Descubre nuestras soluciones <span aria-hidden="true">→</span></a></div>
-        <div class="nx-banner-caption">NexumID · Tecnología aplicada a necesidades reales</div>
+      <section class="nx-carousel" aria-roledescription="carrusel" aria-label="Destacados NexumID" tabindex="0" data-playing="false">
+        <div class="nx-carousel-track">
+          <section class="nx-banner nx-carousel-slide" role="group" aria-roledescription="diapositiva" aria-label="1 de 3: NexumID">
+            <img class="nx-banner-image" src="assets/nexumid-hero.webp" alt="" fetchpriority="high" width="1672" height="941">
+            <div class="nx-banner-content"><span class="landing-kicker">TECNOLOGÍA QUE CONECTA</span><h1 id="nx-main-title">Conecta lo importante.<br>Simplifica tu día.</h1><p>Documentos a mano. Accesos bajo control.<br>Una mejor atención para tus clientes.</p><a class="nx-button" href="#soluciones">Descubre nuestras soluciones <span aria-hidden="true">→</span></a></div>
+          </section>
+          <section class="nx-banner nx-carousel-slide nx-slide-vehicle" role="group" aria-roledescription="diapositiva" aria-label="2 de 3: Identidad Vehicular" aria-hidden="true" inert>
+            <div class="nx-banner-content"><span class="landing-kicker">IDENTIDAD DIGITAL VEHICULAR</span><h2>Tu tarjeta.<br>Tus documentos.</h2><p>Acerca tu teléfono o escanea el QR.<br>Ingresa tu PIN y consulta tu documentación.</p><a class="nx-button" href="#vehicular">Conoce Identidad Vehicular <span aria-hidden="true">→</span></a></div>
+            <div class="nx-slide-card"><img src="assets/nexumid-tarjeta-vehicular.webp" alt="Tarjeta NFC NexumID Identidad Digital Vehicular" width="1200" height="800" loading="lazy"></div>
+          </section>
+          <section class="nx-banner nx-carousel-slide nx-slide-business" role="group" aria-roledescription="diapositiva" aria-label="3 de 3: Soluciones para negocios" aria-hidden="true" inert>
+            <div class="nx-banner-content"><span class="landing-kicker">SOLUCIONES PARA TU NEGOCIO</span><h2>Mejor atención.<br>Más organización.</h2><p>Pedidos QR, control de estacionamientos<br>y pantallas con tu marca.</p><a class="nx-button" href="#contacto">Conversemos sobre tu proyecto <span aria-hidden="true">→</span></a></div>
+            <div class="nx-slide-business-art" aria-hidden="true"><div class="nx-room-screen"><span>NEXUMID · ALOJAMIENTOS</span><strong>Tu marca.<br>Una experiencia propia.</strong><div><i></i><i></i><i></i></div></div><div class="nx-business-note"><span>Soluciones conectadas</span><strong>Pedidos QR · Parking · Pantallas</strong></div></div>
+          </section>
+        </div>
+        <div class="nx-carousel-controls" aria-label="Controles del carrusel">
+          <button class="nx-carousel-arrow nx-carousel-prev" type="button" aria-label="Diapositiva anterior">‹</button>
+          <div class="nx-carousel-indicators"><button type="button" class="nx-slide-dot" data-slide="0" aria-label="Mostrar NexumID" aria-current="true"><i></i></button><button type="button" class="nx-slide-dot" data-slide="1" aria-label="Mostrar Identidad Vehicular" aria-current="false"><i></i></button><button type="button" class="nx-slide-dot" data-slide="2" aria-label="Mostrar soluciones para negocios" aria-current="false"><i></i></button></div>
+          <span class="nx-slide-counter" aria-hidden="true">01 / 03</span>
+          <button class="nx-carousel-toggle" type="button" aria-label="Activar avance automático">▶</button>
+          <button class="nx-carousel-arrow nx-carousel-next" type="button" aria-label="Siguiente diapositiva">›</button>
+        </div>
+        <span class="nx-carousel-status nx-visually-hidden" aria-live="polite" aria-atomic="true">Destacado 1 de 3</span>
       </section>
       <nav class="nx-sectors" aria-label="Explorar soluciones"><a href="#vehicular"><span>01</span>Identidad Vehicular <b aria-hidden="true">→</b></a><a href="#salud-info"><span>02</span>Salud <b aria-hidden="true">→</b></a><a href="#parking-info"><span>03</span>Parking <b aria-hidden="true">→</b></a><a href="#alojamientos-info"><span>04</span>Alojamientos <b aria-hidden="true">→</b></a></nav>
       <section id="soluciones" class="landing-section nx-showcase">
@@ -87,6 +106,101 @@ function mostrarLandingComercial() {
       </section>
       <footer class="landing-footer"><div class="nx-footer-top"><div><img class="nx-official-logo" src="assets/nexumid-logo-corporativo.webp" alt="NexumID, Soluciones Tecnológicas by Smart Box Connect" width="1000" height="333"><p>Tecnología que conecta.</p><small>Una marca de Smart Box Connect</small></div><nav aria-label="Soluciones en el pie de página"><strong>Soluciones</strong><a href="#vehicular">Identidad Vehicular</a><a href="#salud-info">Salud</a><a href="#parking-info">Parking</a><a href="#alojamientos-info">Alojamientos</a></nav><nav aria-label="Empresa"><strong>NexumID</strong><a href="#nosotros">Nosotros</a><a href="#proyectos">Proyectos</a><a href="#contacto">Contacto</a><a href="#accesos">Acceso clientes</a></nav><nav class="nx-footer-contact" aria-label="Contacto NexumID"><strong>Contacto</strong><a href="tel:+56926097948">Principal: +56 9 2609 7948</a><a href="tel:+56985387195">Apoyo: +56 9 8538 7195</a><a href="mailto:nexumid.tec@gmail.com">nexumid.tec@gmail.com</a><a href="https://wa.me/56926097948?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20las%20soluciones%20de%20NexumID." target="_blank" rel="noopener noreferrer">Escribir por WhatsApp ↗</a></nav></div><div class="nx-footer-bottom"><span>© ${new Date().getFullYear()} NexumID · Chile</span><a href="#inicio">Volver arriba ↑</a></div></footer>
     </div>`;
+    iniciarCarruselNexum(app);
+}
+
+function iniciarCarruselNexum(app) {
+    const carousel = app.querySelector('.nx-carousel');
+    if (!carousel) return;
+    const track = carousel.querySelector('.nx-carousel-track');
+    const slides = [...carousel.querySelectorAll('.nx-carousel-slide')];
+    const dots = [...carousel.querySelectorAll('.nx-slide-dot')];
+    const toggle = carousel.querySelector('.nx-carousel-toggle');
+    const counter = carousel.querySelector('.nx-slide-counter');
+    const status = carousel.querySelector('.nx-carousel-status');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let active = 0;
+    let playing = false;
+    let timer = null;
+    let frame = null;
+    let targetIndex = null;
+    function schedule() {
+        window.clearTimeout(timer);
+        if (!carousel.isConnected || !playing || document.hidden) return;
+        timer = window.setTimeout(() => {
+            if (!carousel.isConnected) return;
+            show(active + 1, false);
+        }, 7000);
+    }
+    function setPlaying(value) {
+        playing = value;
+        carousel.dataset.playing = String(playing);
+        toggle.textContent = playing ? 'Ⅱ' : '▶';
+        toggle.setAttribute('aria-label', playing ? 'Pausar avance automático' : 'Activar avance automático');
+        status.setAttribute('aria-live', playing ? 'off' : 'polite');
+        schedule();
+    }
+    function update(index) {
+        active = (index + slides.length) % slides.length;
+        dots.forEach((dot, i) => dot.setAttribute('aria-current', String(i === active)));
+        slides.forEach((slide, i) => {
+            slide.inert = i !== active;
+            slide.setAttribute('aria-hidden', String(i !== active));
+        });
+        counter.textContent = String(active + 1).padStart(2, '0') + ' / 03';
+        status.textContent = 'Destacado ' + (active + 1) + ' de ' + slides.length;
+        schedule();
+    }
+    function show(index, manual = true) {
+        if (manual) setPlaying(false);
+        const next = (index + slides.length) % slides.length;
+        targetIndex = next;
+        update(next);
+        track.scrollTo({left: next * track.clientWidth, behavior: reduceMotion.matches ? 'auto' : 'smooth'});
+    }
+    carousel.querySelector('.nx-carousel-prev').addEventListener('click', () => show(active - 1));
+    carousel.querySelector('.nx-carousel-next').addEventListener('click', () => show(active + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => show(i)));
+    toggle.addEventListener('click', () => setPlaying(!playing));
+    carousel.addEventListener('keydown', event => {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            event.preventDefault();
+            show(active + (event.key === 'ArrowRight' ? 1 : -1));
+        }
+    });
+    track.addEventListener('pointerdown', () => {
+        targetIndex = null;
+        setPlaying(false);
+    }, {passive: true});
+    track.addEventListener('scroll', () => {
+        window.cancelAnimationFrame(frame);
+        frame = window.requestAnimationFrame(() => {
+            if (targetIndex !== null) {
+                if (Math.abs(track.scrollLeft - targetIndex * track.clientWidth) > 2) return;
+                targetIndex = null;
+            }
+            const index = Math.round(track.scrollLeft / track.clientWidth);
+            if (index !== active) update(index);
+        });
+    }, {passive: true});
+    carousel.addEventListener('mouseenter', () => setPlaying(false));
+    carousel.addEventListener('focusin', event => {
+        if (event.target !== toggle) setPlaying(false);
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) window.clearTimeout(timer);
+        else schedule();
+    });
+    const resizeObserver = new ResizeObserver(() => {
+        track.scrollTo({left: active * track.clientWidth, behavior: 'auto'});
+    });
+    resizeObserver.observe(track);
+    const menu = app.querySelector('.nx-mobile-menu');
+    if (menu) menu.addEventListener('click', event => {
+        if (event.target.closest('a')) menu.open = false;
+    });
+    update(0);
+    setPlaying(!reduceMotion.matches);
 }
 
 function escapeHtml(text) {
