@@ -38,59 +38,49 @@ function mostrarLandingComercial() {
     if (!app) return;
     document.title = "NexumID | Tecnología que conecta";
     app.innerHTML = `
-    <div class="landing">
+    <div class="landing" id="inicio">
       <header class="landing-header">
-        <img src="logo-nexumid.png" alt="NexumID" class="landing-logo">
-        <span class="landing-badge">IDENTIDAD VEHICULAR</span>
+        <a href="#inicio" aria-label="NexumID, inicio"><img src="logo-nexumid.png" alt="NexumID by Smart Box Connect" class="landing-logo"></a>
+        <nav class="nx-nav" aria-label="Navegación principal"><a href="#soluciones">Soluciones</a><a href="#proyectos">Proyectos</a><a href="#accesos">Acceso clientes</a></nav>
       </header>
-      <section class="landing-hero">
-        <span class="landing-kicker">NFC + QR · ACCESO PROTEGIDO</span>
-        <h1>La documentación de tu vehículo, conectada.</h1>
-        <p class="landing-lead">NexumID reúne la identidad y documentación de tu vehículo en un perfil digital accesible desde una tarjeta NFC o código QR.</p>
-        <div class="landing-actions">
-          <a class="landing-primary" href="#como-funciona">CONOCER NEXUMID</a>
-          <a class="landing-secondary" href="#documentos">VER FUNCIONES</a>
-        </div>
-        <div class="landing-card">
-          <div class="landing-card-top"><span>NEXUMID</span><span class="landing-live"><i></i> CONECTADO</span></div>
-          <div class="landing-nfc">NFC</div>
-          <strong>Identidad Digital Vehicular</strong>
-          <small>Acerca tu dispositivo o escanea el QR.</small>
-          <div class="landing-tech">TECNOLOGÍA QUE CONECTA</div>
+      <section class="landing-hero nx-hero">
+        <div class="nx-hero-copy"><span class="landing-kicker">IDENTIDAD DIGITAL · NFC · QR · SOFTWARE</span>
+        <h1>Tecnología que conecta tu mundo.</h1>
+        <p class="landing-lead">Conectamos tu información y la operación de tu negocio con soluciones simples de usar. Identidad vehicular, documentos de salud, estacionamientos y experiencias digitales para alojamientos.</p>
+        <div class="landing-actions"><a class="landing-primary" href="#soluciones">CONOCER SOLUCIONES</a><a class="landing-secondary" href="#accesos">ACCEDER A MI SERVICIO</a></div>
+        <p class="nx-origin">NexumID by Smart Box Connect · Chile</p></div>
+        <div class="landing-card"><div class="landing-card-top"><span>NEXUMID</span><span class="nx-card-label">NFC + QR</span></div><div class="landing-nfc">NFC</div><strong>Tu información, conectada.</strong><small>Acerca tu teléfono o escanea el QR.</small><div class="landing-tech">TECNOLOGÍA QUE CONECTA</div></div>
+      </section>
+      <section id="soluciones" class="landing-section landing-dark">
+        <span class="landing-kicker">EL ECOSISTEMA NEXUMID</span><h2>Una solución para cada necesidad.</h2>
+        <p class="landing-section-copy">Desarrollamos herramientas para personas y empresas. Cada implementación tiene un alcance, permisos y condiciones de uso definidos.</p>
+        <div class="nx-solutions">
+          <article class="nx-solution"><span class="nx-number">01 / NFC + QR</span><h3>Identidad Vehicular</h3><p>La documentación de tu vehículo, conectada. Un perfil digital accesible desde tu tarjeta NFC o código QR.</p><ul><li>SOAP y permiso de circulación</li><li>Revisión técnica, certificado de gases y padrón</li><li>Acceso con PIN y enlaces temporales a documentos</li></ul><a href="#vehicular" class="nx-link">Conocer Identidad Vehicular ↗</a></article>
+          <article class="nx-solution"><span class="nx-number">02 / PORTAL EN PILOTO</span><h3>NexumID Salud</h3><p>Un portal para gestionar documentos de salud, compartir archivos y definir la información de emergencia visible desde una tarjeta.</p><ul><li>Documentos y opciones de acceso compartido</li><li>Perfil de emergencia según la decisión del titular</li><li>Portal instalable en equipos compatibles</li></ul><a href="salud.html" class="nx-link">Ingresar a Salud ↗</a></article>
+          <article class="nx-solution"><span class="nx-number">03 / PILOTO DE CONTROL</span><h3>NexumID Parking</h3><p>Control de uso de estacionamientos mediante tarjetas y validación NFC o QR, con un panel para caja y administración.</p><ul><li>Usuarios, tarjetas y reglas de uso</li><li>Eventos con operador, fecha y hora de Chile</li><li>Consulta y confirmación de validaciones</li></ul><a href="parking/" class="nx-link">Ingresar a Parking ↗</a></article>
+          <article class="nx-solution"><span class="nx-number">04 / ALOJAMIENTOS</span><h3>QR, pedidos y pantallas</h3><p>Herramientas para conectar la habitación con el personal y personalizar la experiencia en televisores y TV Box compatibles.</p><ul><li>Carta QR por habitación y gestión de pedidos</li><li>Estados y notificaciones al personal</li><li>Launcher con marca y accesos a aplicaciones</li></ul><a href="#proyectos" class="nx-link">Conocer el proyecto ↗</a></article>
         </div>
       </section>
-      <section id="como-funciona" class="landing-section">
-        <span class="landing-kicker">CÓMO FUNCIONA</span>
-        <h2>Simple para usar. Diseñado para proteger.</h2>
-        <div class="landing-grid">
-          <article><b>01</b><h3>Acerca o escanea</h3><p>Usa NFC o QR para abrir el perfil digital asociado al vehículo.</p></article>
-          <article><b>02</b><h3>Acceso con PIN</h3><p>La documentación se mantiene detrás de un acceso privado de 4 dígitos.</p></article>
-          <article><b>03</b><h3>Documentos disponibles</h3><p>Consulta la información registrada del vehículo desde el teléfono.</p></article>
-        </div>
-      </section>
-      <section id="documentos" class="landing-section landing-dark">
-        <span class="landing-kicker">DOCUMENTACIÓN</span>
-        <h2>Lo importante, en un solo lugar.</h2>
-        <p class="landing-section-copy">NexumID permite asociar SOAP, Permiso de Circulación, Revisión Técnica, Certificado de Gases y Padrón al perfil del vehículo.</p>
+      <section id="vehicular" class="landing-section">
+        <span class="landing-kicker">IDENTIDAD DIGITAL VEHICULAR</span><h2>La documentación de tu vehículo, conectada.</h2>
+        <p class="landing-section-copy">El servicio con el que comenzó NexumID. Consulta la documentación asociada a tu vehículo desde tu tarjeta y conserva el control de acceso mediante PIN.</p>
+        <div class="landing-grid"><article><b>01</b><h3>Acerca o escanea</h3><p>Abre el enlace de la tarjeta NFC o QR asociada al vehículo.</p></article><article><b>02</b><h3>Ingresa tu PIN</h3><p>El perfil documental solicita tu PIN de cuatro dígitos.</p></article><article><b>03</b><h3>Consulta tus documentos</h3><p>Los accesos temporales se generan al abrir los archivos disponibles.</p></article></div>
         <div class="landing-docs"><span>SOAP</span><span>PERMISO DE CIRCULACIÓN</span><span>REVISIÓN TÉCNICA</span><span>CERTIFICADO DE GASES</span><span>PADRÓN</span></div>
       </section>
-      <section class="landing-section landing-security">
-        <span class="landing-kicker">SEGURIDAD</span>
-        <h2>Tu información no queda expuesta.</h2>
-        <p class="landing-section-copy">El acceso al perfil documental requiere PIN y los documentos se abren mediante accesos temporales generados al momento de consultarlos.</p>
-        <div class="landing-security-row"><span>🔐 Acceso con PIN</span><span>⏱ Enlaces temporales</span><span>✓ Perfil identificado</span></div>
+      <section id="proyectos" class="landing-section landing-dark">
+        <span class="landing-kicker">IMPLEMENTACIÓN EN TERRENO</span><h2>Soluciones para la operación diaria.</h2>
+        <div class="nx-case"><div><span class="nx-number">PROYECTO DE ALOJAMIENTO</span><h3>Una experiencia conectada desde la habitación.</h3><p>El proyecto reúne carta QR, gestión de pedidos y notificaciones al personal con una pantalla de inicio personalizada para los equipos de las habitaciones.</p><p>El launcher fue instalado y probado en nueve habitaciones. La carta y la aplicación del personal son componentes separados, con su propio alcance.</p></div><div class="nx-case-facts"><strong>9</strong><span>habitaciones con launcher instalado</span><div class="landing-security-row"><span>CARTA QR</span><span>GESTIÓN DE PEDIDOS</span><span>PANTALLA PERSONALIZADA</span></div></div></div>
       </section>
-      <section class="landing-cta">
-        <span class="landing-kicker">NEXUMID</span>
-        <h2>Tu vehículo también puede tener identidad digital.</h2>
-        <p>Una forma moderna de conectar tu vehículo con su información esencial.</p>
-        <div class="landing-slogan">Tecnología que conecta.</div>
+      <section id="accesos" class="landing-section">
+        <span class="landing-kicker">CLIENTES Y OPERADORES</span><h2>Accede a tu plataforma.</h2>
+        <p class="landing-section-copy">Usa tu cuenta autorizada. Las tarjetas NFC y QR existentes siguen abriendo sus perfiles habituales.</p>
+        <div class="nx-access-grid"><article class="nx-access"><h3>Salud</h3><p>Portal de documentos y perfil personal.</p><a href="salud.html" class="nx-link">Abrir portal ↗</a></article><article class="nx-access"><h3>Parking</h3><p>Acceso para caja y administración.</p><a href="parking/" class="nx-link">Abrir Parking ↗</a></article><article class="nx-access"><h3>Vehicular</h3><p>Escanea tu tarjeta o abre tu perfil por patente. El acceso a documentos seguirá solicitando el PIN.</p><form class="nx-plate-form" action="./" method="get"><label for="nx-patente">Patente del vehículo</label><div><input id="nx-patente" name="patente" required maxlength="12" pattern=".*\\S.*" autocomplete="off" spellcheck="false" placeholder="AB-CD-12"><button type="submit">ABRIR</button></div></form></article></div>
+        <details class="nx-admin"><summary>Accesos de administración</summary><div><a href="admin.html">Administración Vehicular ↗</a><a href="salud-admin.html">Administración de Salud ↗</a></div></details>
       </section>
-      <footer class="landing-footer">
-        <img src="logo-nexumid.png" alt="NexumID" class="landing-footer-logo">
-        <div>IDENTIDAD DIGITAL VEHICULAR</div>
-        <small>Una solución de Smart Box Connect</small>
-      </footer>
+      <section class="landing-section landing-dark" id="nosotros"><span class="landing-kicker">NEXUMID BY SMART BOX CONNECT</span><h2>Desarrollo cercano. Aplicación práctica.</h2><p class="landing-section-copy">NexumID es la línea de soluciones tecnológicas de Smart Box Connect. Desarrollamos desde Chile y trabajamos sobre necesidades concretas: acceder a información, simplificar tareas y conectar los equipos con la operación de cada negocio.</p><div class="landing-grid"><article><b>ENTENDER</b><h3>Definir la necesidad</h3><p>Identificamos quién usará la herramienta y qué debe resolver.</p></article><article><b>PROBAR</b><h3>Validar el uso</h3><p>Comprobamos el flujo en los equipos y las condiciones del proyecto.</p></article><article><b>IMPLEMENTAR</b><h3>Acordar el alcance</h3><p>Definimos funcionalidades, instalación y soporte antes de extender la solución.</p></article></div></section>
+      <section class="landing-section nx-faq"><span class="landing-kicker">ANTES DE COMENZAR</span><h2>Preguntas frecuentes</h2><details><summary>¿La tarjeta guarda mis documentos?</summary><p>La tarjeta NFC y el QR abren un enlace al servicio. Los documentos se gestionan en la plataforma asociada.</p></details><details><summary>¿Necesito NFC en mi teléfono?</summary><p>Para leer una tarjeta acercando el teléfono necesitas NFC compatible. El QR ofrece otra forma de abrir el enlace desde la cámara.</p></details><details><summary>¿Qué información puede ver otra persona?</summary><p>Depende del servicio y sus permisos. Vehicular requiere PIN para consultar documentos. En Salud, el titular define la información de emergencia pública y los accesos compartidos.</p></details><details><summary>¿El launcher sirve para cualquier televisor?</summary><p>La compatibilidad depende del sistema, el modelo y sus restricciones. Se prueba el dispositivo antes de confirmar la instalación.</p></details><details><summary>¿Los servicios tienen el mismo precio?</summary><p>No. Las tarjetas, los sistemas y los launchers tienen alcances distintos. La cotización depende de las unidades, funcionalidades e implementación acordadas.</p></details></section>
+      <section class="landing-cta"><span class="landing-kicker">TU PRÓXIMO PROYECTO</span><h2>¿Qué necesitas conectar?</h2><p>Cuéntanos qué tarea quieres resolver, cuántas personas o equipos usarán la solución y qué tienes instalado hoy. Con esa información podemos definir una implementación y su cotización.</p><p class="nx-contact-note">Solicita una propuesta a tu contacto de NexumID o Smart Box Connect.</p><div class="landing-slogan">Tecnología que conecta.</div></section>
+      <footer class="landing-footer"><img src="logo-nexumid.png" alt="NexumID" class="landing-footer-logo"><div>NEXUMID · SOLUCIONES TECNOLÓGICAS</div><small>Una marca de Smart Box Connect · Chile</small><div class="nx-footer-links"><a href="#soluciones">Soluciones</a><a href="#accesos">Acceso clientes</a><a href="#inicio">Volver arriba ↑</a></div></footer>
     </div>`;
 }
 
@@ -965,3 +955,4 @@ function estadoVencimiento(fecha, ahora = new Date()) {
                     : '#65e3b1'
     };
 }
+
