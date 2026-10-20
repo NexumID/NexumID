@@ -1,0 +1,35 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NexumID Core · Laboratorio de IA</title>
+<style>
+*{box-sizing:border-box}html{font-family:system-ui,-apple-system,sans-serif;color-scheme:dark}body{background:#071225;color:#edf5ff;margin:0}main{max-width:720px;margin:auto;padding:23px 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px}.logo{font-size:20px;font-weight:850;letter-spacing:.12em}.logo em{color:#52baff;font-style:normal}.tag{border:1px solid #385d7e;border-radius:30px;color:#a7d7ff;padding:7px 9px;font-size:10px}
+h1{font-size:clamp(27px,5vw,40px);margin:26px 0 10px;line-height:1.1;letter-spacing:-.03em}p{color:#afc2dc;line-height:1.5}
+.panel{margin-top:21px;background:#101e36;border:1px solid #294360;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px #040b19}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px;padding:13px;border-bottom:1px solid #30445e}
+.status{font-size:11px;color:#98c6f5}.status:before{content:"●";color:#4dd9aa;margin-right:6px}
+button{cursor:pointer;border-radius:10px;border:1px solid #456481;padding:9px 11px;color:#c6def7;background:#132947;font-weight:650}button.active,button.send{background:#1678ce;border-color:#278de5;color:white}button:disabled{opacity:.5;cursor:wait}
+#auth{display:none;padding:13px;background:#12253c;border-bottom:1px solid #30445e}#auth input{width:100%;margin:9px 0;background:#09172b;border:1px solid #486480;border-radius:10px;padding:12px;color:white}
+small{color:#abc2de;font-size:11px;line-height:1.5;display:block}.messages{height:350px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.bubble{max-width:92%;border-radius:15px;padding:12px 14px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:14px}.bot{align-self:flex-start;background:#1d314e}.me{align-self:flex-end;background:#12639d}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 13px 15px}.chips button{border-radius:22px;font-size:11px}
+form{padding:13px;display:flex;gap:8px;border-top:1px solid #30445e}form input{flex:1;min-width:0;border:1px solid #486480;background:#091b31;border-radius:10px;color:white;padding:12px;font:inherit;font-size:14px}
+.foot{padding:14px 0;font-size:12px;color:#a4bad5;line-height:1.5}.notice{background:#132a42;border-left:3px solid #44b1fb;border-radius:6px;padding:12px;margin:20px 0;font-size:12px;color:#c7dced}
+</style><meta name="referrer" content="no-referrer"></head><body><main>
+<header><div class="logo">NEXUM<em>ID</em> CORE</div><div class="tag">AI LAB · PILOTO AISLADO</div></header>
+<h1>El cerebro digital<br>de tu negocio.</h1>
+<p>Prueba el concepto de un asistente NexumID con ejemplos ficticios del Motel Aeme. Este piloto no consulta ni modifica ningún sistema real.</p>
+<section class="panel"><div class="toolbar"><span id="status" class="status">Demo · simulación</span><div><button id="demo" class="active" type="button">Demo</button> <button id="live" type="button">IA real</button></div></div>
+<div id="auth"><label for="token">Token de acceso del piloto</label><input type="password" id="token" autocomplete="off" placeholder="PILOT_ACCESS_TOKEN"><small>Para activar la IA, configura OPENAI_API_KEY y PILOT_ACCESS_TOKEN en Edge Function Secrets de Supabase. Aquí va únicamente el token del piloto, nunca la clave de OpenAI. No se guarda en el navegador.</small></div>
+<div id="messages" class="messages" role="log" aria-live="polite"></div>
+<div class="chips"><button data-prompt="¿Cuántos pedidos están pendientes?">Pedidos pendientes</button><button data-prompt="¿Qué pasa con la habitación 2?">Habitación 2</button><button data-prompt="¿Qué debería priorizar hoy?">Prioridades</button></div>
+<form id="form"><input id="message" maxlength="600" required placeholder="Pregunta algo a NexumID..."><button class="send" id="send">Enviar</button></form></section>
+<div class="notice">🔒 El modo Demo usa reglas programadas, NO un modelo de IA. El modo IA real usa OpenAI solo si configuraste los secretos y un token. No ingresa a producción.</div>
+<div class="foot">NexumID Core · Prueba técnica · No ingreses información personal de huéspedes, claves ni datos confidenciales. No se guarda historial en Supabase.</div>
+</main><script>
+const log=document.getElementById("messages"),input=document.getElementById("message");let mode="demo";
+function say(msg,who){const el=document.createElement("div");el.className="bubble "+who;el.textContent=msg;log.append(el);log.scrollTop=log.scrollHeight}
+function setMode(next){mode=next;document.getElementById("demo").classList.toggle("active",mode==="demo");document.getElementById("live").classList.toggle("active",mode==="live");document.getElementById("auth").style.display=mode==="live"?"block":"none";document.getElementById("status").textContent=mode==="demo"?"Demo · simulación":"IA real · protegida";log.replaceChildren();say(mode==="demo"?"¡Hola! Soy una demostración de NexumID. Los pedidos y habitaciones de este ejemplo son inventados. Prueba las consultas sugeridas.":"Modo IA real. Necesitas configurar los secretos en Supabase. No tengo acceso a datos operativos reales.","bot")}
+document.getElementById("demo").onclick=()=>setMode("demo");document.getElementById("live").onclick=()=>setMode("live");
+document.querySelectorAll("[data-prompt]").forEach(b=>b.onclick=()=>{input.value=b.dataset.prompt;input.focus()});
+document.getElementById("form").onsubmit=async(e)=>{e.preventDefault();const question=input.value.trim();if(!question)return;input.value="";say(question,"me");const btn=document.getElementById("send");btn.disabled=true;try{const r=await fetch("https://tkrugleneazdeqhxxkvr.supabase.co/functions/v1/nexumid-core-ai-lab",{method:"POST",headers:{"Content-Type":"application/json","x-pilot-token":mode==="live"?document.getElementById("token").value:""},body:JSON.stringify({mode:mode,message:question})});const j=await r.json();say(j.answer||j.error||"Respuesta no disponible","bot")}catch{say("Error de conexión con el piloto.","bot")}finally{btn.disabled=false;input.focus()}};
+setMode("demo");
+</script></body></html>
