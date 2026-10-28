@@ -21,6 +21,26 @@
       "asset": "nexumid-logo.webp",
       "source": "nexumid-logo-principal.png",
       "kind": "Recurso gráfico original recuperado"
+    },
+    {
+      "asset": "familia-interfaz.webp",
+      "source": "Interfaz original Familia 1.0.3",
+      "kind": "Render estático del HTML original, sin sesión ni datos personales"
+    },
+    {
+      "asset": "salud-interfaz.webp",
+      "source": "Interfaz original NexumID Salud",
+      "kind": "Render estático del HTML original, sin documentos personales"
+    },
+    {
+      "asset": "parking-acceso.webp",
+      "source": "Parking app-v6",
+      "kind": "Captura real de pantalla de acceso, sin credenciales"
+    },
+    {
+      "asset": "voz-acceso.webp",
+      "source": "aeme-voz-logos-1792943694561.jpg",
+      "kind": "Recorte de la captura real de acceso del personal"
     }
   ]
 }
