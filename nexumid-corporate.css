@@ -167,9 +167,6 @@
 }
 
 /* Proyectos recientes: recursos originales y estados de desarrollo. */
-.nx-global .nx-real-brand-art{display:flex;align-items:center;justify-content:center;gap:12px}
-.nx-global .nx-real-brand-art>img{height:100%;width:70%;object-fit:contain;filter:drop-shadow(0 20px 40px #0006)}
-.nx-global .nx-real-brand-art>span{position:absolute;bottom:8px;right:16px;color:#bed7e9;font-size:10px;letter-spacing:1.8px;line-height:1.8;text-align:right}
 .nx-global .nx-recovered-logo{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#091c30;padding:25px;gap:20px}
 .nx-global .nx-recovered-logo img{width:100%;height:auto;max-height:165px;object-fit:contain}
 .nx-global .nx-recovered-logo>span{color:#cce8fa;letter-spacing:2px;font-size:12px}
@@ -199,4 +196,17 @@
 .nx-global .nx-project-note{font-size:12px;line-height:1.8;color:#526779;max-width:850px;margin:28px 0 0}
 .nx-global .nx-recent a:focus-visible{outline:3px solid #008cff;outline-offset:4px}
 @media(max-width:1000px){.nx-global .nx-project-meta>span{max-width:180px}.nx-global .nx-project-brand{flex-direction:column;gap:12px}.nx-global .nx-project-brand>span{max-width:none;text-align:center}}
-@media(max-width:700px){.nx-global .nx-project-grid{grid-template-columns:1fr;gap:22px}.nx-global .nx-project-copy{padding:25px}.nx-global .nx-project h3{font-size:27px}.nx-global .nx-project-media{min-height:180px;height:auto}.nx-global .nx-project-family-art{padding:35px 18px}.nx-global .nx-project-brand{flex-direction:row;gap:22px}.nx-global .nx-project-brand img{width:145px;height:145px}.nx-global .nx-project-brand>span{font-size:9px;max-width:105px;text-align:left}.nx-global .nx-project-voice{height:270px}.nx-global .nx-project-meta>span{max-width:180px}.nx-global .nx-real-brand-art>img{width:78%}.nx-global .nx-real-brand-art>span{bottom:0;right:8px;font-size:7px}.nx-global .nx-project-meta>b{margin-left:0}.nx-global .nx-project-compact .nx-project-meta>b{margin-left:auto}}
+@media(max-width:700px){.nx-global .nx-project-grid{grid-template-columns:1fr;gap:22px}.nx-global .nx-project-copy{padding:25px}.nx-global .nx-project h3{font-size:27px}.nx-global .nx-project-media{min-height:180px;height:auto}.nx-global .nx-project-family-art{padding:35px 18px}.nx-global .nx-project-brand{flex-direction:row;gap:22px}.nx-global .nx-project-brand img{width:145px;height:145px}.nx-global .nx-project-brand>span{font-size:9px;max-width:105px;text-align:left}.nx-global .nx-project-voice{height:270px}.nx-global .nx-project-meta>span{max-width:180px}.nx-global .nx-project-meta>b{margin-left:0}.nx-global .nx-project-compact .nx-project-meta>b{margin-left:auto}}
+
+/* Identidad corporativa y comunicación. */
+.nx-global .nx-corporate-brand-art{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:35px;padding:30px}
+.nx-global .nx-corporate-brand-art img{width:100%;height:auto;object-fit:contain}
+.nx-global .nx-corporate-brand-art>span{color:#c5dced;text-align:center;font-size:10px;line-height:1.8;letter-spacing:1.4px}
+.nx-global .nx-corporate-service-art{display:flex;flex-direction:column;gap:30px;align-items:center}
+.nx-global .nx-corporate-service-art img{width:100%;height:auto}
+.nx-global .nx-corporate-service-art>span{color:#d8e6f1;font-size:13px;line-height:1.8;text-align:center}
+.nx-global .nx-family-identity{gap:28px;padding:30px;background:radial-gradient(ellipse at bottom,#15405f,#071725)}
+.nx-global .nx-family-identity img{width:130px;height:130px}
+.nx-global .nx-family-identity>span{color:#e4f3ff;font-size:29px;line-height:1.25;font-weight:400;letter-spacing:-.6px}
+.nx-global .nx-family-identity strong{font-size:40px;color:#7ce2ff;font-weight:500}
+@media(max-width:700px){.nx-global .nx-family-identity{min-height:210px;gap:22px;padding:24px}.nx-global .nx-family-identity img{width:95px;height:95px}.nx-global .nx-family-identity>span{font-size:23px}.nx-global .nx-family-identity strong{font-size:32px}.nx-global .nx-corporate-brand-art{padding:20px;gap:24px}.nx-global .nx-corporate-brand-art>span{font-size:8px}}

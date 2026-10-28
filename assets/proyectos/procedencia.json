@@ -1,31 +1,11 @@
 {
   "fecha": "2026-10-28",
-  "nota": "Recursos recuperados de proyectos existentes. La interfaz de Smartboxconnect es un render de la aplicación con datos de prueba. No se presentan como fotos de instalación.",
+  "nota": "Recursos gráficos originales y captura de interfaz recuperados de los proyectos NexumID.",
   "recursos": [
-    {
-      "asset": "familia-logo.webp",
-      "source": "nexumid-familia-boxi-cabecera.webp",
-      "kind": "Recurso gráfico original recuperado"
-    },
     {
       "asset": "familia-icono.webp",
       "source": "familia-icon-preview.png",
       "kind": "Recurso gráfico original recuperado"
-    },
-    {
-      "asset": "smartboxconnect-logo.webp",
-      "source": "sbc-official.png",
-      "kind": "Recurso gráfico original recuperado"
-    },
-    {
-      "asset": "boxi.webp",
-      "source": "mascot-official.png",
-      "kind": "Recurso gráfico original recuperado"
-    },
-    {
-      "asset": "smartboxconnect-interfaz.webp",
-      "source": "home-reference-live.png",
-      "kind": "Captura de interfaz existente"
     },
     {
       "asset": "aeme-voz-interfaz.webp",
