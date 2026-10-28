@@ -165,3 +165,38 @@
  .nx-global.nx-corporate .nx-hero-footnote{font-size:9px;gap:10px;letter-spacing:.8px;flex-wrap:wrap}
  .nx-global.nx-corporate .nx-orbit-label{font-size:8px;letter-spacing:1px}
 }
+
+/* Proyectos recientes: recursos originales y estados de desarrollo. */
+.nx-global .nx-real-brand-art{display:flex;align-items:center;justify-content:center;gap:12px}
+.nx-global .nx-real-brand-art>img{height:100%;width:70%;object-fit:contain;filter:drop-shadow(0 20px 40px #0006)}
+.nx-global .nx-real-brand-art>span{position:absolute;bottom:8px;right:16px;color:#bed7e9;font-size:10px;letter-spacing:1.8px;line-height:1.8;text-align:right}
+.nx-global .nx-recovered-logo{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#091c30;padding:25px;gap:20px}
+.nx-global .nx-recovered-logo img{width:100%;height:auto;max-height:165px;object-fit:contain}
+.nx-global .nx-recovered-logo>span{color:#cce8fa;letter-spacing:2px;font-size:12px}
+.nx-global .nx-project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.nx-global .nx-project{background:#fff;border:1px solid #dae4ed;border-radius:8px;overflow:hidden;min-width:0;display:flex;flex-direction:column}
+.nx-global .nx-project-media{margin:0;position:relative;min-height:300px;height:300px;background:#081b2d;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.nx-global .nx-project-media img{display:block;max-width:100%;object-fit:contain}
+.nx-global .nx-project-family-art{background:radial-gradient(ellipse at 50% 100%,#15405f,#071725 80%);padding:40px 25px}
+.nx-global .nx-project-family-art img{width:100%;height:auto}
+.nx-global .nx-project-brand{gap:28px;min-height:260px;padding:25px}
+.nx-global .nx-project-brand img{height:200px;width:200px}
+.nx-global .nx-project-brand>span{color:#bdd7e9;font-size:11px;letter-spacing:2px;line-height:1.8;max-width:130px}
+.nx-global .nx-project-screenshot>a{display:block;width:100%;align-self:stretch;background:#071725}
+.nx-global .nx-project-screenshot img{width:100%;height:100%;object-fit:contain}
+.nx-global .nx-project-screenshot figcaption{position:absolute;bottom:0;left:0;right:0;padding:9px 14px;background:#071725ed;color:#e0edf6;font-size:10px;line-height:1.5}
+.nx-global .nx-project-voice{height:290px}
+.nx-global .nx-project-copy{padding:30px;display:flex;flex-direction:column;flex:1;align-items:flex-start}
+.nx-global .nx-project-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%;min-height:32px;margin-bottom:20px}
+.nx-global .nx-project-meta img{object-fit:contain}
+.nx-global .nx-project-meta>span{font-size:9px;letter-spacing:1px;color:#426784;line-height:1.6}
+.nx-global .nx-project-meta>b{margin-left:auto;color:#24506c;background:#e9f2f8;padding:7px 10px;border-radius:4px;font-size:10px;line-height:1.4;font-weight:600}
+.nx-global .nx-project h3{margin:0 0 15px;color:#142f49;font-size:29px;font-weight:500;letter-spacing:-.7px;line-height:1.2}
+.nx-global .nx-project p{font-size:15px;line-height:1.8;color:#526779;margin:0 0 18px}
+.nx-global .nx-project .nx-project-state{font-size:12px;line-height:1.7;border-left:2px solid #86b6d5;padding-left:12px;color:#526779}
+.nx-global .nx-project .nx-text-link{margin-top:auto;padding-top:8px;font-size:13px;line-height:1.7}
+.nx-global .nx-project-compact .nx-eyebrow{font-size:9px;letter-spacing:1.1px;margin:0 0 16px;color:#426784}
+.nx-global .nx-project-note{font-size:12px;line-height:1.8;color:#526779;max-width:850px;margin:28px 0 0}
+.nx-global .nx-recent a:focus-visible{outline:3px solid #008cff;outline-offset:4px}
+@media(max-width:1000px){.nx-global .nx-project-meta>span{max-width:180px}.nx-global .nx-project-brand{flex-direction:column;gap:12px}.nx-global .nx-project-brand>span{max-width:none;text-align:center}}
+@media(max-width:700px){.nx-global .nx-project-grid{grid-template-columns:1fr;gap:22px}.nx-global .nx-project-copy{padding:25px}.nx-global .nx-project h3{font-size:27px}.nx-global .nx-project-media{min-height:180px;height:auto}.nx-global .nx-project-family-art{padding:35px 18px}.nx-global .nx-project-brand{flex-direction:row;gap:22px}.nx-global .nx-project-brand img{width:145px;height:145px}.nx-global .nx-project-brand>span{font-size:9px;max-width:105px;text-align:left}.nx-global .nx-project-voice{height:270px}.nx-global .nx-project-meta>span{max-width:180px}.nx-global .nx-real-brand-art>img{width:78%}.nx-global .nx-real-brand-art>span{bottom:0;right:8px;font-size:7px}.nx-global .nx-project-meta>b{margin-left:0}.nx-global .nx-project-compact .nx-project-meta>b{margin-left:auto}}
