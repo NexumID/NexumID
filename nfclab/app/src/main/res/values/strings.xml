@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NexumID NFC LAB</string>
+    <string name="hce_service_description">Emulación NFC de laboratorio</string>
+    <string name="hce_aid_description">AID de prueba NexumID NFC LAB</string>
+</resources>
